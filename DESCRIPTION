@@ -1,12 +1,12 @@
 Package: yaps
-Title: What the Package Does (one line, title case)
-Version: 0.0.0.9000
-Authors@R: person("First", "Last", email = "first.last@example.com", role = c("aut", "cre"))
-Description: What the package does (one paragraph).
+Title: Track estimation using YAPS (Yet Another Positioning Solver)
+Version: 1.0.0
+Authors@R: person("Henrik", "Baktoft", email = "hba@aqua.dtu.dk", role = c("aut", "cre"))
+Description: Estimate track from acoustic data using YAPS (doi:10.1038/s41598-017-14278-z).
 Depends: R (>= 3.4.3)
-License: What license is it under?
+License: GPL-3 + file LICENSE
 Encoding: UTF-8
 LazyData: true
-LinkingTo: Rcpp
-Imports: Rcpp
 RoxygenNote: 6.0.1
+LinkingTo: Rcpp, TMB, RcppEigen
+Imports: Rcpp, TMB, circular, RcppEigen, zoo, stats

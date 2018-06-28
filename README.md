@@ -1,7 +1,10 @@
-# yaps - YAPS (Yet Another Positioning Solver) (R package)
-The yaps package requires [devtools] and [TMB](https://github.com/kaskr/adcomp). 
-Please see https://github.com/kaskr/adcomp/wiki/Download for instructions on TMB installation. Remember to install Rtools needed for TMB to run.
+# yaps - YAPS (Yet Another Positioning Solver)
+Based on the original [YAPS](https://www.nature.com/articles/s41598-017-14278-z.pdf) presented in Baktoft, Gjelland, Økland & Thygesen (2017): Positioning of aquatic animals based on time-of-arrival and random walk models using YAPS (Yet Another Positioning Solver). DOI:10.1038/s41598-017-14278-z
+A few changes have been made to improve performance and allow track estimation from random burst interval transmitters.
+To use on own data, compile a toa-matrix based on synchronized hydrophone data and replace the hydros dataframe with actual hydrophone positions. 
 
+The yaps package requires [devtools](https://cran.r-project.org/web/packages/devtools/index.html) and [TMB](https://github.com/kaskr/adcomp). 
+Please see https://github.com/kaskr/adcomp/wiki/Download for instructions on TMB installation. Remember to install Rtools needed for TMB to run.
 
 Installation:
 ```

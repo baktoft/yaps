@@ -1,7 +1,7 @@
 # YAPS - (Yet Another Positioning Solver) 
-Based on the original [YAPS](https://www.nature.com/articles/s41598-017-14278-z.pdf) presented in Baktoft, Gjelland, Økland & Thygesen (2017): Positioning of aquatic animals based on time-of-arrival and random walk models using YAPS (Yet Another Positioning Solver). DOI:10.1038/s41598-017-14278-z  
+Based on the original [YAPS](https://www.nature.com/articles/s41598-017-14278-z.pdf) presented in Baktoft, Gjelland, Økland & Thygesen (2017): Positioning of aquatic animals based on time-of-arrival and random walk models using YAPS (Yet Another Positioning Solver). [DOI:10.1038/s41598-017-14278-z](https://www.nature.com/articles/s41598-017-14278-z.pdf)  
 
-A few changes have been made to improve performance and allow track estimation from random burst interval transmitters.  
+A few changes have been made to allow track estimation from random burst interval transmitters (by popular demand) and to improve performance.  
 
 To use on own data, compile a toa-matrix based on synchronized hydrophone data and replace the hydros dataframe with actual hydrophone positions. 
 

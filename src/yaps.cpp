@@ -29,6 +29,8 @@ Type objective_function<Type>::operator() ()
 	DATA_SCALAR(bi_penalty);
 	DATA_SCALAR(rbi_min);
 	DATA_SCALAR(rbi_max);
+	DATA_STRING(ss_data_what);	// 'est' = estimate SS-data; 'data' = Use SS-data
+	DATA_VECTOR(ss_data);		// Vector of SS-data if used - length(ss_data) = np
 	DATA_IVECTOR(ss_idx);
 	DATA_INTEGER(n_ss);
 	DATA_SCALAR(approxBI);
@@ -38,7 +40,7 @@ Type objective_function<Type>::operator() ()
 	PARAMETER_VECTOR(X);	//Position at time of ping
 	PARAMETER_VECTOR(Y);	//Position at time of ping
 	PARAMETER_VECTOR(top);		// Estimated time of pings
-	PARAMETER_VECTOR(ss);
+	PARAMETER_VECTOR(ss);		// Estimated speed of sound
 
 	PARAMETER(logD_xy);    		// Diffusivity of fish
 	Type D_xy = exp(logD_xy);
@@ -69,7 +71,11 @@ Type objective_function<Type>::operator() ()
 		for(int h=0; h<nh; ++h){ //iterate hydros
 			if(!isNA(toa(h,i))){ //ignore NA's...
 				dist(h,i) = sqrt((H(h,0)-X(i))*(H(h,0)-X(i)) + (H(h,1)-Y(i))*(H(h,1)-Y(i)));
-				mu_toa(h,i) = top(i) +  dist(h,i)/ss(ss_idx(i));
+				if(ss_data_what == "est"){
+					mu_toa(h,i) = top(i) +  dist(h,i)/ss(ss_idx(i));
+				} else {
+					mu_toa(h,i) = top(i) +  dist(h,i)/ss_data(i);
+				}
 				Type eps = toa(h,i) - mu_toa(h,i);
 				
 				nll -= Edist(0) * dnorm(eps, Type(0), sigma_toa, true); 					//Gaussian part					
@@ -85,6 +91,7 @@ Type objective_function<Type>::operator() ()
 	nll -= dnorm(logSigma_toa, Type(0), Type(25), true);
 	nll -= dnorm(logScale, Type(0), Type(25), true);
 	nll -= dnorm(logSigma_bi, Type(0), Type(25), true);
+	nll -= dnorm(logD_v, Type(0), Type(25), true);
 
 	//position component
 	nll -= dnorm(X(0),Type(0),Type(100),true);

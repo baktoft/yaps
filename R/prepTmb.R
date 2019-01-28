@@ -8,12 +8,14 @@
 #' @param pingType Type of transmitter to simulate - either stable burst interval ('sbi') or random burst interval ('rbi')
 #' @param rbi_min,rbi_max Minimum and maximum BI for random burst interval transmitters
 #' @param sdInits If >0 initial values will be randomized around the normally fixed value using rnorm(length(inits), mean=inits, sd=sdInits)
+#' @param ss_data_what What speed of sound (ss) data to be used. Default ss_data_what='est': ss is estimated by the model. Alternatively, if ss_data_what='data': ss_data must be provided and length(ss_data) == ncol(toa)
+#' @param ss_data Vector of ss-data to be used if ss_data_what = 'est'. Otherwise ss_data <- 0 (default)
 
 
 #' @return List of input data ready for use in TMB-call
 #' @export
-getInp <- function(hydros, toa, E_dist, n_ss, pingType, sdInits=1, rbi_min=0, rbi_max=0){
-	datTmb <- getDatTmb(hydros, toa, E_dist, n_ss, pingType, rbi_min, rbi_max)
+getInp <- function(hydros, toa, E_dist, n_ss, pingType, sdInits=1, rbi_min=0, rbi_max=0, ss_data_what='est', ss_data=0){
+	datTmb <- getDatTmb(hydros, toa, E_dist, n_ss, pingType, rbi_min, rbi_max, ss_data_what, ss_data)
 	params <- getParams(datTmb)
 	inits <- getInits(pingType, sdInits)
 	return(list(
@@ -31,13 +33,15 @@ getInp <- function(hydros, toa, E_dist, n_ss, pingType, sdInits=1, rbi_min=0, rb
 #'
 #' @return List for use in TMB.
 #' @export
-getDatTmb <- function(hydros, toa, E_dist, n_ss, pingType, rbi_min, rbi_max){
+getDatTmb <- function(hydros, toa, E_dist, n_ss, pingType, rbi_min, rbi_max, ss_data_what, ss_data){
 	if(n_ss > 1){
 		ss_idx <- cut(1:ncol(toa), n_ss, labels=FALSE) - 1 #-1 because zero-indexing in TMB
 	} else {
 		ss_idx <- rep(0, ncol(toa))
 	}
 	approxBI <- mean(diff(toa[1,]), na.rm=TRUE)
+	
+	if(ss_data_what == 'data') { stopifnot(length(ss_data) == ncol(toa))}
 	
 	Edist <- rep(0,2)
 	if(E_dist == "Gaus") {Edist[1] <- 1}
@@ -56,6 +60,8 @@ getDatTmb <- function(hydros, toa, E_dist, n_ss, pingType, rbi_min, rbi_max){
 		pingType = pingType,
 		n_ss = n_ss,
 		ss_idx = ss_idx,
+		ss_data_what = ss_data_what,
+		ss_data = ss_data,
 		approxBI = approxBI
 	)
 	return(datTmb)

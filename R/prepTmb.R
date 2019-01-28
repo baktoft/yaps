@@ -1,11 +1,11 @@
 #' Get prepared inp-object for use in TMB-call
 #'
-#' Wrapper-function to compile a list of inoput needed to run TMB
-#' @param hydros Data frame from simHydros()
-#' @param toa TOA-matrix
-#' @param E_dist Which distribution to use in the model - 0=Gaussian, 1=Mixture of Gauss and t
-#' @param n_ss Number of speed of sound to estimate
-#' @param pingType Type of transmitter to simulate - either stable burst interval (sbi) or random burst interval (rbi)
+#' Wrapper-function to compile a list of input needed to run TMB
+#' @param hydros Dataframe from simHydros() or Dataframe with columns hx and hy containing positions of the receivers. Translate the coordinates to get the grid centre close to (0;0).
+#' @param toa TOA-matrix: matrix with receivers in rows and detections in columns. Make sure that the receivers are in the same order as in hydros, and that the matrix is very regular: one ping per column (inlude empty columns if a ping is not detected).
+#' @param E_dist Which distribution to use in the model - "Gaus" = Gaussian, "Mixture" = mixture of Gaussian and t
+#' @param n_ss Number of soundspeed estimates: one estimate per hour is usually enough
+#' @param pingType Type of transmitter to simulate - either stable burst interval ('sbi') or random burst interval ('rbi')
 #' @param rbi_min,rbi_max Minimum and maximum BI for random burst interval transmitters
 #' @param sdInits If >0 initial values will be randomized around the normally fixed value using rnorm(length(inits), mean=inits, sd=sdInits)
 

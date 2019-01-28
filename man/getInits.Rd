@@ -7,7 +7,7 @@
 getInits(pingType, sdInits = 1)
 }
 \arguments{
-\item{pingType}{Type of transmitter to simulate - either stable burst interval (sbi) or random burst interval (rbi)}
+\item{pingType}{Type of transmitter to simulate - either stable burst interval ('sbi') or random burst interval ('rbi')}
 
 \item{sdInits}{If >0 initial values will be randomized around the normally fixed value using rnorm(length(inits), mean=inits, sd=sdInits)}
 }

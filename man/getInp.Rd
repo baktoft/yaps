@@ -8,15 +8,15 @@ getInp(hydros, toa, E_dist, n_ss, pingType, sdInits = 1, rbi_min = 0,
   rbi_max = 0)
 }
 \arguments{
-\item{hydros}{Data frame from simHydros()}
+\item{hydros}{Dataframe from simHydros() or Dataframe with columns hx and hy containing positions of the receivers. Translate the coordinates to get the grid centre close to (0;0).}
 
-\item{toa}{TOA-matrix}
+\item{toa}{TOA-matrix: matrix with receivers in rows and detections in columns. Make sure that the receivers are in the same order as in hydros, and that the matrix is very regular: one ping per column (inlude empty columns if a ping is not detected).}
 
-\item{E_dist}{Which distribution to use in the model - 0=Gaussian, 1=Mixture of Gauss and t}
+\item{E_dist}{Which distribution to use in the model - "Gaus" = Gaussian, "Mixture" = mixture of Gaussian and t}
 
-\item{n_ss}{Number of speed of sound to estimate}
+\item{n_ss}{Number of soundspeed estimates: one estimate per hour is usually enough}
 
-\item{pingType}{Type of transmitter to simulate - either stable burst interval (sbi) or random burst interval (rbi)}
+\item{pingType}{Type of transmitter to simulate - either stable burst interval ('sbi') or random burst interval ('rbi')}
 
 \item{sdInits}{If >0 initial values will be randomized around the normally fixed value using rnorm(length(inits), mean=inits, sd=sdInits)}
 
@@ -26,5 +26,5 @@ getInp(hydros, toa, E_dist, n_ss, pingType, sdInits = 1, rbi_min = 0,
 List of input data ready for use in TMB-call
 }
 \description{
-Wrapper-function to compile a list of inoput needed to run TMB
+Wrapper-function to compile a list of input needed to run TMB
 }

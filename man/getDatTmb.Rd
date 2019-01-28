@@ -7,15 +7,15 @@
 getDatTmb(hydros, toa, E_dist, n_ss, pingType, rbi_min, rbi_max)
 }
 \arguments{
-\item{hydros}{Data frame from simHydros()}
+\item{hydros}{Dataframe from simHydros() or Dataframe with columns hx and hy containing positions of the receivers. Translate the coordinates to get the grid centre close to (0;0).}
 
-\item{toa}{TOA-matrix}
+\item{toa}{TOA-matrix: matrix with receivers in rows and detections in columns. Make sure that the receivers are in the same order as in hydros, and that the matrix is very regular: one ping per column (inlude empty columns if a ping is not detected).}
 
-\item{E_dist}{Which distribution to use in the model - 0=Gaussian, 1=Mixture of Gauss and t}
+\item{E_dist}{Which distribution to use in the model - "Gaus" = Gaussian, "Mixture" = mixture of Gaussian and t}
 
-\item{n_ss}{Number of speed of sound to estimate}
+\item{n_ss}{Number of soundspeed estimates: one estimate per hour is usually enough}
 
-\item{pingType}{Type of transmitter to simulate - either stable burst interval (sbi) or random burst interval (rbi)}
+\item{pingType}{Type of transmitter to simulate - either stable burst interval ('sbi') or random burst interval ('rbi')}
 
 \item{rbi_min}{Minimum and maximum BI for random burst interval transmitters}
 

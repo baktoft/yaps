@@ -10,7 +10,7 @@ simTOP(trueTrack, pingType, sbi_mean = NULL, sbi_sd = NULL,
 \arguments{
 \item{trueTrack}{Track obtained from simTrueTrack().}
 
-\item{pingType}{Type of transmitter to simulate - either stable burst interval (sbi) or random burst interval (rbi)}
+\item{pingType}{Type of transmitter to simulate - either stable burst interval ('sbi') or random burst interval ('rbi')}
 
 \item{sbi_mean}{Mean and SD of burst interval when pingType = 'sbi'}
 

@@ -1,6 +1,6 @@
 Package: yaps
 Title: Track estimation using YAPS (Yet Another Positioning Solver)
-Version: 1.0.0
+Version: 1.1.0
 Authors@R: person("Henrik", "Baktoft", email = "hba@aqua.dtu.dk", role = c("aut", "cre"))
 Description: Estimate track from acoustic data using YAPS (doi:10.1038/s41598-017-14278-z).
 Depends: R (>= 3.4.3)

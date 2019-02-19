@@ -3,7 +3,7 @@ Based on the original [YAPS](https://www.nature.com/articles/s41598-017-14278-z.
 
 A few changes have been made to allow track estimation from random burst interval transmitters (by popular demand) and to improve performance.  
 
-To use on own data, compile a toa-matrix based on synchronized hydrophone data and replace the hydros dataframe with actual hydrophone positions. 
+To use on own data, compile a toa-matrix based on synchronized hydrophone data and replace the hydros dataframe with actual hydrophone positions. Jenna Vergeynst have created some functions (python) to achieve this - see her github repos for details [time_synchronization](https://github.com/JennaVergeynst/time_synchronization) and [prepare_toa_for_yaps](https://github.com/JennaVergeynst/prepare_toa_for_yaps).
 
 The yaps package requires [devtools](https://cran.r-project.org/web/packages/devtools/index.html) and [TMB](https://github.com/kaskr/adcomp).  
 Please see for [instructions](https://github.com/kaskr/adcomp/wiki/Download) on TMB installation. Remember to install [Rtools](https://cran.r-project.org/bin/windows/Rtools/) as specified in the TMB documentation.

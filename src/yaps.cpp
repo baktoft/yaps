@@ -82,6 +82,9 @@ Type objective_function<Type>::operator() ()
 				
 				nll -= Edist(1) * log( G_part * dnorm(eps, Type(0),sigma_toa,false) + 		//Gaussian part
 						t_part * dt(eps/scale, Type(3.0), false) );					//t part
+				
+				nll -= Edist(2) * log(dt(eps/scale, Type(3.0), false)/scale);
+
 			}
 		}
 	}

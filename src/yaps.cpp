@@ -89,6 +89,7 @@ Type objective_function<Type>::operator() ()
 	// Needed to ensure positive definite Hessian...
 	nll -= dnorm(log_t_part, Type(0), Type(25), true);
 	nll -= dnorm(logSigma_toa, Type(0), Type(25), true);
+	nll -= dnorm(logSigma_bi, Type(0), Type(25), true);
 	nll -= dnorm(logScale, Type(0), Type(25), true);
 	nll -= dnorm(logSigma_bi, Type(0), Type(25), true);
 	nll -= dnorm(logD_v, Type(0), Type(25), true);
@@ -116,7 +117,7 @@ Type objective_function<Type>::operator() ()
 		}
 	} else if(pingType == "rbi"){
 		for(int i = 1; i < np; ++i)	{
-			nll -= dnorm(top(i), top(i-1) + (rbi_max - rbi_min)/2, sigma_bi, true);
+			nll -= dnorm(top(i), top(i-1) + (rbi_max - rbi_min)/2, Type(30.0), true);
 			nll += bi_penalty * (softplus((top(i) - top(i-1)) - rbi_max, bi_epsilon) + softplus(rbi_min - (top(i) - top(i-1)), bi_epsilon));
 		}
 	} 

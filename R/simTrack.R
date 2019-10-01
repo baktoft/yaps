@@ -72,18 +72,19 @@ simTrueTrack <- function(model='rw', n, deltaTime=1, D=NULL, shape=NULL, scale=N
 #'
 #' @return Data frame containing time of ping and true positions
 #' @export
-simTelemetryTrack <- function(trueTrack, ss=NULL, pingType, sbi_mean=NULL, sbi_sd=NULL, rbi_min=NULL, rbi_max=NULL){
+simTelemetryTrack <- function(trueTrack, pingType, sbi_mean=NULL, sbi_sd=NULL, rbi_min=NULL, rbi_max=NULL){
 	if(pingType == 'sbi'){
 		top <- simTOP(trueTrack, pingType='sbi', sbi_mean=sbi_mean, sbi_sd=sbi_sd)
 	} else if(pingType == 'rbi'){
 		top <- simTOP(trueTrack, pingType='rbi', rbi_min=rbi_min, rbi_max=rbi_max)
 	}
 	
-	x <- stats::approx(x=trueTrack$time, y=trueTrack$x, xout=top)$y
-	y <- stats::approx(x=trueTrack$time, y=trueTrack$y, xout=top)$y
+	x  <- stats::approx(x=trueTrack$time, y=trueTrack$x, xout=top)$y
+	y  <- stats::approx(x=trueTrack$time, y=trueTrack$y, xout=top)$y
+	ss <- stats::approx(x=trueTrack$time, y=trueTrack$ss, xout=top)$y
 	
 
-	out <- data.frame(top=top, x=x, y=y)
+	out <- data.frame(top=top, x=x, y=y, ss=ss)
 	
 	return(out)
 }

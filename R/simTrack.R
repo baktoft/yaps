@@ -77,16 +77,23 @@ simTelemetryTrack <- function(trueTrack, pingType, sbi_mean=NULL, sbi_sd=NULL, r
 		top <- simTOP(trueTrack, pingType='sbi', sbi_mean=sbi_mean, sbi_sd=sbi_sd)
 	} else if(pingType == 'rbi'){
 		top <- simTOP(trueTrack, pingType='rbi', rbi_min=rbi_min, rbi_max=rbi_max)
+	} else if(pingType == 'pbi'){
+		top_list <- simTOP(trueTrack, pingType='pbi', rbi_min=rbi_min, rbi_max=rbi_max)
+		top <- top_list$top
+		biTable <- top_list$biTable
 	}
 	
 	x  <- stats::approx(x=trueTrack$time, y=trueTrack$x, xout=top)$y
 	y  <- stats::approx(x=trueTrack$time, y=trueTrack$y, xout=top)$y
 	ss <- stats::approx(x=trueTrack$time, y=trueTrack$ss, xout=top)$y
-	
 
 	out <- data.frame(top=top, x=x, y=y, ss=ss)
-	
-	return(out)
+
+	if(pingType == 'pbi'){
+		return(list(out=out, biTable=biTable))
+	} else {
+		return(out)
+	}
 }
 
 #' Simulate time of pings (Internal function)
@@ -114,10 +121,27 @@ simTOP <- function(trueTrack, pingType, sbi_mean=NULL, sbi_sd=NULL, rbi_min=NULL
 		while(max(top) < maxTime){
 			top <- c(top, max(top) + stats::runif(1, rbi_min, rbi_max))
 		}
-	} 
+	} else if (pingType == 'pbi'){
+		try(if(is.null(rbi_min) | is.null(rbi_max)) stop("When pingType == 'pbi', both rbi_min and rbi_max must be specified!", call.=FALSE))
+		biTable <- round(stats::runif(256, rbi_min, rbi_max))
+		top <- top0
+		i <- 1
+		while(max(top) < maxTime){
+			top <- c(top, max(top) + biTable[i] + round(stats::rnorm(1, 0, 0.002), digits=3))
+			if(i == length(biTable)) {
+				i <- 1
+			} else {
+				i <- i+1
+			}
+		}
+	}
 	top <- top[1:length(top)-1]
 	
-	return(top)
+	if(pingType == 'pbi'){
+		return(list(top=top, biTable=biTable))
+	} else {	
+		return(top)
+	}
 }
 
 
@@ -164,7 +188,7 @@ simToa <- function(telemetryTrack, hydros, pingType, sigmaToa, pNA, pMP){
 	#sbi 1/19200    rbi 1/1000
 	if(pingType == 'sbi') {	
 		tempRes <- 19200
-	} else if(pingType == 'rbi') {
+	} else if(pingType == 'rbi' | pingType == 'pbi') {
 		tempRes <- 1000
 	}
 	toa <- floor(toa) + cut(toa-floor(toa), breaks=1:tempRes/tempRes, labels=FALSE)/tempRes

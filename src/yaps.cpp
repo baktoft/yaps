@@ -35,6 +35,8 @@ Type objective_function<Type>::operator() ()
 	DATA_INTEGER(n_ss);
 	DATA_SCALAR(approxBI);
 	DATA_VECTOR(Edist);
+	DATA_VECTOR(biTable);
+
 	
 	
 	PARAMETER_VECTOR(X);	//Position at time of ping
@@ -123,7 +125,11 @@ Type objective_function<Type>::operator() ()
 			nll -= dnorm(top(i), top(i-1) + (rbi_max - rbi_min)/2, Type(30.0), true);
 			nll += bi_penalty * (softplus((top(i) - top(i-1)) - rbi_max, bi_epsilon) + softplus(rbi_min - (top(i) - top(i-1)), bi_epsilon));
 		}
-	} 
+	} else if(pingType == "pbi"){
+		for(int i = 1; i < np; ++i)	{
+			nll -= dnorm(top(i) - (top(i-1) + biTable(i)), Type(0), sigma_bi, true);
+		}
+	}
 
 	REPORT(mu_toa);
 	

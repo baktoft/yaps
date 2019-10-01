@@ -137,8 +137,13 @@ simTOP <- function(trueTrack, pingType, sbi_mean=NULL, sbi_sd=NULL, rbi_min=NULL
 	}
 	top <- top[1:length(top)-1]
 	
+	if(length(top) > length(biTable)){
+		biTable_out <- rep(biTable, times=ceiling(length(top) / length(biTable)))
+	} else {biTable_out <- biTable}
+	biTable_out <- biTable_out[1:length(top)]
+	
 	if(pingType == 'pbi'){
-		return(list(top=top, biTable=biTable))
+		return(list(top=top, biTable=biTable_out))
 	} else {	
 		return(top)
 	}

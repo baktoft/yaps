@@ -82,6 +82,9 @@ Type objective_function<Type>::operator() ()
 				
 				nll -= Edist(1) * log( G_part * dnorm(eps, Type(0),sigma_toa,false) + 		//Gaussian part
 						t_part * dt(eps/scale, Type(3.0), false) );					//t part
+				
+				nll -= Edist(2) * log(dt(eps/scale, Type(3.0), false)/scale);
+
 			}
 		}
 	}
@@ -89,13 +92,14 @@ Type objective_function<Type>::operator() ()
 	// Needed to ensure positive definite Hessian...
 	nll -= dnorm(log_t_part, Type(0), Type(25), true);
 	nll -= dnorm(logSigma_toa, Type(0), Type(25), true);
+	nll -= dnorm(logSigma_bi, Type(0), Type(25), true);
 	nll -= dnorm(logScale, Type(0), Type(25), true);
 	nll -= dnorm(logSigma_bi, Type(0), Type(25), true);
 	nll -= dnorm(logD_v, Type(0), Type(25), true);
 
 	//position component
-	nll -= dnorm(X(0),Type(0),Type(100),true);
-	nll -= dnorm(Y(0),Type(0),Type(100),true);
+	nll -= dnorm(X(0),Type(0),Type(10000),true);
+	nll -= dnorm(Y(0),Type(0),Type(10000),true);
 	for(int i=1; i<np; ++i)	{
 		nll -= dnorm(X(i), X(i-1),sqrt(2*D_xy*(top(i) - top(i-1))),true);	
 		nll -= dnorm(Y(i), Y(i-1),sqrt(2*D_xy*(top(i) - top(i-1))),true);
@@ -116,7 +120,7 @@ Type objective_function<Type>::operator() ()
 		}
 	} else if(pingType == "rbi"){
 		for(int i = 1; i < np; ++i)	{
-			nll -= dnorm(top(i), top(i-1) + (rbi_max - rbi_min)/2, Type(30), true);
+			nll -= dnorm(top(i), top(i-1) + (rbi_max - rbi_min)/2, Type(30.0), true);
 			nll += bi_penalty * (softplus((top(i) - top(i-1)) - rbi_max, bi_epsilon) + softplus(rbi_min - (top(i) - top(i-1)), bi_epsilon));
 		}
 	} 

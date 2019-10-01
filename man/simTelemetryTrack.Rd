@@ -10,8 +10,6 @@ simTelemetryTrack(trueTrack, ss = NULL, pingType, sbi_mean = NULL,
 \arguments{
 \item{trueTrack}{Know track obtained usin simTrueTrack}
 
-\item{ss}{Simulations model for Speed of Sound - defaults to 'rw' = RW-model.}
-
 \item{pingType}{Type of transmitter to simulate - either stable burst interval ('sbi') or random burst interval ('rbi')}
 
 \item{sbi_mean, sbi_sd}{Mean and SD of burst interval when pingType = 'sbi'}

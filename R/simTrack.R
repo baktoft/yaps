@@ -9,10 +9,11 @@
 #' @param shape Shape of the Weibull distribution - only used when model='crw'. 
 #' @param scale Scale of the Weibull distribution - only used when model='crw'. 
 #' @param addDielPattern Adds a realistic(?) diel pattern to movement. Periods of both low and high movement
+#' @param ss Simulations model for Speed of Sound - defaults to 'rw' = RW-model.
 #'
-#' @return Dataframe containing a simulated track - gnu
+#' @return Dataframe containing a simulated track
 #' @export
-simTrueTrack <- function(model='rw', n, deltaTime=1, D=NULL, shape=NULL, scale=NULL, addDielPattern=TRUE){
+simTrueTrack <- function(model='rw', n, deltaTime=1, D=NULL, shape=NULL, scale=NULL, addDielPattern=TRUE, ss='rw'){
 	try(if(model=='rw'  & is.null(D)) stop("When model == 'rw', D needs to be specified"))
 	try(if(model=='crw' & (is.null(shape) | is.null(scale))) stop("When model == 'crw', shape and scale needs to be specified"))
 	
@@ -50,7 +51,15 @@ simTrueTrack <- function(model='rw', n, deltaTime=1, D=NULL, shape=NULL, scale=N
 		x<-cumsum(dX)
 		y<-cumsum(dY)
 	}
-	return(data.frame(time=time, x=x, y=y))
+
+	if(ss == 'rw'){
+		ssD <- stats::rnorm(length(x), 0, 7e-2)
+		ss <- 1450 + cumsum(ssD)
+	} else if (ss == 'constant'){
+		ss <- rep(1450, length(x))
+	}
+
+	return(data.frame(time=time, x=x, y=y, ss=ss))
 }
 
 #' Simulate telemetry track based on known true track obtained using simTrueTrack
@@ -58,7 +67,6 @@ simTrueTrack <- function(model='rw', n, deltaTime=1, D=NULL, shape=NULL, scale=N
 #' Based on a known true track obtained using simTrueTrack, this function will give true positions at time-of-pings, which are also in the output. TOPs are determined by user-specified transmitter type.
 #' Number of pings are determied automatically based on track length and transmitter specifications.
 #' @param trueTrack Know track obtained usin simTrueTrack
-#' @param ss Simulations model for Speed of Sound - defaults to 'rw' = RW-model.
 #' @param sbi_mean,sbi_sd Mean and SD of burst interval when pingType = 'sbi'
 #' @inheritParams getInp
 #'
@@ -73,15 +81,9 @@ simTelemetryTrack <- function(trueTrack, ss=NULL, pingType, sbi_mean=NULL, sbi_s
 	
 	x <- stats::approx(x=trueTrack$time, y=trueTrack$x, xout=top)$y
 	y <- stats::approx(x=trueTrack$time, y=trueTrack$y, xout=top)$y
-
-	if(ss == 'rw'){
-		ssD <- stats::rnorm(length(top), 0, 5e-1)
-		ss <- 1425 + cumsum(ssD)
-	} else if (ss == 'constant'){
-		ss <- rep(1425, length(top))
-	}
 	
-	out <- data.frame(top=top, x=x, y=y, ss=ss)
+
+	out <- data.frame(top=top, x=x, y=y)
 	
 	return(out)
 }

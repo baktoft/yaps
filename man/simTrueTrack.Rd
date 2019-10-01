@@ -5,7 +5,7 @@
 \title{Simulate a known movement track for subsequent estimation using YAPS}
 \usage{
 simTrueTrack(model = "rw", n, deltaTime = 1, D = NULL,
-  shape = NULL, scale = NULL, addDielPattern = TRUE)
+  shape = NULL, scale = NULL, addDielPattern = TRUE, ss = "rw")
 }
 \arguments{
 \item{model}{Movement model: 'rw': Two-dimension random walk  (X,Y)}
@@ -21,9 +21,11 @@ simTrueTrack(model = "rw", n, deltaTime = 1, D = NULL,
 \item{scale}{Scale of the Weibull distribution - only used when model='crw'.}
 
 \item{addDielPattern}{Adds a realistic(?) diel pattern to movement. Periods of both low and high movement}
+
+\item{ss}{Simulations model for Speed of Sound - defaults to 'rw' = RW-model.}
 }
 \value{
-Dataframe containing a simulated track - gnu
+Dataframe containing a simulated track
 }
 \description{
 Produces a simulated regular time-spaced track following the specified movement model. Linear movement between consequitive observations is assumed.

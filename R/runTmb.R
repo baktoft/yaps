@@ -5,10 +5,11 @@
 #' @param getPlsd,getRep Whether or not to get sd estimates (plsd=TRUE) and reported values (getRep=TRUE).
 #' @export
 runTmb <- function(inp, maxIter=1000, getPlsd=TRUE, getRep=TRUE){
+	random <- c("X", "Y", "ss", "top", "tag_drift")
 	obj <- TMB::MakeADFun(
 			data = inp$datTmb,
 			parameters = inp$params,
-			random = c("X", "Y", "ss", "top"),
+			random = random,
 			DLL = "yaps",
 			inner.control = list(maxit = maxIter), 
 			silent=FALSE

@@ -127,7 +127,7 @@ simTOP <- function(trueTrack, pingType, sbi_mean=NULL, sbi_sd=NULL, rbi_min=NULL
 		top <- top0
 		i <- 1
 		while(max(top) < maxTime){
-			top <- c(top, max(top) + biTable[i] + round(stats::rnorm(1, 0, 0.002), digits=3))
+			top <- c(top, max(top) + biTable[i] + round(stats::rnorm(1, 1E-3, 1E-3), digits=5)) # last part introduce a slight directional drift...
 			if(i == length(biTable)) {
 				i <- 1
 			} else {
@@ -136,11 +136,12 @@ simTOP <- function(trueTrack, pingType, sbi_mean=NULL, sbi_sd=NULL, rbi_min=NULL
 		}
 	}
 	top <- top[1:length(top)-1]
-	
-	if(length(top) > length(biTable)){
-		biTable_out <- rep(biTable, times=ceiling(length(top) / length(biTable)))
-	} else {biTable_out <- biTable}
-	biTable_out <- biTable_out[1:length(top)]
+	if(pingType == 'pbi'){
+		if(length(top) > length(biTable)){
+			biTable_out <- rep(biTable, times=ceiling(length(top) / length(biTable)))
+		} else {biTable_out <- biTable}
+		biTable_out <- biTable_out[1:length(top)]
+	}
 	
 	if(pingType == 'pbi'){
 		return(list(top=top, biTable=biTable_out))

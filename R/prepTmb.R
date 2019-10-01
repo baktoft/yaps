@@ -89,6 +89,7 @@ getParams <- function(datTmb){
 		, logSigma_toa = 0			#sigma for Gaussian 
 		, logScale = 0				#scale parameter for t-distribution
 		, log_t_part = 0				#Mixture ratio between Gaussian and t
+		, tag_drift = stats::rnorm(datTmb$np, 0, 1e-2)
 	)
 }
 

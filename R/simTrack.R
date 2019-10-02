@@ -180,10 +180,11 @@ simHydros <- function(auto=TRUE, trueTrack=NULL){
 #' @param sigmaToa Detection uncertainty
 #' @param pNA Probability of missing detection 0-1
 #' @param pMP Probability of multipath propagated signal 0-1
+#' @param tempRes Temporal resolution of the hydrophone. PPM systems are typially 1/1000 sec. Other systems are as high as 1/19200 sec.
 #' @inheritParams getInp
 #' @return List containing TOA matrix (toa) and matrix indicating, which obs are multipath (mp_mat)
 #' @export
-simToa <- function(telemetryTrack, hydros, pingType, sigmaToa, pNA, pMP){
+simToa <- function(telemetryTrack, hydros, pingType, sigmaToa, pNA, pMP, tempRes=NA){
 	#correct toa
 	toa <- apply(telemetryTrack, 1, function(k) k['top'] + sqrt((hydros$hx - k['x'])^2 + (hydros$hy - k['y'])^2 ) / k['ss'])
 	
@@ -192,9 +193,9 @@ simToa <- function(telemetryTrack, hydros, pingType, sigmaToa, pNA, pMP){
 	
 	#make temporal resolution pingType specific
 	#sbi 1/19200    rbi 1/1000
-	if(pingType == 'sbi') {	
+	if(pingType == 'sbi' & is.na(tempRes)) {	
 		tempRes <- 19200
-	} else if(pingType == 'rbi' | pingType == 'pbi') {
+	} else if(pingType == 'rbi' | pingType == 'pbi' & is.na(tempRes)) {
 		tempRes <- 1000
 	}
 	toa <- floor(toa) + cut(toa-floor(toa), breaks=1:tempRes/tempRes, labels=FALSE)/tempRes

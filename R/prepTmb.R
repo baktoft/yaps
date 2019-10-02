@@ -40,7 +40,7 @@ getDatTmb <- function(hydros, toa, E_dist, n_ss, pingType, rbi_min, rbi_max, ss_
 	} else {
 		ss_idx <- rep(0, ncol(toa))
 	}
-	approxBI <- mean(diff(toa[1,]), na.rm=TRUE)
+	approxBI <- mean(diff(colMeans(toa, na.rm=TRUE)))
 	
 	if(ss_data_what == 'data') { stopifnot(length(ss_data) == ncol(toa))}
 	

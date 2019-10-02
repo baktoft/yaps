@@ -123,7 +123,7 @@ simTOP <- function(trueTrack, pingType, sbi_mean=NULL, sbi_sd=NULL, rbi_min=NULL
 		}
 	} else if (pingType == 'pbi'){
 		try(if(is.null(rbi_min) | is.null(rbi_max)) stop("When pingType == 'pbi', both rbi_min and rbi_max must be specified!", call.=FALSE))
-		biTable <- round(stats::runif(256, rbi_min, rbi_max))
+		biTable <- round(stats::runif(256, rbi_min, rbi_max), 1)
 		top <- top0
 		i <- 1
 		while(max(top) < maxTime){

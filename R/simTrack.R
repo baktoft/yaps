@@ -208,7 +208,7 @@ simToa <- function(telemetryTrack, hydros, pingType, sigmaToa, pNA, pMP, tempRes
 	
 	#add MP
 	mp_mat <- matrix(stats::rbinom(length(toa),1, pMP), ncol=ncol(toa))
-	toa <- toa + mp_mat * stats::runif(length(toa), -150, 150) / telemetryTrack$ss
+	toa <- toa + mp_mat * stats::runif(length(toa), 50, 300) / telemetryTrack$ss
 	
 	return(list(toa=toa, mp_mat=mp_mat))
 }

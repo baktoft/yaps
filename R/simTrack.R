@@ -1,6 +1,7 @@
 #' Simulate a known movement track for subsequent estimation using YAPS
 #'
-#' Produces a simulated regular time-spaced track following the specified movement model. Linear movement between consequitive observations is assumed.
+#' Produces a simulated regular time-spaced track following the specified movement model. Linear movement between consecutive observations is assumed.
+#' The output contains x, y, time and sound speed at each simulated position.
 #'
 #' @param model Movement model: 'rw': Two-dimension random walk  (X,Y)
 #' @param n Number of steps in the simulated track 
@@ -65,8 +66,8 @@ simTrueTrack <- function(model='rw', n, deltaTime=1, D=NULL, shape=NULL, scale=N
 #' Simulate telemetry track based on known true track obtained using simTrueTrack
 #'
 #' Based on a known true track obtained using simTrueTrack, this function will give true positions at time-of-pings, which are also in the output. TOPs are determined by user-specified transmitter type.
-#' Number of pings are determied automatically based on track length and transmitter specifications.
-#' @param trueTrack Know track obtained usin simTrueTrack
+#' Number of pings are determined automatically based on track length and transmitter specifications.
+#' @param trueTrack Know track obtained using simTrueTrack
 #' @param sbi_mean,sbi_sd Mean and SD of burst interval when pingType = 'sbi'
 #' @inheritParams getInp
 #'

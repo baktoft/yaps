@@ -5,7 +5,8 @@
 \title{Simulate a known movement track for subsequent estimation using YAPS}
 \usage{
 simTrueTrack(model = "rw", n, deltaTime = 1, D = NULL,
-  shape = NULL, scale = NULL, addDielPattern = TRUE, ss = "rw")
+  shape = NULL, scale = NULL, addDielPattern = TRUE, ss = "rw",
+  start_pos = NULL)
 }
 \arguments{
 \item{model}{Movement model: 'rw': Two-dimension random walk  (X,Y)}
@@ -23,10 +24,13 @@ simTrueTrack(model = "rw", n, deltaTime = 1, D = NULL,
 \item{addDielPattern}{Adds a realistic(?) diel pattern to movement. Periods of both low and high movement}
 
 \item{ss}{Simulations model for Speed of Sound - defaults to 'rw' = RW-model.}
+
+\item{start_pos}{Specify the starting position of the track with c(x0, y0)}
 }
 \value{
 Dataframe containing a simulated track
 }
 \description{
-Produces a simulated regular time-spaced track following the specified movement model. Linear movement between consequitive observations is assumed.
+Produces a simulated regular time-spaced track following the specified movement model. Linear movement between consecutive observations is assumed.
+The output contains x, y, time and sound speed at each simulated position.
 }

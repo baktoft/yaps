@@ -1,4 +1,5 @@
 #' @useDynLib yaps, .registration = TRUE
+#' @useDynLib yaps_sync, .registration = TRUE
 .onUnload <- function (lib) {
   library.dynam.unload("yaps", lib)
 }

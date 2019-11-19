@@ -8,7 +8,7 @@ simTelemetryTrack(trueTrack, pingType, sbi_mean = NULL, sbi_sd = NULL,
   rbi_min = NULL, rbi_max = NULL)
 }
 \arguments{
-\item{trueTrack}{Know track obtained usin simTrueTrack}
+\item{trueTrack}{Know track obtained using simTrueTrack}
 
 \item{pingType}{Type of transmitter to simulate - either stable burst interval ('sbi'), random burst interval ('rbi') or random burst interval but where the random sequence is known a priori}
 
@@ -23,5 +23,5 @@ Data frame containing time of ping and true positions
 }
 \description{
 Based on a known true track obtained using simTrueTrack, this function will give true positions at time-of-pings, which are also in the output. TOPs are determined by user-specified transmitter type.
-Number of pings are determied automatically based on track length and transmitter specifications.
+Number of pings are determined automatically based on track length and transmitter specifications.
 }

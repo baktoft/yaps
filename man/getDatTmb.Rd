@@ -5,7 +5,7 @@
 \title{Get data for input to TMB}
 \usage{
 getDatTmb(hydros, toa, E_dist, n_ss, pingType, rbi_min, rbi_max,
-  ss_data_what, ss_data)
+  ss_data_what, ss_data, biTable)
 }
 \arguments{
 \item{hydros}{Dataframe from simHydros() or Dataframe with columns hx and hy containing positions of the receivers. Translate the coordinates to get the grid centre close to (0;0).}
@@ -25,6 +25,8 @@ getDatTmb(hydros, toa, E_dist, n_ss, pingType, rbi_min, rbi_max,
 \item{ss_data_what}{What speed of sound (ss) data to be used. Default ss_data_what='est': ss is estimated by the model. Alternatively, if ss_data_what='data': ss_data must be provided and length(ss_data) == ncol(toa)}
 
 \item{ss_data}{Vector of ss-data to be used if ss_data_what = 'est'. Otherwise ss_data <- 0 (default)}
+
+\item{biTable}{Table of known burst intervals. Only used when pingType == "pbi". Default=NULL}
 }
 \value{
 List for use in TMB.

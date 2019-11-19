@@ -2,158 +2,116 @@
 using namespace density;
 
 template<class Type>
-Type softplus(Type x,Type epsilon)
-{
-  return 0.5*(x+sqrt(x*x+epsilon*epsilon));
-}
-
-template<class Type>
 bool isNA(Type x){
   return R_IsNA(asDouble(x));
 }
 
 template<class Type>
-bool isFinite(Type x){
-  return R_finite(asDouble(x));
-}
-
-template<class Type>
 Type objective_function<Type>::operator() ()
 {
-	DATA_ARRAY(H);			// Position of hydros 
+	DATA_ARRAY(H);
 	DATA_ARRAY(toa);   		// Time of arrival at hydro. One row per buoy, one column per ping
-	DATA_INTEGER(nh);
+	// DATA_VECTOR(beac);
+	DATA_VECTOR(sync_tag_idx_vec);
 	DATA_INTEGER(np);
-	DATA_STRING(pingType);
-	DATA_SCALAR(bi_epsilon);    
-	DATA_SCALAR(bi_penalty);
-	DATA_SCALAR(rbi_min);
-	DATA_SCALAR(rbi_max);
-	DATA_STRING(ss_data_what);	// 'est' = estimate SS-data; 'data' = Use SS-data
-	DATA_VECTOR(ss_data);		// Vector of SS-data if used - length(ss_data) = np
-	DATA_IVECTOR(ss_idx);
-	DATA_INTEGER(n_ss);
-	DATA_SCALAR(approxBI);
-	DATA_VECTOR(Edist);
-	DATA_VECTOR(biTable);
-
+	DATA_INTEGER(nh);
+	DATA_INTEGER(tk);		// hydro number that is time keeper
+	DATA_VECTOR(fixed_hydros_vec);
+	DATA_VECTOR(offset_idx);
+	DATA_INTEGER(n_offset_idx);
+	DATA_VECTOR(ss_idx);
+	DATA_INTEGER(n_ss_idx);
 	
+	PARAMETER_VECTOR(TOP);		// Estimated time of pings
+	PARAMETER_ARRAY(OFFSET);
+	PARAMETER_ARRAY(SLOPE1);
+	PARAMETER_ARRAY(SLOPE2);
+	PARAMETER_VECTOR(SS);
+	// PARAMETER_VECTOR(TRUE_X);
+	// PARAMETER_VECTOR(TRUE_Y);
+	PARAMETER_ARRAY(TRUE_H)
+
+	PARAMETER(LOG_SIGMA_TOA);    		
+	Type SIGMA_TOA = exp(LOG_SIGMA_TOA);
 	
-	PARAMETER_VECTOR(X);	//Position at time of ping
-	PARAMETER_VECTOR(Y);	//Position at time of ping
-	PARAMETER_VECTOR(top);		// Estimated time of pings
-	PARAMETER_VECTOR(ss);		// Estimated speed of sound
+	PARAMETER_VECTOR(LOG_SIGMA_HYDROS_XY);
+	vector<Type> SIGMA_HYDROS_XY = exp(LOG_SIGMA_HYDROS_XY);
 
-	PARAMETER(logD_xy);    		// Diffusivity of fish
-	Type D_xy = exp(logD_xy);
+	array<Type> mu_toa(np,nh);  // mu-matrix
+	array<Type> eps_toa(np,nh);  // mu-matrix
+	array<Type> dist_mat(nh,nh);
+
+	// Type nll = 0.0;
+	parallel_accumulator<Type> nll(this);  
 	
-	PARAMETER(logSigma_bi);		// Sigma for burst interval
-	Type sigma_bi = exp(logSigma_bi);
-
-	PARAMETER(logD_v);    		// Diffusivity of sound speed
-	Type D_v = exp(logD_v);
-	
-	PARAMETER(logSigma_toa);	// Sigma TimeOfArrival
-	Type sigma_toa = exp(logSigma_toa);
-
-	PARAMETER(logScale);		// scale-parameter for t-dist
-	Type scale = exp(logScale);
-
-	PARAMETER(log_t_part);		// t-part of mixture model 
-	Type t_part = exp(log_t_part);
-	Type G_part = Type(1.0) - t_part; //Gaussian part of mixture model
-
-	PARAMETER_VECTOR(tag_drift);
-
-	array<Type> mu_toa(nh,np);  // mu-matrix
-	array<Type> dist(nh,np);	// dist-matrix
-	vector<Type> top_pbi(np);
-
-	Type nll = 0.0;
-
-	if(pingType == "pbi"){
-		top_pbi(0) = Type(0.0);
-		for(int i = 1; i < np; ++i)	{
-			top_pbi(i) = top_pbi(i-1) + biTable(i-1);
-		}
-		for(int i = 0; i < np; ++i)	{
-			nll -= dnorm(top(i), top_pbi(i) + tag_drift(i), Type(1E-6), true);
-		}
-	} else {
-		for(int i = 0; i < np; ++i)	{
-			nll -= dnorm(tag_drift(i), Type(0), Type(10), true);
-		}
-	}
-
-
-	for(int i=0; i<np; ++i) //iterate pings
-	{
-		for(int h=0; h<nh; ++h){ //iterate hydros
-			if(!isNA(toa(h,i))){ //ignore NA's...
-				dist(h,i) = sqrt((H(h,0)-X(i))*(H(h,0)-X(i)) + (H(h,1)-Y(i))*(H(h,1)-Y(i)));
-				if(ss_data_what == "est"){
-					mu_toa(h,i) = top(i) +  dist(h,i)/ss(ss_idx(i));
-				} else {
-					mu_toa(h,i) = top(i) +  dist(h,i)/ss_data(i);
-				}
-				Type eps = toa(h,i) - mu_toa(h,i);
-				
-				nll -= Edist(0) * dnorm(eps, Type(0), sigma_toa, true); 					//Gaussian part					
-				
-				nll -= Edist(1) * log( G_part * dnorm(eps, Type(0),sigma_toa,false) + 		//Gaussian part
-						t_part * dt(eps/scale, Type(3.0), false) );					//t part
-				
-				nll -= Edist(2) * log(dt(eps/scale, Type(3.0), false)/scale);
-
+	for(int h1=0; h1 < nh; ++h1){
+		for(int h2=0; h2 < nh; ++h2){
+			if(h1 == h2){
+				dist_mat(h1, h2) = Type(0.0);
+			} else {
+				// dist_mat(h1, h2) = sqrt(pow(TRUE_X(h1) - TRUE_X(h2), 2) + pow(TRUE_Y(h1) - TRUE_Y(h2), 2));
+				dist_mat(h1, h2) = sqrt(pow(TRUE_H(h1,0) - TRUE_H(h2,0), 2) + pow(TRUE_H(h1,1) - TRUE_H(h2,1), 2));
 			}
 		}
 	}
 	
-	// Needed to ensure positive definite Hessian...
-	nll -= dnorm(log_t_part, Type(0), Type(25), true);
-	nll -= dnorm(logSigma_toa, Type(0), Type(25), true);
-	nll -= dnorm(logSigma_bi, Type(0), Type(25), true);
-	nll -= dnorm(logScale, Type(0), Type(25), true);
-	nll -= dnorm(logSigma_bi, Type(0), Type(25), true);
-	nll -= dnorm(logD_v, Type(0), Type(25), true);
+	// OFFSET as 1-D random walks...
+	for(int i = 0; i < n_offset_idx; ++i){	
+		for(int h=0; h <nh;++h){
+			if(h==tk){
+					nll -= dnorm(OFFSET(h, i) , Type(0.0), Type(0.0000000001), true);
+					nll -= dnorm(SLOPE1(h, i) , Type(0.0), Type(0.0000000001), true);
+					nll -= dnorm(SLOPE2(h,i) , Type(0.0), Type(0.0000000001), true);
+			}
+			else {
+					nll -= dnorm(OFFSET(h,i), Type(0),Type(30),true);
+					nll -= dnorm(SLOPE1(h,i), Type(0),Type(10),true);
+					nll -= dnorm(SLOPE2(h,i), Type(0),Type(10),true);
+			}
+		}
+	}
+	for(int p = 0; p < np; ++p){   		// iterate pings
+		for(int h=0; h < nh; ++h){		// iterate hydros in ping p
+			if(!isNA(toa(p,h))){
+				int beac_p = CppAD::Integer(sync_tag_idx_vec(p));
+				int ss_idx_int = CppAD::Integer(ss_idx(p));
+				int off_idx_int = CppAD::Integer(offset_idx(p));
+				
+				mu_toa(p,h) = TOP(p) + dist_mat(beac_p, h)/SS(ss_idx_int) + OFFSET(h, off_idx_int) + SLOPE1(h, off_idx_int)*(toa(p,h)/1E6) + SLOPE2(h, off_idx_int)*pow((toa(p,h)/1E6),2);
+				eps_toa(p,h) = toa(p,h) - mu_toa(p,h);
+				// nll -= dnorm(eps_toa(p,h), Type(0.0), SIGMA_TOA, true);
+				// nll -= log(dt(eps_toa(p,h)/SCALE, Type(3.0), false)/SCALE);
+				nll -= log(dt(eps_toa(p,h)/SIGMA_TOA, Type(3.0), false)/SIGMA_TOA);
+			}
+		}
+	}
 
-	//position component
-	nll -= dnorm(X(0),Type(0),Type(10000),true);
-	nll -= dnorm(Y(0),Type(0),Type(10000),true);
-	for(int i=1; i<np; ++i)	{
-		nll -= dnorm(X(i), X(i-1),sqrt(2*D_xy*(top(i) - top(i-1))),true);	
-		nll -= dnorm(Y(i), Y(i-1),sqrt(2*D_xy*(top(i) - top(i-1))),true);
+	for(int h=0; h<nh; ++h){
+		if(fixed_hydros_vec(h) == 1){
+			// nll -= dnorm(TRUE_X(h), H(h,0), Type(1e-5), true);
+			// nll -= dnorm(TRUE_Y(h), H(h,1), Type(1e-5), true);
+			nll -= dnorm(TRUE_H(h,0), H(h,0), Type(1e-6), true);
+			nll -= dnorm(TRUE_H(h,1), H(h,1), Type(1e-6), true);
+			nll -= dnorm(SIGMA_HYDROS_XY(h), Type(0), Type(1), true);
+		} else {
+			// nll -= dnorm(TRUE_X(h), H(h,0), SIGMA_HYDROS_XY(h), true);
+			// nll -= dnorm(TRUE_Y(h), H(h,1), SIGMA_HYDROS_XY(h), true);
+			nll -= dnorm(TRUE_H(h,0), H(h,0), SIGMA_HYDROS_XY(h), true);
+			nll -= dnorm(TRUE_H(h,1), H(h,1), SIGMA_HYDROS_XY(h), true);
+		}
+	}
+
+	//speed of sound component
+	for(int i = 0; i < n_ss_idx; ++i){
+		nll -= dnorm(SS(i), Type(1450.0), Type(20), true);
 	}
 	
-	// //speed of sound component
-	nll -= dnorm(ss(0),Type(1430.0),Type(10.0),true);		
-	for(int i = 1; i < n_ss; ++i){
-		nll -= dnorm(ss(i), ss(i-1),sqrt(2*D_v), true);
-	}
 	
-	//burst interval component
-	if(pingType == "sbi"){
-		nll -= dnorm(top(0),Type(0.0),Type(4.0),true);
-		nll -= dnorm(top(1),Type(approxBI),Type(4.0),true);
-		for(int i = 2; i < np; ++i)	{
-			nll -= dnorm(top(i)-2*top(i-1)+top(i-2), Type(0),sigma_bi, true);
-		}
-	} else if(pingType == "rbi"){
-		nll -= dnorm(top(0),Type(0.0),Type(4.0),true);
-		for(int i = 1; i < np; ++i)	{
-			nll -= dnorm(top(i), top(i-1) + (rbi_max - rbi_min)/2, (rbi_max-rbi_min)/2, true);
-			nll += bi_penalty * (softplus((top(i) - top(i-1)) - rbi_max, bi_epsilon) + softplus(rbi_min - (top(i) - top(i-1)), bi_epsilon));
-		}
-	} else if(pingType == "pbi"){
-		nll -= dnorm(tag_drift(0), Type(0.0), Type(4), true);
-		nll -= dnorm(tag_drift(1), Type(0.0), Type(4), true);
-		for(int i = 2; i < np; ++i)	{
-			nll -= dnorm(tag_drift(i)-2*tag_drift(i-1)+tag_drift(i-2), Type(0), sigma_bi, true);
-		}
-	}
-
-
-	REPORT(mu_toa);
+	REPORT(eps_toa);
+	REPORT(SS);
+	REPORT(TRUE_H);
+	REPORT(dist_mat);
 	
 	return nll;
 }
+

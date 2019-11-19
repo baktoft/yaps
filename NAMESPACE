@@ -3,6 +3,7 @@
 export(getDatTmb)
 export(getInits)
 export(getInp)
+export(getInpSync)
 export(getParams)
 export(runTmb)
 export(simHydros)

@@ -10,12 +10,13 @@
 #' @param sdInits If >0 initial values will be randomized around the normally fixed value using rnorm(length(inits), mean=inits, sd=sdInits)
 #' @param ss_data_what What speed of sound (ss) data to be used. Default ss_data_what='est': ss is estimated by the model. Alternatively, if ss_data_what='data': ss_data must be provided and length(ss_data) == ncol(toa)
 #' @param ss_data Vector of ss-data to be used if ss_data_what = 'est'. Otherwise ss_data <- 0 (default)
+#' @param biTable Table of known burst intervals. Only used when pingType == "pbi". Default=NULL
 
 
 #' @return List of input data ready for use in TMB-call
 #' @export
-getInp <- function(hydros, toa, E_dist, n_ss, pingType, sdInits=1, rbi_min=0, rbi_max=0, ss_data_what='est', ss_data=0){
-	datTmb <- getDatTmb(hydros, toa, E_dist, n_ss, pingType, rbi_min, rbi_max, ss_data_what, ss_data)
+getInp <- function(hydros, toa, E_dist, n_ss, pingType, sdInits=1, rbi_min=0, rbi_max=0, ss_data_what='est', ss_data=0, biTable=NULL){
+	datTmb <- getDatTmb(hydros, toa, E_dist, n_ss, pingType, rbi_min, rbi_max, ss_data_what, ss_data, biTable)
 	params <- getParams(datTmb)
 	inits <- getInits(pingType, sdInits)
 	return(list(
@@ -33,21 +34,21 @@ getInp <- function(hydros, toa, E_dist, n_ss, pingType, sdInits=1, rbi_min=0, rb
 #'
 #' @return List for use in TMB.
 #' @export
-getDatTmb <- function(hydros, toa, E_dist, n_ss, pingType, rbi_min, rbi_max, ss_data_what, ss_data){
+getDatTmb <- function(hydros, toa, E_dist, n_ss, pingType, rbi_min, rbi_max, ss_data_what, ss_data, biTable){
 	if(n_ss > 1){
 		ss_idx <- cut(1:ncol(toa), n_ss, labels=FALSE) - 1 #-1 because zero-indexing in TMB
 	} else {
 		ss_idx <- rep(0, ncol(toa))
 	}
-	approxBI <- mean(diff(toa[1,]), na.rm=TRUE)
-	
+	approxBI <- mean(diff(colMeans(toa, na.rm=TRUE), na.rm=TRUE), na.rm=TRUE)
+
 	if(ss_data_what == 'data') { stopifnot(length(ss_data) == ncol(toa))}
-	
+
 	Edist <- rep(0,3)
 	if(E_dist == "Gaus") {Edist[1] <- 1}
 	if(E_dist == "Mixture") {Edist[2] <- 1}
 	if(E_dist == "t") {Edist[3] <- 1}
-	
+
 	datTmb <- list(
 		H = matrix(c(hydros$hx, hydros$hy), ncol=2),
 		nh = nrow(hydros),
@@ -56,15 +57,18 @@ getDatTmb <- function(hydros, toa, E_dist, n_ss, pingType, rbi_min, rbi_max, ss_
 		toa = toa,
 		bi_epsilon = 1e-6,
 		bi_penalty = 1*1e9,
-		rbi_min = rbi_min, 
+		rbi_min = rbi_min,
 		rbi_max = rbi_max,
 		pingType = pingType,
 		n_ss = n_ss,
 		ss_idx = ss_idx,
 		ss_data_what = ss_data_what,
 		ss_data = ss_data,
-		approxBI = approxBI
+		approxBI = approxBI,
+		biTable = c(1)
 	)
+	if(pingType == 'pbi') {datTmb$biTable = biTable}
+
 	return(datTmb)
 }
 
@@ -83,9 +87,10 @@ getParams <- function(datTmb){
 		, logD_xy = 0				#diffusivity of transmitter movement (D_xy in ms)
 		, logSigma_bi = 0			#sigma  burst interval (sigma_bi in ms)
 		, logD_v = 0				#diffusivity of speed of sound (D_v in ms)
-		, logSigma_toa = 0			#sigma for Gaussian 
+		, logSigma_toa = 0			#sigma for Gaussian
 		, logScale = 0				#scale parameter for t-distribution
 		, log_t_part = 0				#Mixture ratio between Gaussian and t
+		, tag_drift = stats::rnorm(datTmb$np, 0, 1e-2)
 	)
 }
 

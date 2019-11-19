@@ -12,11 +12,11 @@ getDatTmb(hydros, toa, E_dist, n_ss, pingType, rbi_min, rbi_max,
 
 \item{toa}{TOA-matrix: matrix with receivers in rows and detections in columns. Make sure that the receivers are in the same order as in hydros, and that the matrix is very regular: one ping per column (inlude empty columns if a ping is not detected).}
 
-\item{E_dist}{Which distribution to use in the model - "Gaus" = Gaussian, "Mixture" = mixture of Gaussian and t}
+\item{E_dist}{Which distribution to use in the model - "Gaus" = Gaussian, "Mixture" = mixture of Gaussian and t or "t" = pure t-distribution}
 
 \item{n_ss}{Number of soundspeed estimates: one estimate per hour is usually enough}
 
-\item{pingType}{Type of transmitter to simulate - either stable burst interval ('sbi') or random burst interval ('rbi')}
+\item{pingType}{Type of transmitter to simulate - either stable burst interval ('sbi'), random burst interval ('rbi') or random burst interval but where the random sequence is known a priori}
 
 \item{rbi_min}{Minimum and maximum BI for random burst interval transmitters}
 

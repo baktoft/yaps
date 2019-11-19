@@ -3,9 +3,9 @@
 #' Wrapper-function to compile a list of input needed to run TMB
 #' @param hydros Dataframe from simHydros() or Dataframe with columns hx and hy containing positions of the receivers. Translate the coordinates to get the grid centre close to (0;0).
 #' @param toa TOA-matrix: matrix with receivers in rows and detections in columns. Make sure that the receivers are in the same order as in hydros, and that the matrix is very regular: one ping per column (inlude empty columns if a ping is not detected).
-#' @param E_dist Which distribution to use in the model - "Gaus" = Gaussian, "Mixture" = mixture of Gaussian and t
+#' @param E_dist Which distribution to use in the model - "Gaus" = Gaussian, "Mixture" = mixture of Gaussian and t or "t" = pure t-distribution
 #' @param n_ss Number of soundspeed estimates: one estimate per hour is usually enough
-#' @param pingType Type of transmitter to simulate - either stable burst interval ('sbi') or random burst interval ('rbi')
+#' @param pingType Type of transmitter to simulate - either stable burst interval ('sbi'), random burst interval ('rbi') or random burst interval but where the random sequence is known a priori
 #' @param rbi_min,rbi_max Minimum and maximum BI for random burst interval transmitters
 #' @param sdInits If >0 initial values will be randomized around the normally fixed value using rnorm(length(inits), mean=inits, sd=sdInits)
 #' @param ss_data_what What speed of sound (ss) data to be used. Default ss_data_what='est': ss is estimated by the model. Alternatively, if ss_data_what='data': ss_data must be provided and length(ss_data) == ncol(toa)
@@ -43,9 +43,10 @@ getDatTmb <- function(hydros, toa, E_dist, n_ss, pingType, rbi_min, rbi_max, ss_
 	
 	if(ss_data_what == 'data') { stopifnot(length(ss_data) == ncol(toa))}
 	
-	Edist <- rep(0,2)
+	Edist <- rep(0,3)
 	if(E_dist == "Gaus") {Edist[1] <- 1}
 	if(E_dist == "Mixture") {Edist[2] <- 1}
+	if(E_dist == "t") {Edist[3] <- 1}
 	
 	datTmb <- list(
 		H = matrix(c(hydros$hx, hydros$hy), ncol=2),

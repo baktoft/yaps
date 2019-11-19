@@ -22,7 +22,7 @@ library(yaps)
 set.seed(42)
 
 # Simulate true track of animal movement of n seconds
-trueTrack <- simTrueTrack(model='crw', n = 15000, deltaTime=1, shape=1, scale=0.5, addDielPattern=TRUE)
+trueTrack <- simTrueTrack(model='crw', n = 15000, deltaTime=1, shape=1, scale=0.5, addDielPattern=TRUE, ss='rw')
 
 # Simulate telemetry observations from true track.
 # Format and parameters depend on type of transmitter burst interval (BI) - stable (sbi) or random (rbi).
@@ -30,10 +30,10 @@ pingType <- 'sbi'
 
 if(pingType == 'sbi') { # stable BI
 	sbi_mean <- 30; sbi_sd <- 1e-4;
-	teleTrack <- simTelemetryTrack(trueTrack, ss='rw', pingType=pingType, sbi_mean=sbi_mean, sbi_sd=sbi_sd)
+	teleTrack <- simTelemetryTrack(trueTrack, pingType=pingType, sbi_mean=sbi_mean, sbi_sd=sbi_sd)
 } else if(pingType == 'rbi'){ # random BI
 	pingType <- 'rbi'; rbi_min <- 20; rbi_max <- 40;
-	teleTrack <- simTelemetryTrack(trueTrack, ss='rw', pingType=pingType, rbi_min=rbi_min, rbi_max=rbi_max)
+	teleTrack <- simTelemetryTrack(trueTrack, pingType=pingType, rbi_min=rbi_min, rbi_max=rbi_max)
 }
 
 # Simulate hydrophone array

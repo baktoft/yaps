@@ -4,13 +4,13 @@
 \alias{simTelemetryTrack}
 \title{Simulate telemetry track based on known true track obtained using simTrueTrack}
 \usage{
-simTelemetryTrack(trueTrack, ss = NULL, pingType, sbi_mean = NULL,
-  sbi_sd = NULL, rbi_min = NULL, rbi_max = NULL)
+simTelemetryTrack(trueTrack, pingType, sbi_mean = NULL, sbi_sd = NULL,
+  rbi_min = NULL, rbi_max = NULL)
 }
 \arguments{
 \item{trueTrack}{Know track obtained usin simTrueTrack}
 
-\item{pingType}{Type of transmitter to simulate - either stable burst interval ('sbi') or random burst interval ('rbi')}
+\item{pingType}{Type of transmitter to simulate - either stable burst interval ('sbi'), random burst interval ('rbi') or random burst interval but where the random sequence is known a priori}
 
 \item{sbi_mean, sbi_sd}{Mean and SD of burst interval when pingType = 'sbi'}
 

@@ -11,7 +11,7 @@ simToa(telemetryTrack, hydros, pingType, sigmaToa, pNA, pMP)
 
 \item{hydros}{Dataframe obtained from getHydros}
 
-\item{pingType}{Type of transmitter to simulate - either stable burst interval ('sbi') or random burst interval ('rbi')}
+\item{pingType}{Type of transmitter to simulate - either stable burst interval ('sbi'), random burst interval ('rbi') or random burst interval but where the random sequence is known a priori}
 
 \item{sigmaToa}{Detection uncertainty}
 

@@ -9,11 +9,12 @@
 #' @param shape Shape of the Weibull distribution - only used when model='crw'. 
 #' @param scale Scale of the Weibull distribution - only used when model='crw'. 
 #' @param addDielPattern Adds a realistic(?) diel pattern to movement. Periods of both low and high movement
+#' @param start_pos Specify the starting position of the track with c(x0, y0)
 #' @param ss Simulations model for Speed of Sound - defaults to 'rw' = RW-model.
 #'
 #' @return Dataframe containing a simulated track
 #' @export
-simTrueTrack <- function(model='rw', n, deltaTime=1, D=NULL, shape=NULL, scale=NULL, addDielPattern=TRUE, ss='rw'){
+simTrueTrack <- function(model='rw', n, deltaTime=1, D=NULL, shape=NULL, scale=NULL, addDielPattern=TRUE, ss='rw', start_pos=NULL){
 	try(if(model=='rw'  & is.null(D)) stop("When model == 'rw', D needs to be specified"))
 	try(if(model=='crw' & (is.null(shape) | is.null(scale))) stop("When model == 'crw', shape and scale needs to be specified"))
 	
@@ -22,8 +23,13 @@ simTrueTrack <- function(model='rw', n, deltaTime=1, D=NULL, shape=NULL, scale=N
 	time <- cumsum(c(0, dt))
 	
 	#start position
-	x0 <- stats::runif(1,0,5)
-	y0 <- stats::runif(1,0,5)
+	if(!is.null(start_pos)){
+	  x0 <- start_pos[1]
+	  y0 <- start_pos[2]
+	}	else{
+	  x0 <- stats::runif(1,0,5)
+	  y0 <- stats::runif(1,0,5)
+	}
 	
 	#RW-model
 	if(model == 'rw'){

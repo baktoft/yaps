@@ -35,6 +35,8 @@ Type objective_function<Type>::operator() ()
 	DATA_INTEGER(n_ss);
 	DATA_SCALAR(approxBI);
 	DATA_VECTOR(Edist);
+	DATA_VECTOR(biTable);
+
 	
 	
 	PARAMETER_VECTOR(X);	//Position at time of ping
@@ -61,10 +63,28 @@ Type objective_function<Type>::operator() ()
 	Type t_part = exp(log_t_part);
 	Type G_part = Type(1.0) - t_part; //Gaussian part of mixture model
 
+	PARAMETER_VECTOR(tag_drift);
+
 	array<Type> mu_toa(nh,np);  // mu-matrix
 	array<Type> dist(nh,np);	// dist-matrix
+	vector<Type> top_pbi(np);
 
 	Type nll = 0.0;
+
+	if(pingType == "pbi"){
+		top_pbi(0) = Type(0.0);
+		for(int i = 1; i < np; ++i)	{
+			top_pbi(i) = top_pbi(i-1) + biTable(i-1);
+		}
+		for(int i = 0; i < np; ++i)	{
+			nll -= dnorm(top(i), top_pbi(i) + tag_drift(i), Type(1E-6), true);
+		}
+	} else {
+		for(int i = 0; i < np; ++i)	{
+			nll -= dnorm(tag_drift(i), Type(0), Type(10), true);
+		}
+	}
+
 
 	for(int i=0; i<np; ++i) //iterate pings
 	{
@@ -82,6 +102,9 @@ Type objective_function<Type>::operator() ()
 				
 				nll -= Edist(1) * log( G_part * dnorm(eps, Type(0),sigma_toa,false) + 		//Gaussian part
 						t_part * dt(eps/scale, Type(3.0), false) );					//t part
+				
+				nll -= Edist(2) * log(dt(eps/scale, Type(3.0), false)/scale);
+
 			}
 		}
 	}
@@ -89,13 +112,14 @@ Type objective_function<Type>::operator() ()
 	// Needed to ensure positive definite Hessian...
 	nll -= dnorm(log_t_part, Type(0), Type(25), true);
 	nll -= dnorm(logSigma_toa, Type(0), Type(25), true);
+	nll -= dnorm(logSigma_bi, Type(0), Type(25), true);
 	nll -= dnorm(logScale, Type(0), Type(25), true);
 	nll -= dnorm(logSigma_bi, Type(0), Type(25), true);
 	nll -= dnorm(logD_v, Type(0), Type(25), true);
 
 	//position component
-	nll -= dnorm(X(0),Type(0),Type(100),true);
-	nll -= dnorm(Y(0),Type(0),Type(100),true);
+	nll -= dnorm(X(0),Type(0),Type(10000),true);
+	nll -= dnorm(Y(0),Type(0),Type(10000),true);
 	for(int i=1; i<np; ++i)	{
 		nll -= dnorm(X(i), X(i-1),sqrt(2*D_xy*(top(i) - top(i-1))),true);	
 		nll -= dnorm(Y(i), Y(i-1),sqrt(2*D_xy*(top(i) - top(i-1))),true);
@@ -108,18 +132,26 @@ Type objective_function<Type>::operator() ()
 	}
 	
 	//burst interval component
-	nll -= dnorm(top(0),Type(0.0),Type(4.0),true);
 	if(pingType == "sbi"){
+		nll -= dnorm(top(0),Type(0.0),Type(4.0),true);
 		nll -= dnorm(top(1),Type(approxBI),Type(4.0),true);
 		for(int i = 2; i < np; ++i)	{
 			nll -= dnorm(top(i)-2*top(i-1)+top(i-2), Type(0),sigma_bi, true);
 		}
 	} else if(pingType == "rbi"){
+		nll -= dnorm(top(0),Type(0.0),Type(4.0),true);
 		for(int i = 1; i < np; ++i)	{
-			nll -= dnorm(top(i), top(i-1) + (rbi_max - rbi_min)/2, Type(30), true);
+			nll -= dnorm(top(i), top(i-1) + (rbi_max - rbi_min)/2, (rbi_max-rbi_min)/2, true);
 			nll += bi_penalty * (softplus((top(i) - top(i-1)) - rbi_max, bi_epsilon) + softplus(rbi_min - (top(i) - top(i-1)), bi_epsilon));
 		}
-	} 
+	} else if(pingType == "pbi"){
+		nll -= dnorm(tag_drift(0), Type(0.0), Type(4), true);
+		nll -= dnorm(tag_drift(1), Type(0.0), Type(4), true);
+		for(int i = 2; i < np; ++i)	{
+			nll -= dnorm(tag_drift(i)-2*tag_drift(i-1)+tag_drift(i-2), Type(0), sigma_bi, true);
+		}
+	}
+
 
 	REPORT(mu_toa);
 	

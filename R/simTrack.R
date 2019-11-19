@@ -10,10 +10,11 @@
 #' @param scale Scale of the Weibull distribution - only used when model='crw'. 
 #' @param addDielPattern Adds a realistic(?) diel pattern to movement. Periods of both low and high movement
 #' @param start_pos Specify the starting position of the track with c(x0, y0)
+#' @param ss Simulations model for Speed of Sound - defaults to 'rw' = RW-model.
 #'
-#' @return Dataframe containing a simulated track - gnu
+#' @return Dataframe containing a simulated track
 #' @export
-simTrueTrack <- function(model='rw', n, deltaTime=1, D=NULL, shape=NULL, scale=NULL, addDielPattern=TRUE, start_pos=NULL){
+simTrueTrack <- function(model='rw', n, deltaTime=1, D=NULL, shape=NULL, scale=NULL, addDielPattern=TRUE, ss='rw', start_pos=NULL){
 	try(if(model=='rw'  & is.null(D)) stop("When model == 'rw', D needs to be specified"))
 	try(if(model=='crw' & (is.null(shape) | is.null(scale))) stop("When model == 'crw', shape and scale needs to be specified"))
 	
@@ -56,7 +57,15 @@ simTrueTrack <- function(model='rw', n, deltaTime=1, D=NULL, shape=NULL, scale=N
 		x<-cumsum(dX)
 		y<-cumsum(dY)
 	}
-	return(data.frame(time=time, x=x, y=y))
+
+	if(ss == 'rw'){
+		ssD <- stats::rnorm(length(x), 0, 7e-2)
+		ss <- 1450 + cumsum(ssD)
+	} else if (ss == 'constant'){
+		ss <- rep(1450, length(x))
+	}
+
+	return(data.frame(time=time, x=x, y=y, ss=ss))
 }
 
 #' Simulate telemetry track based on known true track obtained using simTrueTrack
@@ -64,32 +73,33 @@ simTrueTrack <- function(model='rw', n, deltaTime=1, D=NULL, shape=NULL, scale=N
 #' Based on a known true track obtained using simTrueTrack, this function will give true positions at time-of-pings, which are also in the output. TOPs are determined by user-specified transmitter type.
 #' Number of pings are determied automatically based on track length and transmitter specifications.
 #' @param trueTrack Know track obtained usin simTrueTrack
-#' @param ss Simulations model for Speed of Sound - defaults to 'rw' = RW-model.
 #' @param sbi_mean,sbi_sd Mean and SD of burst interval when pingType = 'sbi'
 #' @inheritParams getInp
 #'
 #' @return Data frame containing time of ping and true positions
 #' @export
-simTelemetryTrack <- function(trueTrack, ss=NULL, pingType, sbi_mean=NULL, sbi_sd=NULL, rbi_min=NULL, rbi_max=NULL){
+simTelemetryTrack <- function(trueTrack, pingType, sbi_mean=NULL, sbi_sd=NULL, rbi_min=NULL, rbi_max=NULL){
 	if(pingType == 'sbi'){
 		top <- simTOP(trueTrack, pingType='sbi', sbi_mean=sbi_mean, sbi_sd=sbi_sd)
 	} else if(pingType == 'rbi'){
 		top <- simTOP(trueTrack, pingType='rbi', rbi_min=rbi_min, rbi_max=rbi_max)
+	} else if(pingType == 'pbi'){
+		top_list <- simTOP(trueTrack, pingType='pbi', rbi_min=rbi_min, rbi_max=rbi_max)
+		top <- top_list$top
+		biTable <- top_list$biTable
 	}
 	
-	x <- stats::approx(x=trueTrack$time, y=trueTrack$x, xout=top)$y
-	y <- stats::approx(x=trueTrack$time, y=trueTrack$y, xout=top)$y
+	x  <- stats::approx(x=trueTrack$time, y=trueTrack$x, xout=top)$y
+	y  <- stats::approx(x=trueTrack$time, y=trueTrack$y, xout=top)$y
+	ss <- stats::approx(x=trueTrack$time, y=trueTrack$ss, xout=top)$y
 
-	if(ss == 'rw'){
-		ssD <- stats::rnorm(length(top), 0, 5e-1)
-		ss <- 1425 + cumsum(ssD)
-	} else if (ss == 'constant'){
-		ss <- rep(1425, length(top))
-	}
-	
 	out <- data.frame(top=top, x=x, y=y, ss=ss)
-	
-	return(out)
+
+	if(pingType == 'pbi'){
+		return(list(out=out, biTable=biTable))
+	} else {
+		return(out)
+	}
 }
 
 #' Simulate time of pings (Internal function)
@@ -117,10 +127,33 @@ simTOP <- function(trueTrack, pingType, sbi_mean=NULL, sbi_sd=NULL, rbi_min=NULL
 		while(max(top) < maxTime){
 			top <- c(top, max(top) + stats::runif(1, rbi_min, rbi_max))
 		}
-	} 
+	} else if (pingType == 'pbi'){
+		try(if(is.null(rbi_min) | is.null(rbi_max)) stop("When pingType == 'pbi', both rbi_min and rbi_max must be specified!", call.=FALSE))
+		biTable <- round(stats::runif(256, rbi_min, rbi_max), 1)
+		top <- top0
+		i <- 1
+		while(max(top) < maxTime){
+			top <- c(top, max(top) + biTable[i] + round(stats::rnorm(1, 1E-3, 1E-3), digits=5)) # last part introduce a slight directional drift...
+			if(i == length(biTable)) {
+				i <- 1
+			} else {
+				i <- i+1
+			}
+		}
+	}
 	top <- top[1:length(top)-1]
+	if(pingType == 'pbi'){
+		if(length(top) > length(biTable)){
+			biTable_out <- rep(biTable, times=ceiling(length(top) / length(biTable)))
+		} else {biTable_out <- biTable}
+		biTable_out <- biTable_out[1:length(top)]
+	}
 	
-	return(top)
+	if(pingType == 'pbi'){
+		return(list(top=top, biTable=biTable_out))
+	} else {	
+		return(top)
+	}
 }
 
 
@@ -153,10 +186,11 @@ simHydros <- function(auto=TRUE, trueTrack=NULL){
 #' @param sigmaToa Detection uncertainty
 #' @param pNA Probability of missing detection 0-1
 #' @param pMP Probability of multipath propagated signal 0-1
+#' @param tempRes Temporal resolution of the hydrophone. PPM systems are typially 1/1000 sec. Other systems are as high as 1/19200 sec.
 #' @inheritParams getInp
 #' @return List containing TOA matrix (toa) and matrix indicating, which obs are multipath (mp_mat)
 #' @export
-simToa <- function(telemetryTrack, hydros, pingType, sigmaToa, pNA, pMP){
+simToa <- function(telemetryTrack, hydros, pingType, sigmaToa, pNA, pMP, tempRes=NA){
 	#correct toa
 	toa <- apply(telemetryTrack, 1, function(k) k['top'] + sqrt((hydros$hx - k['x'])^2 + (hydros$hy - k['y'])^2 ) / k['ss'])
 	
@@ -165,9 +199,9 @@ simToa <- function(telemetryTrack, hydros, pingType, sigmaToa, pNA, pMP){
 	
 	#make temporal resolution pingType specific
 	#sbi 1/19200    rbi 1/1000
-	if(pingType == 'sbi') {	
+	if(pingType == 'sbi' & is.na(tempRes)) {	
 		tempRes <- 19200
-	} else if(pingType == 'rbi') {
+	} else if(pingType == 'rbi' | pingType == 'pbi' & is.na(tempRes)) {
 		tempRes <- 1000
 	}
 	toa <- floor(toa) + cut(toa-floor(toa), breaks=1:tempRes/tempRes, labels=FALSE)/tempRes
@@ -180,7 +214,7 @@ simToa <- function(telemetryTrack, hydros, pingType, sigmaToa, pNA, pMP){
 	
 	#add MP
 	mp_mat <- matrix(stats::rbinom(length(toa),1, pMP), ncol=ncol(toa))
-	toa <- toa + mp_mat * stats::runif(length(toa), -150, 150) / telemetryTrack$ss
+	toa <- toa + mp_mat * stats::runif(length(toa), 50, 300) / telemetryTrack$ss
 	
 	return(list(toa=toa, mp_mat=mp_mat))
 }

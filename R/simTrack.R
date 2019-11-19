@@ -77,16 +77,23 @@ simTelemetryTrack <- function(trueTrack, pingType, sbi_mean=NULL, sbi_sd=NULL, r
 		top <- simTOP(trueTrack, pingType='sbi', sbi_mean=sbi_mean, sbi_sd=sbi_sd)
 	} else if(pingType == 'rbi'){
 		top <- simTOP(trueTrack, pingType='rbi', rbi_min=rbi_min, rbi_max=rbi_max)
+	} else if(pingType == 'pbi'){
+		top_list <- simTOP(trueTrack, pingType='pbi', rbi_min=rbi_min, rbi_max=rbi_max)
+		top <- top_list$top
+		biTable <- top_list$biTable
 	}
 	
 	x  <- stats::approx(x=trueTrack$time, y=trueTrack$x, xout=top)$y
 	y  <- stats::approx(x=trueTrack$time, y=trueTrack$y, xout=top)$y
 	ss <- stats::approx(x=trueTrack$time, y=trueTrack$ss, xout=top)$y
-	
 
 	out <- data.frame(top=top, x=x, y=y, ss=ss)
-	
-	return(out)
+
+	if(pingType == 'pbi'){
+		return(list(out=out, biTable=biTable))
+	} else {
+		return(out)
+	}
 }
 
 #' Simulate time of pings (Internal function)
@@ -114,10 +121,33 @@ simTOP <- function(trueTrack, pingType, sbi_mean=NULL, sbi_sd=NULL, rbi_min=NULL
 		while(max(top) < maxTime){
 			top <- c(top, max(top) + stats::runif(1, rbi_min, rbi_max))
 		}
-	} 
+	} else if (pingType == 'pbi'){
+		try(if(is.null(rbi_min) | is.null(rbi_max)) stop("When pingType == 'pbi', both rbi_min and rbi_max must be specified!", call.=FALSE))
+		biTable <- round(stats::runif(256, rbi_min, rbi_max), 1)
+		top <- top0
+		i <- 1
+		while(max(top) < maxTime){
+			top <- c(top, max(top) + biTable[i] + round(stats::rnorm(1, 1E-3, 1E-3), digits=5)) # last part introduce a slight directional drift...
+			if(i == length(biTable)) {
+				i <- 1
+			} else {
+				i <- i+1
+			}
+		}
+	}
 	top <- top[1:length(top)-1]
+	if(pingType == 'pbi'){
+		if(length(top) > length(biTable)){
+			biTable_out <- rep(biTable, times=ceiling(length(top) / length(biTable)))
+		} else {biTable_out <- biTable}
+		biTable_out <- biTable_out[1:length(top)]
+	}
 	
-	return(top)
+	if(pingType == 'pbi'){
+		return(list(top=top, biTable=biTable_out))
+	} else {	
+		return(top)
+	}
 }
 
 
@@ -150,10 +180,11 @@ simHydros <- function(auto=TRUE, trueTrack=NULL){
 #' @param sigmaToa Detection uncertainty
 #' @param pNA Probability of missing detection 0-1
 #' @param pMP Probability of multipath propagated signal 0-1
+#' @param tempRes Temporal resolution of the hydrophone. PPM systems are typially 1/1000 sec. Other systems are as high as 1/19200 sec.
 #' @inheritParams getInp
 #' @return List containing TOA matrix (toa) and matrix indicating, which obs are multipath (mp_mat)
 #' @export
-simToa <- function(telemetryTrack, hydros, pingType, sigmaToa, pNA, pMP){
+simToa <- function(telemetryTrack, hydros, pingType, sigmaToa, pNA, pMP, tempRes=NA){
 	#correct toa
 	toa <- apply(telemetryTrack, 1, function(k) k['top'] + sqrt((hydros$hx - k['x'])^2 + (hydros$hy - k['y'])^2 ) / k['ss'])
 	
@@ -162,9 +193,9 @@ simToa <- function(telemetryTrack, hydros, pingType, sigmaToa, pNA, pMP){
 	
 	#make temporal resolution pingType specific
 	#sbi 1/19200    rbi 1/1000
-	if(pingType == 'sbi') {	
+	if(pingType == 'sbi' & is.na(tempRes)) {	
 		tempRes <- 19200
-	} else if(pingType == 'rbi') {
+	} else if(pingType == 'rbi' | pingType == 'pbi' & is.na(tempRes)) {
 		tempRes <- 1000
 	}
 	toa <- floor(toa) + cut(toa-floor(toa), breaks=1:tempRes/tempRes, labels=FALSE)/tempRes
@@ -177,7 +208,7 @@ simToa <- function(telemetryTrack, hydros, pingType, sigmaToa, pNA, pMP){
 	
 	#add MP
 	mp_mat <- matrix(stats::rbinom(length(toa),1, pMP), ncol=ncol(toa))
-	toa <- toa + mp_mat * stats::runif(length(toa), -150, 150) / telemetryTrack$ss
+	toa <- toa + mp_mat * stats::runif(length(toa), 50, 300) / telemetryTrack$ss
 	
 	return(list(toa=toa, mp_mat=mp_mat))
 }

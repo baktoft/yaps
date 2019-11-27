@@ -16,13 +16,16 @@
 #' @return List of input data ready for use in TMB-call
 #' @export
 getInp <- function(hydros, toa, E_dist, n_ss, pingType, sdInits=1, rbi_min=0, rbi_max=0, ss_data_what='est', ss_data=0, biTable=NULL){
-	datTmb <- getDatTmb(hydros, toa, E_dist, n_ss, pingType, rbi_min, rbi_max, ss_data_what, ss_data, biTable)
+	inp_params <- getInpParams(hydros, toa, pingType)
+	datTmb <- getDatTmb(hydros, toa, E_dist, n_ss, pingType, rbi_min, rbi_max, ss_data_what, ss_data, biTable, inp_params)
 	params <- getParams(datTmb)
 	inits <- getInits(pingType, sdInits)
 	return(list(
 		datTmb = datTmb,
 		params= params,
-		inits = inits)
+		inits = inits,
+		inp_params = inp_params
+		)
 	)
 }
 
@@ -30,11 +33,19 @@ getInp <- function(hydros, toa, E_dist, n_ss, pingType, sdInits=1, rbi_min=0, rb
 #' Get data for input to TMB
 #'
 #' Compile data for input to TMB.
+#' @param inp_params Selection of parameters used to setup and run YAPS.
 #' @inheritParams getInp
 #'
 #' @return List for use in TMB.
 #' @export
-getDatTmb <- function(hydros, toa, E_dist, n_ss, pingType, rbi_min, rbi_max, ss_data_what, ss_data, biTable){
+getDatTmb <- function(hydros, toa, E_dist, n_ss, pingType, rbi_min, rbi_max, ss_data_what, ss_data, biTable, inp_params){
+	T0 <- inp_params$T0
+	Hx0 <- inp_params$Hx0
+	Hy0 <- inp_params$Hy0
+	
+	toa <- toa - T0
+	toa <- t(toa)
+
 	if(n_ss > 1){
 		ss_idx <- cut(1:ncol(toa), n_ss, labels=FALSE) - 1 #-1 because zero-indexing in TMB
 	} else {
@@ -48,9 +59,10 @@ getDatTmb <- function(hydros, toa, E_dist, n_ss, pingType, rbi_min, rbi_max, ss_
 	if(E_dist == "Gaus") {Edist[1] <- 1}
 	if(E_dist == "Mixture") {Edist[2] <- 1}
 	if(E_dist == "t") {Edist[3] <- 1}
+	
 
 	datTmb <- list(
-		H = matrix(c(hydros$hx, hydros$hy), ncol=2),
+		H = matrix(c(hydros$hx-Hx0, hydros$hy-Hy0), ncol=2),
 		nh = nrow(hydros),
 		np = ncol(toa),
 		Edist = Edist,
@@ -79,11 +91,14 @@ getDatTmb <- function(hydros, toa, E_dist, n_ss, pingType, rbi_min, rbi_max, ss_
 #' @return List of params for use in TMB
 #' @export
 getParams <- function(datTmb){
+	params_XY <- getParamsXYFromCOA(datTmb)
 	list(
-		  X = 0 + stats::rnorm(ncol(datTmb$toa), sd=10)
-		, Y = 0 + stats::rnorm(ncol(datTmb$toa), sd=10)
+		  X = params_XY$X + stats::rnorm(ncol(datTmb$toa), sd=10)
+		, Y = params_XY$Y + stats::rnorm(ncol(datTmb$toa), sd=10)
+		  # X = 0 + stats::rnorm(ncol(datTmb$toa), sd=10)
+		# , Y = 0 + stats::rnorm(ncol(datTmb$toa), sd=10)
 		, top = zoo::na.approx(apply(datTmb$toa, 2, function(k) {stats::median(k, na.rm=TRUE)}), rule=2)	#time of ping
-		, ss=stats::rnorm(datTmb$n_ss, 1412, 2) 	#speed of sound
+		, ss=stats::rnorm(datTmb$n_ss, 1450, 5) 	#speed of sound
 		, logD_xy = 0				#diffusivity of transmitter movement (D_xy in ms)
 		, logSigma_bi = 0			#sigma  burst interval (sigma_bi in ms)
 		, logD_v = 0				#diffusivity of speed of sound (D_v in ms)
@@ -92,6 +107,25 @@ getParams <- function(datTmb){
 		, log_t_part = 0				#Mixture ratio between Gaussian and t
 		, tag_drift = stats::rnorm(datTmb$np, 0, 1e-2)
 	)
+}
+
+#' Get initial values for X and Y based on Center Of Activity - i.e. hydrophones positions
+#'
+#' Attempts to give meaningful initial values for X and Y based on which hydros detected each ping
+#' @inheritParams getInp
+#' @noRd
+getParamsXYFromCOA <- function(datTmb){
+	toa <- datTmb$toa
+	hydros <- datTmb$H
+
+	toa_detect <- toa
+	toa_detect[!is.na(toa_detect)] <- 1
+
+	X <- zoo::na.approx(colMeans((toa_detect) * hydros[,1], na.rm=TRUE))
+	Y <- zoo::na.approx(colMeans((toa_detect) * hydros[,2], na.rm=TRUE))
+	
+	return(list(X=X, Y=Y))
+
 }
 
 #' Get inits for use in TMB
@@ -118,4 +152,18 @@ getInits <- function(pingType, sdInits=1) {
 
 	inits <- stats::rnorm(length(inits), mean=inits, sd=sdInits)
 	return(inits)
+}
+
+#' Get parameters for this specific data set
+#'
+#' Compile a list of relevant parameters (e.g. T0) to use later on
+#' @inheritParams getInp
+getInpParams <- function(hydros, toa, pingType){
+	T0 <- min(toa, na.rm=TRUE)
+		
+	Hx0 <- hydros[1,hx]
+	Hy0 <- hydros[1,hy]
+
+	return(list(T0=T0, Hx0=Hx0, Hy0=Hy0))
+
 }

@@ -31,6 +31,10 @@ vignettes/*.pdf
 # Temporary files created by R markdown
 *.utf8.md
 *.knit.md
+man/figures/
+/man/figures/
+man/figures/*.png
+/man/figures/*.png
 
 # Shiny token, see https://shiny.rstudio.com/articles/shinyapps.html
 rsconnect/

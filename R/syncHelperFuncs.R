@@ -1,0 +1,97 @@
+#' Internal function. Get hydros for sync from sync_dat
+#' @inheritParams getInpSync
+getInpSyncHInfo <- function(sync_dat){
+	Hx0 <- sync_dat$hydros[1,x]
+	Hy0 <- sync_dat$hydros[1,y]
+
+	inp_H <- sync_dat$hydros[, c('x','y','z')]
+	inp_H[, x:=x-Hx0]
+	inp_H[, y:=y-Hy0]
+	inp_H[]
+	
+	return(list(inp_H=inp_H, Hx0=Hx0, Hy0=Hy0))
+}
+
+
+
+
+#' Internal function to append needed columns to table detections 
+#' @inheritParams getInpSync
+appendDetections <- function(sync_dat){
+	sync_dat$detections[, hydro_idx := data.table::merge.data.table(sync_dat$detections, sync_dat$hydros[, c('serial','idx')], by='serial', sort=FALSE)$idx]
+	if(!"epo" %in% colnames(sync_dat$detections)){
+		sync_dat$detections[, epo := as.numeric(ts)]
+	}
+	sync_dat$detections[, epofrac := epo+frac]
+	return(sync_dat)
+}
+
+#' Internal function to build gross TOA matrix, sync_tag_vec and epo_self_vec - the matrix needs pruning before use in sync function
+#' @inheritParams getInpSync
+buildToaListGross <- function(sync_dat, excl_self_detect){
+	hydros <- sync_dat$hydros
+	detections <- sync_dat$detections
+	sync_tags <- hydros[!is.na(sync_tag), sync_tag]
+
+	toa <- matrix(nrow=0, ncol=nrow(hydros))
+	sync_tag_idx_vec <- c()
+	epo_self_vec <-c()
+	for(i in 1:length(sync_tags)){
+		hydro_i_idx <- 	hydros[sync_tag == sync_tags[i], idx]
+		sync_tag_i_idx <- hydro_i_idx
+		# hydro_st_serial <- hydros[sync_tag == sync_tags[st], serial]
+		self_detections <- detections[tag==sync_tags[i] & hydro_idx==hydro_i_idx]
+		other_detections <- detections[tag==sync_tags[i] & hydro_idx!=hydro_i_idx]
+		self_detections[, epo_roll:=epofrac]
+		other_detections[, epo_roll:=epofrac]
+		toa_i <- t(plyr::daply(.data=other_detections, .variables="hydro_idx", .fun=function(k){
+			k <- data.table::data.table(k)
+			return(as.numeric(k[self_detections, roll="nearest", on=.(epo_roll)]$epofrac))
+		}))
+
+		# idx <- unique(other_detections$hydro_idx)
+		# toa_i <- matrix(nrow=nrow(self_detections), ncol=length(idx))
+		# colnames(toa_i) <- idx
+		# for(j in 1:length(idx)){
+			# k <- other_detections[hydro_idx == idx[j]]
+			# toa_i[, j] <- 
+			# as.numeric(k[self_detections, roll="nearest", on=.(epo_roll)]$epofrac)
+		# }
+		
+		toa_i_mat <- matrix(nrow=nrow(toa_i), ncol=nrow(hydros))
+		toa_i_mat[, as.numeric(colnames(toa_i))] <- toa_i
+		toa_i_mat[, hydro_i_idx] <- self_detections$epofrac
+
+		if(excl_self_detect){
+			toa_i_mat[, hydro_i_idx] <- NA
+		}
+
+
+		toa <- rbind(toa, toa_i_mat)
+		sync_tag_idx_vec <- c(sync_tag_idx_vec, rep(sync_tag_i_idx, nrow(toa_i_mat)))
+		epo_self_vec <- c(epo_self_vec, self_detections$epofrac)
+	}
+
+	return(list(toa = toa, sync_tag_idx_vec=sync_tag_idx_vec, epo_self_vec=epo_self_vec))
+}
+
+#' Internal function to prune the object obtained by buildToaListGross
+#' @param toa_list_gross Toa list obtained using `buildToaListGross()`
+#' @inheritParams getInpSync
+#' @noRd
+pruneToaListGross <- function(toa_list_gross, max_epo_diff, min_hydros){
+	toa <- toa_list_gross$toa
+	epo_self_vec <- toa_list_gross$epo_self_vec
+	sync_tag_idx_vec <- toa_list_gross$sync_tag_idx_vec
+	
+	toa[which(abs(toa - epo_self_vec) > max_epo_diff)] <- NA
+
+	nobs <- apply(toa, 1, function(k) sum(!is.na(k)))
+	keepers <- which(nobs >= min_hydros)
+	toa <- toa[keepers ,]
+	sync_tag_idx_vec <- sync_tag_idx_vec[keepers]
+	epo_self_vec <- epo_self_vec[keepers]
+	
+	return(list(toa=toa, sync_tag_idx_vec=sync_tag_idx_vec, epo_self_vec=epo_self_vec))
+
+}

@@ -1,6 +1,6 @@
 Package: yaps
 Title: Track estimation using YAPS (Yet Another Positioning Solver)
-Version: 1.1.1
+Version: 1.2.0.9000
 Authors@R: person("Henrik", "Baktoft", email = "hba@aqua.dtu.dk", role = c("aut", "cre"))
 Description: Estimate track from acoustic data using YAPS (doi:10.1038/s41598-017-14278-z).
 Depends: R (>= 3.5.0)
@@ -9,4 +9,4 @@ Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.1.1
 LinkingTo: Rcpp, TMB, RcppEigen
-Imports: Rcpp, TMB, circular, RcppEigen, zoo, stats, data.table
+Imports: circular, data.table, ggplot2, plyr,Rcpp, RcppEigen, reshape2, splusTimeSeries, stats, tictoc, TMB, viridis,zoo

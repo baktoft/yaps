@@ -1,5 +1,6 @@
 #' Internal function. Get hydros for sync from sync_dat
 #' @inheritParams getInpSync
+#' @noRd
 getInpSyncHInfo <- function(sync_dat){
 	Hx0 <- sync_dat$hydros[1,x]
 	Hy0 <- sync_dat$hydros[1,y]
@@ -17,6 +18,7 @@ getInpSyncHInfo <- function(sync_dat){
 
 #' Internal function to append needed columns to table detections 
 #' @inheritParams getInpSync
+#' @noRd
 appendDetections <- function(sync_dat){
 	sync_dat$detections[, hydro_idx := data.table::merge.data.table(sync_dat$detections, sync_dat$hydros[, c('serial','idx')], by='serial', sort=FALSE)$idx]
 	if(!"epo" %in% colnames(sync_dat$detections)){
@@ -28,6 +30,7 @@ appendDetections <- function(sync_dat){
 
 #' Internal function to build gross TOA matrix, sync_tag_vec and epo_self_vec - the matrix needs pruning before use in sync function
 #' @inheritParams getInpSync
+#' @noRd
 buildToaListGross <- function(sync_dat, excl_self_detect){
 	hydros <- sync_dat$hydros
 	detections <- sync_dat$detections

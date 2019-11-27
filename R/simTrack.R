@@ -66,7 +66,7 @@ simTrueTrack <- function(model='rw', n, deltaTime=1, D=NULL, shape=NULL, scale=N
 		ss <- rep(1450, length(x))
 	}
 
-	return(data.frame(time=time, x=x, y=y, ss=ss))
+	return(data.table::data.table(time=time, x=x, y=y, ss=ss))
 }
 
 #' Simulate telemetry track based on known true track obtained using simTrueTrack
@@ -174,7 +174,7 @@ simHydros <- function(auto=TRUE, trueTrack=NULL){
 	hx <- c(hx.min,hx.min,hx.max,hx.max, 0, 500,  500, -500, -500)
 	hy <- c(hy.min,hy.max,hy.max,hy.min, 0, 500, -500, -500, 500)
 
-	hydros <- data.frame(hx=hx, hy=hy)
+	hydros <- data.table::data.table(hx=hx, hy=hy)
 
 	return(hydros)
 }

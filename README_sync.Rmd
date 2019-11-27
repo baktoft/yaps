@@ -42,12 +42,12 @@ knitr::opts_chunk$set(
 ### A complete walk-through taking you from raw data, through synchronization to final tracks
 YAPS was introduced in 2017 as a manufacturer agnostic alternative to proprietary and vendor specific options. The paper introducing YAPS can be downloaded (open access) [here](https://www.nature.com/articles/s41598-017-14278-z.pdf). While YAPS is open-source and transparant, it is not (nor has it been intended to be) a turn-key and/or a one-size-fits-all solution. Although the YAPS model is open and transparent, the process from raw data downloaded from hydrophones to final tracks is long and sometimes challenging. Especially, the very important synchronization of hydrophone arrays have proven to be a major obstacle for many potential users.  
 
-This how-to guide walks through the entire workflow from raw data collected by PPM-based systems (Vemco VR2/VPS) to final tracks. The walk-through shows how to use new functions added to YAPS enabling an easy and approachable (but fine tuned) synchronization.  
+This how-to guide is intended to provide users with an example work-flow to start from. The guide walks through the entire workflow from raw data collected by PPM-based systems (Vemco VR2/VPS) to final tracks. It shows how to use new functions added to YAPS enabling an easy and approachable (but fine tuned) synchronization. 
 
-Click here for the [old readme with example using simulated data](https://github.com/baktoft/yaps)
+Click here for a [quick example running YAPS on simulated data](#exampleSimuluation)
 
 ## Disclaimer
-We have attempted to make both synchronization process and track estimation user-friendly. However, it is far from trivial to synchronize hydrophones (let alone automating the process) based on detections in a variable and often noisy environment. Hydrophones might be replaced/shifted and if not fixed securely, hydrophones might move/be moved during a study. Additionally, hydrophone performance and output format varies considerably between (and within) manufacturers. On top of that, hydrophones don't always behave and perform as expected. For instance, some models autonomously initiate reboots causing perturbation of varying magnitude and/or duration of the internal clock at apparently random time intervals. Therefore, the functions in YAPS might perform sub-optimal or even fail miserably when applied to new data. If/when this happens, please let us know through a direct message or leave a bug-report. Also note, the to-do list for improvements and tweaks is long and growing, so stay tuned for updates.  
+We have attempted to make both synchronization process and track estimation user-friendly. However, it is not trivial to synchronize hydrophones (let alone automating the process) based on detections in a variable and often noisy environment. Hydrophones might be replaced/shifted and if not fixed securely, hydrophones might move/be moved during a study. Additionally, hydrophone performance and output format varies considerably between (and within) manufacturers. On top of that, hydrophones don't always behave and perform as expected. For instance, some hydrophone models autonomously initiate reboots causing perturbation of varying magnitude and/or duration of the internal clock at apparently random time intervals. Therefore, the functions in YAPS might perform sub-optimal or even fail miserably when applied to new data. If/when this happens, please let us know through a direct message or leave a bug-report. Also note, the to-do list for improvements and tweaks is long and growing, so stay tuned for updates.  
 
 
 ### About synchronization in YAPS
@@ -262,6 +262,69 @@ There are surely many other formats out there - please tell us, if you want a sp
 	head(detections, n=3)
 ```
 
+#### Example using YAPS on simulated data {#exampleSimuluation}
+```
+devtools::install_github("baktoft/yaps")
+rm(list=ls())   
+library(yaps)
+
+# Simulate true track of animal movement of n seconds
+trueTrack <- simTrueTrack(model='crw', n = 15000, deltaTime=1, shape=1, scale=0.5, addDielPattern=TRUE, ss='rw')
+
+# Simulate telemetry observations from true track.
+# Format and parameters depend on type of transmitter burst interval (BI) - stable (sbi) or random (rbi).
+pingType <- 'sbi'
+
+if(pingType == 'sbi') { # stable BI
+    sbi_mean <- 30; sbi_sd <- 1e-4;
+    teleTrack <- simTelemetryTrack(trueTrack, pingType=pingType, sbi_mean=sbi_mean, sbi_sd=sbi_sd)
+} else if(pingType == 'rbi'){ # random BI
+    pingType <- 'rbi'; rbi_min <- 20; rbi_max <- 40;
+    teleTrack <- simTelemetryTrack(trueTrack, pingType=pingType, rbi_min=rbi_min, rbi_max=rbi_max)
+}
+
+# Simulate hydrophone array
+hydros <- simHydros(auto=TRUE, trueTrack=trueTrack)
+toa_list <- simToa(teleTrack, hydros, pingType, sigmaToa=1e-4, pNA=0.25, pMP=0.01)
+toa <- toa_list$toa
+
+# Specify whether to use ss_data from measured water temperature (ss_data_what <- 'data') or to estimate ss in the model (ss_data_what <- 'est')
+ss_data_what <- 'data'
+if(ss_data_what == 'data') {ss_data <- teleTrack$ss} else {ss_data <- 0}
+
+
+if(pingType == 'sbi'){
+    inp <- getInp(hydros, toa, E_dist="Mixture", n_ss=10, pingType=pingType, sdInits=0, ss_data_what=ss_data_what, ss_data=ss_data)
+} else if(pingType == 'rbi'){
+    inp <- getInp(hydros, toa, E_dist="Mixture", n_ss=10, pingType=pingType, sdInits=0, rbi_min=rbi_min, rbi_max=rbi_max, ss_data_what=ss_data_what, ss_data=ss_data)
+} 
+str(inp)
+
+pl <- c()
+maxIter <- ifelse(pingType=="sbi", 500, 5000)
+outTmb <- runTmb(inp, maxIter=maxIter, getPlsd=TRUE, getRep=TRUE)
+str(outTmb)
+
+# Estimates in pl
+pl <- outTmb$pl
+# Correcting for hydrophone centering
+pl$X <- outTmb$pl$X + inp$inp_params$Hx0
+pl$Y <- outTmb$pl$Y + inp$inp_params$Hy0
+
+
+# Error estimates in plsd
+plsd <- outTmb$plsd
+
+# plot the resulting estimated track
+plot(y~x, data=trueTrack, type="l", xlim=range(hydros$hx), ylim=range(hydros$hy), asp=1)
+lines(y~x, data=teleTrack)
+points(hy~hx, data=hydros, col="green", pch=20, cex=3)
+lines(pl$Y~pl$X, col="red")
+```
+
+
+
+
 ## TO DO
 + Check inp_sync fuck ups in toa-matrix when removing outliers!!!
 + Add documentation to all functions...
@@ -291,5 +354,6 @@ There are surely many other formats out there - please tell us, if you want a sp
 + Move example data to external package and get YAPS on CRAN
 + Add list of papers actually using YAPS - incl. Vanwyck's thesis
 + Add logo to github :-)
++ Add list of locations/species tracked using YAPS
 + Build github pages
 + https://github.com/kaskr/adcomp/issues/233

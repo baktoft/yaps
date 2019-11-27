@@ -16,31 +16,32 @@ hydrophones to final tracks is long and sometimes challenging.
 Especially, the very important synchronization of hydrophone arrays have
 proven to be a major obstacle for many potential users.
 
-This how-to guide walks through the entire workflow from raw data
-collected by PPM-based systems (Vemco VR2/VPS) to final tracks. The
-walk-through shows how to use new functions added to YAPS enabling an
-easy and approachable (but fine tuned) synchronization.
+This how-to guide is intended to provide users with an example work-flow
+to start from. The guide walks through the entire workflow from raw data
+collected by PPM-based systems (Vemco VR2/VPS) to final tracks. It shows
+how to use new functions added to YAPS enabling an easy and approachable
+(but fine tuned) synchronization.
 
-Click here for the [old readme with example using simulated
-data](https://github.com/baktoft/yaps)
+Click here for a [quick example running YAPS on simulated
+data](#exampleSimuluation)
 
 ## Disclaimer
 
 We have attempted to make both synchronization process and track
-estimation user-friendly. However, it is far from trivial to synchronize
+estimation user-friendly. However, it is not trivial to synchronize
 hydrophones (let alone automating the process) based on detections in a
 variable and often noisy environment. Hydrophones might be
 replaced/shifted and if not fixed securely, hydrophones might move/be
 moved during a study. Additionally, hydrophone performance and output
 format varies considerably between (and within) manufacturers. On top of
 that, hydrophones don’t always behave and perform as expected. For
-instance, some models autonomously initiate reboots causing perturbation
-of varying magnitude and/or duration of the internal clock at apparently
-random time intervals. Therefore, the functions in YAPS might perform
-sub-optimal or even fail miserably when applied to new data. If/when
-this happens, please let us know through a direct message or leave a
-bug-report. Also note, the to-do list for improvements and tweaks is
-long and growing, so stay tuned for updates.
+instance, some hydrophone models autonomously initiate reboots causing
+perturbation of varying magnitude and/or duration of the internal clock
+at apparently random time intervals. Therefore, the functions in YAPS
+might perform sub-optimal or even fail miserably when applied to new
+data. If/when this happens, please let us know through a direct message
+or leave a bug-report. Also note, the to-do list for improvements and
+tweaks is long and growing, so stay tuned for updates.
 
 ### About synchronization in YAPS
 
@@ -248,10 +249,10 @@ plotSyncModelCheck(sync_model, by="hydro")
 # 6. Apply the sync model to all detection data. Synced timestamps are found in column eposync
 detections_synced <- applySync(toa=ssu1$detections, hydros=ssu1$hydros, sync_model)
 head(detections_synced, n=3)
-#>                     ts   tag        epo  frac serial hydro_idx    epofrac    eposync
-#> 1: 2019-09-09 16:05:53 59335 1568045153 0.631 128368         6 1568045154 1568045154
-#> 2: 2019-09-09 16:07:46 59334 1568045266 0.644 128368         6 1568045267 1568045267
-#> 3: 2019-09-09 16:09:21 59337 1568045361 0.932 128368         6 1568045362 1568045362
+#>                     ts   tag        epo  frac serial    epofrac hydro_idx    eposync
+#> 1: 2019-09-09 16:05:53 59335 1568045153 0.631 128368 1568045154         6 1568045154
+#> 2: 2019-09-09 16:07:46 59334 1568045266 0.644 128368 1568045267         6 1568045267
+#> 3: 2019-09-09 16:09:21 59337 1568045361 0.932 128368 1568045362         6 1568045362
 ```
 
 ### Running YAPS - ssu1
@@ -337,14 +338,10 @@ database.
     fn <- system.file("extdata", "VUE_Export_ssu1.csv", package="yaps") 
     vue <- data.table::fread(fn, fill=TRUE)
     head(vue, n=3)
-#>        Date and Time (UTC)    Receiver    Transmitter Transmitter Name Transmitter Serial Sensor Value Sensor Unit
-#> 1: 2019-09-09 16:04:11.193 VR2W-128355 A69-1602-59335               NA                 NA           NA          NA
-#> 2: 2019-09-09 16:04:12.574 VR2W-128371 A69-1602-59336               NA                 NA           NA          NA
-#> 3: 2019-09-09 16:04:43.953 VR2W-128959 A69-1602-59335               NA                 NA           NA          NA
-#>    Station Name Latitude Longitude
-#> 1:       CESI10       NA        NA
-#> 2:       CESI15       NA        NA
-#> 3:       CESI12       NA        NA
+#>        Date and Time (UTC)    Receiver    Transmitter Transmitter Name Transmitter Serial Sensor Value Sensor Unit Station Name Latitude Longitude
+#> 1: 2019-09-09 16:04:11.193 VR2W-128355 A69-1602-59335               NA                 NA           NA          NA       CESI10       NA        NA
+#> 2: 2019-09-09 16:04:12.574 VR2W-128371 A69-1602-59336               NA                 NA           NA          NA       CESI15       NA        NA
+#> 3: 2019-09-09 16:04:43.953 VR2W-128959 A69-1602-59335               NA                 NA           NA          NA       CESI12       NA        NA
     detections <- prepDetections(raw_dat=vue, type="vemco_vue")
     head(detections, n=3)
 #>                     ts   tag        epo frac serial
@@ -352,6 +349,65 @@ database.
 #> 2: 2019-09-09 16:04:12 59336 1568045053  574 128371
 #> 3: 2019-09-09 16:04:43 59335 1568045084  953 128959
 ```
+
+#### Example using YAPS on simulated data
+
+    devtools::install_github("baktoft/yaps")
+    rm(list=ls())   
+    library(yaps)
+    
+    # Simulate true track of animal movement of n seconds
+    trueTrack <- simTrueTrack(model='crw', n = 15000, deltaTime=1, shape=1, scale=0.5, addDielPattern=TRUE, ss='rw')
+    
+    # Simulate telemetry observations from true track.
+    # Format and parameters depend on type of transmitter burst interval (BI) - stable (sbi) or random (rbi).
+    pingType <- 'sbi'
+    
+    if(pingType == 'sbi') { # stable BI
+        sbi_mean <- 30; sbi_sd <- 1e-4;
+        teleTrack <- simTelemetryTrack(trueTrack, pingType=pingType, sbi_mean=sbi_mean, sbi_sd=sbi_sd)
+    } else if(pingType == 'rbi'){ # random BI
+        pingType <- 'rbi'; rbi_min <- 20; rbi_max <- 40;
+        teleTrack <- simTelemetryTrack(trueTrack, pingType=pingType, rbi_min=rbi_min, rbi_max=rbi_max)
+    }
+    
+    # Simulate hydrophone array
+    hydros <- simHydros(auto=TRUE, trueTrack=trueTrack)
+    toa_list <- simToa(teleTrack, hydros, pingType, sigmaToa=1e-4, pNA=0.25, pMP=0.01)
+    toa <- toa_list$toa
+    
+    # Specify whether to use ss_data from measured water temperature (ss_data_what <- 'data') or to estimate ss in the model (ss_data_what <- 'est')
+    ss_data_what <- 'data'
+    if(ss_data_what == 'data') {ss_data <- teleTrack$ss} else {ss_data <- 0}
+    
+    
+    if(pingType == 'sbi'){
+        inp <- getInp(hydros, toa, E_dist="Mixture", n_ss=10, pingType=pingType, sdInits=0, ss_data_what=ss_data_what, ss_data=ss_data)
+    } else if(pingType == 'rbi'){
+        inp <- getInp(hydros, toa, E_dist="Mixture", n_ss=10, pingType=pingType, sdInits=0, rbi_min=rbi_min, rbi_max=rbi_max, ss_data_what=ss_data_what, ss_data=ss_data)
+    } 
+    str(inp)
+    
+    pl <- c()
+    maxIter <- ifelse(pingType=="sbi", 500, 5000)
+    outTmb <- runTmb(inp, maxIter=maxIter, getPlsd=TRUE, getRep=TRUE)
+    str(outTmb)
+    
+    # Estimates in pl
+    pl <- outTmb$pl
+    # Correcting for hydrophone centering
+    pl$X <- outTmb$pl$X + inp$inp_params$Hx0
+    pl$Y <- outTmb$pl$Y + inp$inp_params$Hy0
+    
+    
+    # Error estimates in plsd
+    plsd <- outTmb$plsd
+    
+    # plot the resulting estimated track
+    plot(y~x, data=trueTrack, type="l", xlim=range(hydros$hx), ylim=range(hydros$hy), asp=1)
+    lines(y~x, data=teleTrack)
+    points(hy~hx, data=hydros, col="green", pch=20, cex=3)
+    lines(pl$Y~pl$X, col="red")
 
 ## TO DO
 

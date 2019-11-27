@@ -44,7 +44,11 @@ getDatTmb <- function(hydros, toa, E_dist, n_ss, pingType, rbi_min, rbi_max, ss_
 	Hy0 <- inp_params$Hy0
 	
 	toa <- toa - T0
-	toa <- t(toa)
+	
+	# attempting to make sure toa is oriented correct
+	if(!nrow(toa) == nrow(hydros)){
+		toa <- t(toa)
+	}
 
 	if(n_ss > 1){
 		ss_idx <- cut(1:ncol(toa), n_ss, labels=FALSE) - 1 #-1 because zero-indexing in TMB

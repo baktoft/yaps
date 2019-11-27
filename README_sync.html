@@ -605,10 +605,10 @@ body {
 <h1 id="yaps---how-to-use">YAPS - How to use</h1>
 <h3 id="a-complete-walk-through-taking-you-from-raw-data-through-synchronization-to-final-tracks">A complete walk-through taking you from raw data, through synchronization to final tracks</h3>
 <p>YAPS was introduced in 2017 as a manufacturer agnostic alternative to proprietary and vendor specific options. The paper introducing YAPS can be downloaded (open access) <a href="https://www.nature.com/articles/s41598-017-14278-z.pdf">here</a>. While YAPS is open-source and transparant, it is not (nor has it been intended to be) a turn-key and/or a one-size-fits-all solution. Although the YAPS model is open and transparent, the process from raw data downloaded from hydrophones to final tracks is long and sometimes challenging. Especially, the very important synchronization of hydrophone arrays have proven to be a major obstacle for many potential users.</p>
-<p>This how-to guide walks through the entire workflow from raw data collected by PPM-based systems (Vemco VR2/VPS) to final tracks. The walk-through shows how to use new functions added to YAPS enabling an easy and approachable (but fine tuned) synchronization.</p>
-<p>Click here for the <a href="https://github.com/baktoft/yaps">old readme with example using simulated data</a></p>
+<p>This how-to guide is intended to provide users with an example work-flow to start from. The guide walks through the entire workflow from raw data collected by PPM-based systems (Vemco VR2/VPS) to final tracks. It shows how to use new functions added to YAPS enabling an easy and approachable (but fine tuned) synchronization.</p>
+<p>Click here for a <a href="#exampleSimuluation">quick example running YAPS on simulated data</a></p>
 <h2 id="disclaimer">Disclaimer</h2>
-<p>We have attempted to make both synchronization process and track estimation user-friendly. However, it is far from trivial to synchronize hydrophones (let alone automating the process) based on detections in a variable and often noisy environment. Hydrophones might be replaced/shifted and if not fixed securely, hydrophones might move/be moved during a study. Additionally, hydrophone performance and output format varies considerably between (and within) manufacturers. On top of that, hydrophones don’t always behave and perform as expected. For instance, some models autonomously initiate reboots causing perturbation of varying magnitude and/or duration of the internal clock at apparently random time intervals. Therefore, the functions in YAPS might perform sub-optimal or even fail miserably when applied to new data. If/when this happens, please let us know through a direct message or leave a bug-report. Also note, the to-do list for improvements and tweaks is long and growing, so stay tuned for updates.</p>
+<p>We have attempted to make both synchronization process and track estimation user-friendly. However, it is not trivial to synchronize hydrophones (let alone automating the process) based on detections in a variable and often noisy environment. Hydrophones might be replaced/shifted and if not fixed securely, hydrophones might move/be moved during a study. Additionally, hydrophone performance and output format varies considerably between (and within) manufacturers. On top of that, hydrophones don’t always behave and perform as expected. For instance, some hydrophone models autonomously initiate reboots causing perturbation of varying magnitude and/or duration of the internal clock at apparently random time intervals. Therefore, the functions in YAPS might perform sub-optimal or even fail miserably when applied to new data. If/when this happens, please let us know through a direct message or leave a bug-report. Also note, the to-do list for improvements and tweaks is long and growing, so stay tuned for updates.</p>
 <h3 id="about-synchronization-in-yaps">About synchronization in YAPS</h3>
 <p>Regardles of positioning algorithm used, synchronization of the hydrophone array prior to track estimation is <em>extremely</em> important for quality of the final tracks and great care should be taken to achieve as good as possible sync. The sync method included in YAPS has several benefits. First of all, it <em>synchronizes all hydrophones in one go</em>, avoiding sequential propagating synchronization that might lead to error accumulation in the outer ends of the array. Additionally, it allows for <em>estimation of hydrophone positions</em>, which can be usefull if the initial hydrophone positions are uncertain e.g. due to deep water, strong current or low-level GPS. The internal clock in all hydrophones drift in different directions and with varying speeds affected by water temperature. Therefore, temporally varying non-linear correction is needed. The sync method employed by YAPS is based on a user-specified number of hydrophone-specific second-order polynomials. This approach, in combination with the whole-array-at-once, have proved to give very good synchronization. Perhaps most importantly, synchronization in YAPS is aimed at being user-friendly. To meet this, we have tried to keep all the nitty-gritty stuff inside easy-to-use functions and kept the amount of user decisions at a minimum.</p>
 <h2 id="installation">Installation</h2>
@@ -698,10 +698,10 @@ Function <code>plotSyncModelCheck()</code> apply the sync model to the sync data
 <div class="sourceCode" id="cb6"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb6-1" title="1"><span class="co"># 6. Apply the sync model to all detection data. Synced timestamps are found in column eposync</span></a>
 <a class="sourceLine" id="cb6-2" title="2">detections_synced &lt;-<span class="st"> </span><span class="kw">applySync</span>(<span class="dt">toa=</span>ssu1<span class="op">$</span>detections, <span class="dt">hydros=</span>ssu1<span class="op">$</span>hydros, sync_model)</a>
 <a class="sourceLine" id="cb6-3" title="3"><span class="kw">head</span>(detections_synced, <span class="dt">n=</span><span class="dv">3</span>)</a>
-<a class="sourceLine" id="cb6-4" title="4"><span class="co">#&gt;                     ts   tag        epo  frac serial hydro_idx    epofrac    eposync</span></a>
-<a class="sourceLine" id="cb6-5" title="5"><span class="co">#&gt; 1: 2019-09-09 16:05:53 59335 1568045153 0.631 128368         6 1568045154 1568045154</span></a>
-<a class="sourceLine" id="cb6-6" title="6"><span class="co">#&gt; 2: 2019-09-09 16:07:46 59334 1568045266 0.644 128368         6 1568045267 1568045267</span></a>
-<a class="sourceLine" id="cb6-7" title="7"><span class="co">#&gt; 3: 2019-09-09 16:09:21 59337 1568045361 0.932 128368         6 1568045362 1568045362</span></a></code></pre></div>
+<a class="sourceLine" id="cb6-4" title="4"><span class="co">#&gt;                     ts   tag        epo  frac serial    epofrac hydro_idx    eposync</span></a>
+<a class="sourceLine" id="cb6-5" title="5"><span class="co">#&gt; 1: 2019-09-09 16:05:53 59335 1568045153 0.631 128368 1568045154         6 1568045154</span></a>
+<a class="sourceLine" id="cb6-6" title="6"><span class="co">#&gt; 2: 2019-09-09 16:07:46 59334 1568045266 0.644 128368 1568045267         6 1568045267</span></a>
+<a class="sourceLine" id="cb6-7" title="7"><span class="co">#&gt; 3: 2019-09-09 16:09:21 59337 1568045361 0.932 128368 1568045362         6 1568045362</span></a></code></pre></div>
 <h3 id="running-yaps---ssu1">Running YAPS - ssu1</h3>
 <p>Finally, run the synchronized data through YAPS - needs a little compiling beforehand.<br />
 The only tracks to estimate from this data set is test tracks performed to test feasibility of deploying an array at this location. In the original data set, several transmitters with different power and burst rates were used. Here we focus on a single of these: ID 15266, Vemco V9, high power output, 20-40 second burst interval.</p>
@@ -746,20 +746,74 @@ There are surely many other formats out there - please tell us, if you want a sp
 <a class="sourceLine" id="cb8-2" title="2">    fn &lt;-<span class="st"> </span><span class="kw">system.file</span>(<span class="st">&quot;extdata&quot;</span>, <span class="st">&quot;VUE_Export_ssu1.csv&quot;</span>, <span class="dt">package=</span><span class="st">&quot;yaps&quot;</span>) </a>
 <a class="sourceLine" id="cb8-3" title="3">    vue &lt;-<span class="st"> </span>data.table<span class="op">::</span><span class="kw">fread</span>(fn, <span class="dt">fill=</span><span class="ot">TRUE</span>)</a>
 <a class="sourceLine" id="cb8-4" title="4">    <span class="kw">head</span>(vue, <span class="dt">n=</span><span class="dv">3</span>)</a>
-<a class="sourceLine" id="cb8-5" title="5"><span class="co">#&gt;        Date and Time (UTC)    Receiver    Transmitter Transmitter Name Transmitter Serial Sensor Value Sensor Unit</span></a>
-<a class="sourceLine" id="cb8-6" title="6"><span class="co">#&gt; 1: 2019-09-09 16:04:11.193 VR2W-128355 A69-1602-59335               NA                 NA           NA          NA</span></a>
-<a class="sourceLine" id="cb8-7" title="7"><span class="co">#&gt; 2: 2019-09-09 16:04:12.574 VR2W-128371 A69-1602-59336               NA                 NA           NA          NA</span></a>
-<a class="sourceLine" id="cb8-8" title="8"><span class="co">#&gt; 3: 2019-09-09 16:04:43.953 VR2W-128959 A69-1602-59335               NA                 NA           NA          NA</span></a>
-<a class="sourceLine" id="cb8-9" title="9"><span class="co">#&gt;    Station Name Latitude Longitude</span></a>
-<a class="sourceLine" id="cb8-10" title="10"><span class="co">#&gt; 1:       CESI10       NA        NA</span></a>
-<a class="sourceLine" id="cb8-11" title="11"><span class="co">#&gt; 2:       CESI15       NA        NA</span></a>
-<a class="sourceLine" id="cb8-12" title="12"><span class="co">#&gt; 3:       CESI12       NA        NA</span></a>
-<a class="sourceLine" id="cb8-13" title="13">    detections &lt;-<span class="st"> </span><span class="kw">prepDetections</span>(<span class="dt">raw_dat=</span>vue, <span class="dt">type=</span><span class="st">&quot;vemco_vue&quot;</span>)</a>
-<a class="sourceLine" id="cb8-14" title="14">    <span class="kw">head</span>(detections, <span class="dt">n=</span><span class="dv">3</span>)</a>
-<a class="sourceLine" id="cb8-15" title="15"><span class="co">#&gt;                     ts   tag        epo frac serial</span></a>
-<a class="sourceLine" id="cb8-16" title="16"><span class="co">#&gt; 1: 2019-09-09 16:04:11 59335 1568045051  193 128355</span></a>
-<a class="sourceLine" id="cb8-17" title="17"><span class="co">#&gt; 2: 2019-09-09 16:04:12 59336 1568045053  574 128371</span></a>
-<a class="sourceLine" id="cb8-18" title="18"><span class="co">#&gt; 3: 2019-09-09 16:04:43 59335 1568045084  953 128959</span></a></code></pre></div>
+<a class="sourceLine" id="cb8-5" title="5"><span class="co">#&gt;        Date and Time (UTC)    Receiver    Transmitter Transmitter Name Transmitter Serial Sensor Value Sensor Unit Station Name Latitude Longitude</span></a>
+<a class="sourceLine" id="cb8-6" title="6"><span class="co">#&gt; 1: 2019-09-09 16:04:11.193 VR2W-128355 A69-1602-59335               NA                 NA           NA          NA       CESI10       NA        NA</span></a>
+<a class="sourceLine" id="cb8-7" title="7"><span class="co">#&gt; 2: 2019-09-09 16:04:12.574 VR2W-128371 A69-1602-59336               NA                 NA           NA          NA       CESI15       NA        NA</span></a>
+<a class="sourceLine" id="cb8-8" title="8"><span class="co">#&gt; 3: 2019-09-09 16:04:43.953 VR2W-128959 A69-1602-59335               NA                 NA           NA          NA       CESI12       NA        NA</span></a>
+<a class="sourceLine" id="cb8-9" title="9">    detections &lt;-<span class="st"> </span><span class="kw">prepDetections</span>(<span class="dt">raw_dat=</span>vue, <span class="dt">type=</span><span class="st">&quot;vemco_vue&quot;</span>)</a>
+<a class="sourceLine" id="cb8-10" title="10">    <span class="kw">head</span>(detections, <span class="dt">n=</span><span class="dv">3</span>)</a>
+<a class="sourceLine" id="cb8-11" title="11"><span class="co">#&gt;                     ts   tag        epo frac serial</span></a>
+<a class="sourceLine" id="cb8-12" title="12"><span class="co">#&gt; 1: 2019-09-09 16:04:11 59335 1568045051  193 128355</span></a>
+<a class="sourceLine" id="cb8-13" title="13"><span class="co">#&gt; 2: 2019-09-09 16:04:12 59336 1568045053  574 128371</span></a>
+<a class="sourceLine" id="cb8-14" title="14"><span class="co">#&gt; 3: 2019-09-09 16:04:43 59335 1568045084  953 128959</span></a></code></pre></div>
+<h4 id="example-using-yaps-on-simulated-data">Example using YAPS on simulated data</h4>
+<pre><code>devtools::install_github(&quot;baktoft/yaps&quot;)
+rm(list=ls())   
+library(yaps)
+
+# Simulate true track of animal movement of n seconds
+trueTrack &lt;- simTrueTrack(model=&#39;crw&#39;, n = 15000, deltaTime=1, shape=1, scale=0.5, addDielPattern=TRUE, ss=&#39;rw&#39;)
+
+# Simulate telemetry observations from true track.
+# Format and parameters depend on type of transmitter burst interval (BI) - stable (sbi) or random (rbi).
+pingType &lt;- &#39;sbi&#39;
+
+if(pingType == &#39;sbi&#39;) { # stable BI
+    sbi_mean &lt;- 30; sbi_sd &lt;- 1e-4;
+    teleTrack &lt;- simTelemetryTrack(trueTrack, pingType=pingType, sbi_mean=sbi_mean, sbi_sd=sbi_sd)
+} else if(pingType == &#39;rbi&#39;){ # random BI
+    pingType &lt;- &#39;rbi&#39;; rbi_min &lt;- 20; rbi_max &lt;- 40;
+    teleTrack &lt;- simTelemetryTrack(trueTrack, pingType=pingType, rbi_min=rbi_min, rbi_max=rbi_max)
+}
+
+# Simulate hydrophone array
+hydros &lt;- simHydros(auto=TRUE, trueTrack=trueTrack)
+toa_list &lt;- simToa(teleTrack, hydros, pingType, sigmaToa=1e-4, pNA=0.25, pMP=0.01)
+toa &lt;- toa_list$toa
+
+# Specify whether to use ss_data from measured water temperature (ss_data_what &lt;- &#39;data&#39;) or to estimate ss in the model (ss_data_what &lt;- &#39;est&#39;)
+ss_data_what &lt;- &#39;data&#39;
+if(ss_data_what == &#39;data&#39;) {ss_data &lt;- teleTrack$ss} else {ss_data &lt;- 0}
+
+
+if(pingType == &#39;sbi&#39;){
+    inp &lt;- getInp(hydros, toa, E_dist=&quot;Mixture&quot;, n_ss=10, pingType=pingType, sdInits=0, ss_data_what=ss_data_what, ss_data=ss_data)
+} else if(pingType == &#39;rbi&#39;){
+    inp &lt;- getInp(hydros, toa, E_dist=&quot;Mixture&quot;, n_ss=10, pingType=pingType, sdInits=0, rbi_min=rbi_min, rbi_max=rbi_max, ss_data_what=ss_data_what, ss_data=ss_data)
+} 
+str(inp)
+
+pl &lt;- c()
+maxIter &lt;- ifelse(pingType==&quot;sbi&quot;, 500, 5000)
+outTmb &lt;- runTmb(inp, maxIter=maxIter, getPlsd=TRUE, getRep=TRUE)
+str(outTmb)
+
+# Estimates in pl
+pl &lt;- outTmb$pl
+# Correcting for hydrophone centering
+pl$X &lt;- outTmb$pl$X + inp$inp_params$Hx0
+pl$Y &lt;- outTmb$pl$Y + inp$inp_params$Hy0
+
+
+# Error estimates in plsd
+plsd &lt;- outTmb$plsd
+
+# plot the resulting estimated track
+plot(y~x, data=trueTrack, type=&quot;l&quot;, xlim=range(hydros$hx), ylim=range(hydros$hy), asp=1)
+lines(y~x, data=teleTrack)
+points(hy~hx, data=hydros, col=&quot;green&quot;, pch=20, cex=3)
+lines(pl$Y~pl$X, col=&quot;red&quot;)
+</code></pre>
 <h2 id="to-do">TO DO</h2>
 <ul>
 <li>Check inp_sync fuck ups in toa-matrix when removing outliers!!!</li>

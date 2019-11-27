@@ -62,6 +62,7 @@ getDatTmb <- function(hydros, toa, E_dist, n_ss, pingType, rbi_min, rbi_max, ss_
 	
 
 	datTmb <- list(
+		model = "yaps_track",
 		H = matrix(c(hydros$hx-Hx0, hydros$hy-Hy0), ncol=2),
 		nh = nrow(hydros),
 		np = ncol(toa),

@@ -337,10 +337,14 @@ database.
     fn <- system.file("extdata", "VUE_Export_ssu1.csv", package="yaps") 
     vue <- data.table::fread(fn, fill=TRUE)
     head(vue, n=3)
-#>        Date and Time (UTC)    Receiver    Transmitter Transmitter Name Transmitter Serial Sensor Value Sensor Unit Station Name Latitude Longitude
-#> 1: 2019-09-09 16:04:11.193 VR2W-128355 A69-1602-59335               NA                 NA           NA          NA       CESI10       NA        NA
-#> 2: 2019-09-09 16:04:12.574 VR2W-128371 A69-1602-59336               NA                 NA           NA          NA       CESI15       NA        NA
-#> 3: 2019-09-09 16:04:43.953 VR2W-128959 A69-1602-59335               NA                 NA           NA          NA       CESI12       NA        NA
+#>        Date and Time (UTC)    Receiver    Transmitter Transmitter Name Transmitter Serial Sensor Value Sensor Unit
+#> 1: 2019-09-09 16:04:11.193 VR2W-128355 A69-1602-59335               NA                 NA           NA          NA
+#> 2: 2019-09-09 16:04:12.574 VR2W-128371 A69-1602-59336               NA                 NA           NA          NA
+#> 3: 2019-09-09 16:04:43.953 VR2W-128959 A69-1602-59335               NA                 NA           NA          NA
+#>    Station Name Latitude Longitude
+#> 1:       CESI10       NA        NA
+#> 2:       CESI15       NA        NA
+#> 3:       CESI12       NA        NA
     detections <- prepDetections(raw_dat=vue, type="vemco_vue")
     head(detections, n=3)
 #>                     ts   tag        epo frac serial
@@ -351,8 +355,10 @@ database.
 
 ## TO DO
 
+  - Check inp\_sync fuck ups in toa-matrix when removing outliers\!\!\!
   - Add documentation to all functions…
   - Add temporal plot of residuals to plotSyncModelResids()
+  - Add notes about burst interval distributions…
   - Change from ping to time in plotSyncModelCheck( by=“ping”)
   - update link to old readme, when the new one is online
   - Add figure showing hydrophone drifts to visualoze the need of sync

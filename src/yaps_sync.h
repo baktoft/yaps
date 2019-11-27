@@ -1,14 +1,3 @@
-#include <TMB.hpp>
-using namespace density;
-
-template<class Type>
-bool isNA(Type x){
-  return R_IsNA(asDouble(x));
-}
-
-template<class Type>
-Type objective_function<Type>::operator() ()
-{
 	DATA_ARRAY(H);
 	DATA_ARRAY(toa_offset); 
 	DATA_IVECTOR(sync_tag_idx_vec);
@@ -105,5 +94,4 @@ Type objective_function<Type>::operator() ()
 	REPORT(dist_mat);
 	
 	return nll;
-}
 

@@ -31,8 +31,7 @@ getSyncModel <- function(inp_sync, silent=TRUE, fine_tune=TRUE){
 		# config(DLL="yaps_sync")
 		# ## Reduce memory peak of a parallel model by creating tapes in serial
 		# config(tape.parallel=0, DLL="yaps_sync")
-
-		obj <- TMB::MakeADFun(data = dat_tmb, parameters = params, random = random, DLL = "yaps_sync", inner.control = list(maxit = 100), silent=silent)
+		obj <- TMB::MakeADFun(data = dat_tmb, parameters = params, random = random, DLL = "yaps", inner.control = list(maxit = 100), silent=silent)
 		
 		if(silent){
 			opt <- suppressWarnings(stats::nlminb(inits,obj$fn,obj$gr))
@@ -196,6 +195,7 @@ getDatTmbSync <- function(sync_dat, time_keeper_idx, inp_toa_list, fixed_hydros_
 	toa_offset <- inp_toa_list$toa - offset_vals$offset_levels[offset_vals$offset_idx]
 
 	dat_tmb_sync <- list(
+		model = "yaps_sync",
 		H=H,
 		toa_offset=toa_offset,
 		sync_tag_idx_vec = inp_toa_list$sync_tag_idx_vec,

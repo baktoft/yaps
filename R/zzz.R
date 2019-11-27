@@ -27,7 +27,6 @@ if (getRversion() >= "2.15.1"){
 
 
 #' @useDynLib yaps
-#' @useDynLib yaps_sync
 .onUnload <- function (lib) {
   library.dynam.unload("yaps", lib)
 }

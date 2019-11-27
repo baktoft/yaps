@@ -266,6 +266,7 @@ There are surely many other formats out there - please tell us, if you want a sp
 + Check inp_sync fuck ups in toa-matrix when removing outliers!!!
 + Add documentation to all functions...
 + Add temporal plot of residuals to plotSyncModelResids()
++ Add notes about burst interval distributions...
 + Change from ping to time in plotSyncModelCheck( by="ping")
 + update link to old readme, when the new one is online
 + Add figure showing hydrophone drifts to visualoze the need of sync

@@ -9,18 +9,21 @@ plotSyncModelResids <- function(sync_model, by='overall'){
 		# print(quantile(eps_long$E_m, probs=c(0.01, 0.025, 0.05, 0.25, 0.5, 0.57, 0.95, 0.975, 0.99)))
 		p <- ggplot2::ggplot(data=eps_long) + geom_histogram(aes(E_m), bins=50)
 		p <- p + geom_vline(xintercept=c(quantile(eps_long$E_m, probs=c(0.01, 0.05, 0.95, 0.99))), col="red", lty=c(3,2,2,3))
+		p <- p + xlab("Residual (m)")
 	} else if(by == 'sync_tag'){
-		p <- ggplot2::ggplot(data=eps_long) + geom_boxplot(aes(x=factor(hydro_idx), y=E_m)) 
+		p <- ggplot2::ggplot(data=eps_long) 
+		p <- p + geom_boxplot(aes(x=factor(hydro_idx), y=E_m)) 
 		p <- p + geom_vline(xintercept=seq(0, length(unique(eps_long$hydro_idx)), by=5), lty=3, col="red")
-		p <- p + geom_vline(xintercept=seq(0, length(unique(eps_long$hydro_idx)), by=10), lty=2, col="red")
 		p <- p + geom_hline(yintercept=0, col="red") + facet_wrap(.~sync_tag_idx) 
 		# p <- p + labs(title="Sync model residuals - facet by sync_tag_idx") + xlab("hydro_idx")
+		p <- p + ylab("Residual (m)")
 		p <- p + xlab("hydro_idx")
 	} else if(by == 'hydro'){
 		p <- ggplot2::ggplot(data=eps_long) + geom_boxplot(aes(x=factor(sync_tag_idx), y=E_m)) 
 		p <- p + geom_hline(yintercept=0, col="red") + facet_wrap(~hydro_idx) 
 		# p <- p + labs(title="Sync model residuals - facet by hydro_idx") + xlab("sync_tag_idx")
 		p <- p + xlab("sync_tag_idx")
+		p <- p + ylab("Residual (m)")
 	} else if(by == 'quantiles'){
 		quants <- eps_long[, .(q01=quantile(E_m, probs=c(0.01)), q05=quantile(E_m, probs=c(0.05)), q10=quantile(E_m, probs=c(0.10)), q25=quantile(E_m, probs=c(0.25)), q50=quantile(E_m, probs=c(0.50)), q75=quantile(E_m, probs=c(0.75)), q90=quantile(E_m, probs=c(0.90)), q95=quantile(E_m, probs=c(0.95)), q99=quantile(E_m, probs=c(0.99))), by=c('hydro_idx','sync_tag_idx')]
 		thres <- 00
@@ -57,11 +60,11 @@ plotSyncModelCheck <- function(sync_model, by=""){
 	if(by == "sync_bin_sync"){
 		plot_dat <- sync_check_dat[, .(med_delta=median((delta))), by=c('sync_tag_idx', 'focal_hydro_idx', 'hydro_idx', 'offset_idx')]
 		p <- ggplot2::ggplot(data=plot_dat) + geom_boxplot(aes(x=factor(offset_idx), y=med_delta)) + facet_wrap(~sync_tag_idx)
-		p <- p + xlab("Sync bin")
+		p <- p + xlab("Sync period")
 	} else if(by == "sync_bin_hydro"){
 		plot_dat <- sync_check_dat[, .(med_delta=median((delta))), by=c('sync_tag_idx', 'focal_hydro_idx', 'hydro_idx', 'offset_idx')]
 		p <- ggplot2::ggplot(data=plot_dat) + geom_boxplot(aes(x=factor(offset_idx), y=med_delta)) + facet_wrap(~focal_hydro_idx)
-		p <- p + xlab("Sync bin")
+		p <- p + xlab("Sync period")
 	} else if(by == "sync_tag"){
 		plot_dat <- sync_check_dat[, .(med_delta=median((delta))), by=c('sync_tag_idx', 'focal_hydro_idx', 'hydro_idx')]
 		p <- ggplot2::ggplot(data=plot_dat) + geom_boxplot(aes(x=factor(focal_hydro_idx), y=med_delta)) + facet_wrap(~sync_tag_idx)

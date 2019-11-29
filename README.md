@@ -5,28 +5,85 @@
 
 ### A complete walk-through taking you from raw data, through synchronization to final tracks
 
-YAPS was introduced in 2017 as a manufacturer agnostic alternative to
-proprietary and vendor specific options. The paper introducing YAPS can
-be downloaded (open access)
-[here](https://www.nature.com/articles/s41598-017-14278-z.pdf). While
-YAPS is open-source and transparant, it is not (nor has it been intended
-to be) a turn-key and/or a one-size-fits-all solution. Although the YAPS
-model is open and transparent, the process from raw data downloaded from
-hydrophones to final tracks is long and sometimes challenging.
-Especially, the very important synchronization of hydrophone arrays have
-proven to be a major obstacle for many potential users.
+YAPS (Yet Another Position Solver) was introduced in 2017 as an
+alternative to proprietary and vendor specific software for estimating
+position and tracks of aquatic animals tagged with acoustic
+transmitters.
+
+Some motivations for developing and using YAPS:
+
+  - **Transparency and reproducibility.** These concepts should be
+    fundamental in all science and scientific methodology. However,
+    available proprietary software for estimating positions lack
+    transparency and literally constitute “Black Boxes” making
+    reproducibility very challenging, if not impossible.
+
+  - **Open source.** In addition to complete transparency, publishing
+    YAPS open-source enables the user community to e.g. implement study
+    specific adaptations, tweak parts of the estimation models and
+    contribute to the continued development. Oh, and it is available
+    free of charge. We urge users to submit improvements, refinements
+    etc. to the main YAPS repository on github, thereby helping future
+    users.
+
+  - **Vendor agnostic.** The basic input to YAPS is plain matrices of
+    time-of-arrivals of transmitter signals detected by hydrophones. The
+    brand of hydrophones and transmitters are irrelevant. This enables
+    more direct comparisons of tracks and derived behavioural
+    quantifications between studies using varying vendors.
+
+  - **Get the most out of your data.** To our knowledge, all vendor
+    supplied tracking software process data from individual pings
+    independently from other pings. By doing this, these algorithms
+    explicitly discard collected data when pings are detected by less
+    than three hydrophones. However, these data are valuable for
+    estimating tracks if used correctly, and can dramatically increase
+    overall data yield from your study (see e.g. Fig.6 in YAPS paper).
+
+  - **Get the best out of your data.** The holistic
+    complete-track-oriented approach used by YAPS, have proven to be
+    superior in many instances to the isolated single-ping-oriented
+    approach used in vendor software. The single-ping approach is prone
+    to suffer from numerical challenges, which can lead to varying
+    degrees of spurious outliers, multiple position estimates from
+    individual pings (sometimes known as “ghost positions”) and overall
+    increased track jaggedness and uncertainties. These artefacts often
+    necessitate the use of post-processing filters and/or smoothing
+    techniques. In contrast, many of these irregularities are in most
+    circumstances handled well by YAPS and resulting tracks are often
+    ready for use in further analyses. Note, we are not stating that
+    YAPS estimated tracks never need or will benefit from
+    post-processing – it depends very much on study specifics such as
+    the acoustic environment and transmitter burst interval type and
+    duration. However, using YAPS estimated tracks as the starting point
+    for post-processing have in all use cases we know of been vastly
+    superior to using tracks estimated by vendor software.
+
+Although YAPS development was focused on openness, transparency and
+flexibility, YAPS is not (nor has it been intended to be) a turn-key
+and/or a one-size-fits-all solution. While YAPS itself is open and
+transparent, the process from collecting raw data in the field to having
+final estimated tracks is long and sometimes challenging. Especially,
+the very important process of synchronizing arrays have proven to be a
+major obstacle for many potential users.
 
 This how-to guide is intended to provide users with an example work-flow
 to start from. The guide walks through the entire workflow from raw data
-collected by PPM-based systems (Vemco VR2/VPS) to final tracks. It shows
-how to use new functions added to YAPS enabling an easy and approachable
-(but fine tuned) synchronization.
-
-Click here for a [quick example running YAPS on simulated
-data](#exampleSimuluation)
+collected by PPM-based systems (e.g. Vemco VR2 and Thelma TBR700) to
+final tracks. It shows how to use new functions added to YAPS enabling
+an easy and approachable (but fine tuned) synchronization. The guide
+does not cover any field specific steps in the work-flow
+(e.g. hydrophone array layout and fish tagging) as this information is
+available in other sources. We do advice users to make informed
+decisions regarding hydrophone array layout, to obtain precise positions
+of all hydrophones using high quality gps units and to reduce the
+potential for receiver movement during the study as much as possible.
 
 ## Disclaimer
 
+**YAPS obeys the fundamental rule of “garbage in, garbage out”.
+Therefore, DO NOT expect YAPS to salvage a poorly designed study, nor to
+turn crappy data into gold.**  
 We have attempted to make both synchronization process and track
 estimation user-friendly. However, it is not trivial to synchronize
 hydrophones (let alone automating the process) based on detections in a
@@ -45,7 +102,7 @@ tweaks is long and growing, so stay tuned for updates.
 
 ### About synchronization in YAPS
 
-Regardles of positioning algorithm used, synchronization of the
+Regardles of which positioning algorithm is used, synchronization of the
 hydrophone array prior to track estimation is *extremely* important for
 quality of the final tracks and great care should be taken to achieve as
 good as possible sync. The sync method included in YAPS has several
@@ -54,16 +111,16 @@ avoiding sequential propagating synchronization that might lead to error
 accumulation in the outer ends of the array. Additionally, it allows for
 *estimation of hydrophone positions*, which can be usefull if the
 initial hydrophone positions are uncertain e.g. due to deep water,
-strong current or low-level GPS. The internal clock in all hydrophones
-drift in different directions and with varying speeds affected by water
-temperature. Therefore, temporally varying non-linear correction is
-needed. The sync method employed by YAPS is based on a user-specified
-number of hydrophone-specific second-order polynomials. This approach,
-in combination with the whole-array-at-once, have proved to give very
-good synchronization. Perhaps most importantly, synchronization in YAPS
-is aimed at being user-friendly. To meet this, we have tried to keep all
-the nitty-gritty stuff inside easy-to-use functions and kept the amount
-of user decisions at a minimum.
+strong current or low-accuracy GPS. The internal clock in all
+hydrophones drift in different directions and the rate of drift is
+affected by water temperature. Therefore, temporally flexible non-linear
+correction is needed. The sync method employed by YAPS is based on a
+number of hydrophone-specific second-order polynomials. This
+whole-array-at-once, have proved to give very good synchronization.
+Perhaps most importantly, synchronization in YAPS is aimed at being
+user-friendly. To meet this, we have attempted to keep all the
+nitty-gritty stuff inside easy-to-use functions and kept the amount of
+user decisions at a minimum.
 
 ## Installation
 
@@ -86,7 +143,8 @@ Then install the latest version of YAPS with:
 
 ## Included example data
 
-Two data sets are included in YAPS serving as examples:
+Two data sets are included in the package to serve as examples for how
+to use YAPS:
 
 1.  **ssu1**: A tiny data set containing short test tracks from Florida
     Bay. 19 hydrophones, \~24 hour data, \~1 hour test track, Vemco VR2
@@ -128,20 +186,24 @@ or [go here](#prepDetectionsHelp)
     described [here](#prepDetectionsHelp).
 
 2.  **Define sync parameters**. Each data set is different in terms of
-    e.g. array configuration, precission and accuracy of hydrophone
+    e.g. array configuration, precision and accuracy of hydrophone
     positioning, acoustic environment and detection probability, sync
-    tag configuration, manufacturer etc.
+    tag configuration, manufacturer etc. A number of parameters are
+    available to setup the synchronization process for best results.
     
       - `max_epo_diff` Hydrophones are assumed to be running on at least
         somewhat similar time, so that ping trains from sync tags can be
-        aligned correctly across all hydros. `max_epo_diff` sets the
-        upper threshold for differences in TOA of sync tags. Best
+        aligned correctly across all hydrophones. `max_epo_diff` sets
+        the upper threshold for differences in TOA (Time Of Arrival) of
+        a sync tag transmission detected at each hydrophone. Best
         parameter value depends on burst rate of sync tags and how far
-        apart the internal clocks of the hydros are prior to
+        apart the internal clocks of the hydrophones are prior to
         synchronization. A bit less than half of minimum sync tag burst
-        rate is a good starting choice.
+        rate is a good starting choice. A linear time correction applied
+        to the detection data prior to synchronization can improve the
+        alignment process dramitically.
     
-      - `min_hydros` To ensure connectivity throughtout the array, pings
+      - `min_hydros` To ensure connectivity throughout the array, pings
         from sync tags need to be detected by multiple hydrophones and
         all hydrophones need to detect sync tags also detected by other
         hydrophones. `min_hydros` sets the lower threshold of how many
@@ -149,14 +211,14 @@ or [go here](#prepDetectionsHelp)
         included in the sync process. Should be as high as possible
         while observing that all hydrosphones are contributing. If too
         low, isolated hydrophones risk falling out completely. Future
-        versions will work towards automising this.
+        versions will work towards automation of this step.
     
       - `time_keeper_idx` Index of the hydrophone to use as time keeper.
         Could e.g. be the one with smallest overall clock-drift.
     
       - `fixed_hydros_idx` Vector of hydro idx’s for all hydrophones
         where the position is assumed to be known with adequate accuracy
-        and precission. Include as many as possible as fixed hydros to
+        and precision. Include as many as possible as fixed hydros to
         reduce overall computation time and reduce overall variability.
         As a bare minimum two hydros need to be fixed, but we strongly
         advice to use more than two.
@@ -180,7 +242,7 @@ or [go here](#prepDetectionsHelp)
 
 4.  **Run** the sync model using `getSyncModel()`. This can take a long
     time for larger data sets including more hydrophones and/or covering
-    longer time periods. It might a good idea to start with the first
+    longer time periods. It might be a good idea to start with the first
     few days to make sure everything looks ok before syncing the entire
     data set. Also consider the parameter `keep_rate` in `getInpSync()`.
 
@@ -189,9 +251,9 @@ or [go here](#prepDetectionsHelp)
     plots can be used to diagnose if the overall model fit is good.  
     Function `plotSyncModelResids()` plots sync model residuals (in
     meter) - sync model is ok if these residuals are centered closely
-    around 0. If fixed hydros and/or sync tags consistently have large
-    deviations from zero, it can indicate that position accuracy of the
-    hydrophone is sub-optimal. Either obtain a better position
+    around 0. If fixed hydrophones and/or sync tags consistently have
+    large deviations from zero, it may indicate that position accuracy
+    of the hydrophone is sub-optimal. Either obtain a better position
     (typically not possible) or allow th eposition to be non-fixed
     (i.e. remove from `fixed_hydros_idx`).  
     Function `plotSyncModelCheck()` apply the sync model to the sync
@@ -207,59 +269,104 @@ tracks.
 
 ### Synchronizing - ssu1
 
+1.  Already taken care as we are using example data.
+
+2.  set the parameters…
+
+<!-- end list -->
+
 ``` r
-# 1. Already taken care as we are using example data.
-
-# 2. set the parameters...
-max_epo_diff <- 120
-min_hydros <- 2
-time_keeper_idx <- 5
-fixed_hydros_idx <- c(2:3,6, 8,11,13:17)
-n_offset_day <- 2
-n_ss_day <- 2
-
-# 3. get input data ready for getSyncModel()...
-inp_sync <- getInpSync(sync_dat=ssu1, max_epo_diff, min_hydros, time_keeper_idx, fixed_hydros_idx, 
-        n_offset_day, n_ss_day)
-
-# 4. fit the sync model...
-sync_model <- getSyncModel(inp_sync, silent=TRUE)
+    max_epo_diff <- 120
+    min_hydros <- 2
+    time_keeper_idx <- 5
+    fixed_hydros_idx <- c(2:3,6, 8,11,13:17)
+    n_offset_day <- 2
+    n_ss_day <- 2
 ```
 
+3.  get input data ready for getSyncModel()…
+
+<!-- end list -->
+
 ``` r
-# 5a. Plot model residuals...
-plotSyncModelResids(sync_model, by='overall')
+    inp_sync <- getInpSync(sync_dat=ssu1, max_epo_diff, min_hydros, time_keeper_idx, fixed_hydros_idx, 
+        n_offset_day, n_ss_day)
+```
+
+4.  fit the sync model…
+
+<!-- end list -->
+
+``` r
+    sync_model <- getSyncModel(inp_sync, silent=TRUE)
+```
+
+5.  a Plot model residuals (see code block below for explanation)…
+
+<!-- end list -->
+
+``` r
+# Overall histogram of sync model residuals (converted to meter). 
+#   Vertical red lines indicate 1 %, 5 %, 95 % and 99 % quantiles.
+plotSyncModelResids(sync_model, by='overall') 
+
+# Boxplots of sync model residuals (in meter) grouped by sync tags (panel) and hydrophone (x-axis). 
+#  Vertical red lines added for every fifth hydro_idx to aid in identifying troublesome hydrophones. 
 plotSyncModelResids(sync_model, by='sync_tag')
+
+# Boxplots of sync model residuals (in meter) grouped by sync tags (x-axis) and hydrophone (panels).  
 plotSyncModelResids(sync_model, by='hydro')
 ```
 
 ![](man/figures/README_sync-plotSyncModelResids-1.png)![](man/figures/README_sync-plotSyncModelResids-2.png)![](man/figures/README_sync-plotSyncModelResids-3.png)
 
+5.  b …and model check plots. These plots apply `sync_model` to the data
+    and compare *true* hydrophones \<-\> sync tags distances to
+    *estimated* distances based on the synced data (delta). Closer to
+    zero is better. See code block below for further info about each
+    plot.
+
+<!-- end list -->
+
 ``` r
-# 5b. ...and model check plots...
+# Delta grouped by sync tag (panel) and sync period (x-axis)
 plotSyncModelCheck(sync_model, by="sync_bin_sync")
+
+# Delta grouped by hydro_idx (panel) and sync period (x-axis)
 plotSyncModelCheck(sync_model, by="sync_bin_hydro")
+
+# Delta grouped by sync tag (panel) and hydro_idx (x-axis)
 plotSyncModelCheck(sync_model, by="sync_tag")
+
+# Delta grouped by hydro_idx (panel) and sync tag (x-axis)
 plotSyncModelCheck(sync_model, by="hydro")
 ```
 
 ![](man/figures/README_sync-plotSyncModelCheck-1.png)![](man/figures/README_sync-plotSyncModelCheck-2.png)![](man/figures/README_sync-plotSyncModelCheck-3.png)![](man/figures/README_sync-plotSyncModelCheck-4.png)
 
+6.  Apply the sync model to all detection data. Synced timestamps are
+    found in column eposync
+
+<!-- end list -->
+
 ``` r
-# 6. Apply the sync model to all detection data. Synced timestamps are found in column eposync
 detections_synced <- applySync(toa=ssu1$detections, hydros=ssu1$hydros, sync_model)
 head(detections_synced, n=3)
-#>                     ts   tag        epo  frac serial hydro_idx    epofrac    eposync
-#> 1: 2019-09-09 16:05:53 59335 1568045153 0.631 128368         6 1568045154 1568045154
-#> 2: 2019-09-09 16:07:46 59334 1568045266 0.644 128368         6 1568045267 1568045267
-#> 3: 2019-09-09 16:09:21 59337 1568045361 0.932 128368         6 1568045362 1568045362
+#>                     ts   tag        epo  frac serial    epofrac hydro_idx
+#> 1: 2019-09-09 16:05:53 59335 1568045153 0.631 128368 1568045154         6
+#> 2: 2019-09-09 16:07:46 59334 1568045266 0.644 128368 1568045267         6
+#> 3: 2019-09-09 16:09:21 59337 1568045361 0.932 128368 1568045362         6
+#>       eposync
+#> 1: 1568045154
+#> 2: 1568045267
+#> 3: 1568045362
 ```
 
 ### Running YAPS - ssu1
 
 Finally, run the synchronized data through YAPS - needs a little
 compiling beforehand.  
-The only tracks to estimate from this data set is test tracks performed
+The only tracks to estimate from this data set are test tracks performed
 to test feasibility of deploying an array at this location. In the
 original data set, several transmitters with different power and burst
 rates were used. Here we focus on a single of these: ID 15266, Vemco V9,
@@ -291,10 +398,14 @@ yaps_out_ssu1 <- runYaps(inp_ssu1, silent=TRUE) # Default parameter values shoul
 
 ### Plot YAPS results - ssu1
 
-In plots below black and broken line is the gps (i.e. true track) while
-red line is YAPS results.
+Plot below shows true track (gps) as black hatched line while red line
+is YAPS tracking results. Green symbols indicate hydrophone positions.
+
 ![](man/figures/README_sync-plotYapsTrack-1.png)<!-- -->
 
+X and Y coordinates of true track (black) and estimated track(red).
+Broken red lines indicate estimated track +- standard error of position
+estimate.  
 ![](man/figures/README_sync-plotYapsOutDetails-1.png)<!-- -->
 
 -----
@@ -304,14 +415,15 @@ red line is YAPS results.
   - Current version assumes all sync tags are co-located with
     hydrophones (which is usually the case). If needed, future versions
     will allow for other options.
-  - For non-fixed hydros, z is assumed to be known with much higher
-    precision than x and y.
+  - For hydrophones where improved position is desired/needed (i.e. not
+    in the `fixed_hydros_idx` vector), z is assumed to be known with
+    much higher precision than x and y.
   - Only use data from periods where entire array is up, stationary and
     running - otherwise, make sure to NA invalid data…
   - Ensuring initial accuracy and precision of hydrophone positions is
     as good as possible is probably the easiest way to improve final
-    results. We recommend to use a DGPS/GNSS instead of low-level
-    consumer grade devices.
+    results. We recommend to use a differential GPS/GNSS unit instead of
+    low-accuracy consumer grade devices.
 
 -----
 
@@ -320,17 +432,22 @@ red line is YAPS results.
 #### How to create tables `hydros` and `detections`
 
 The `detections` tables contain all detections and can be constructed
-from csv-files exported from vendor software (remember to enable
-millisecond time precision in export options, if needed). Assuming the
-format follows the example shown below, the function `prepDetections()`
-can be used. Data should be truncated to only cover the period you want
-to synchronize - i.e. get rid of all detections before and after the
-study period. Also consider to exclude data recorded while the system is
-only partially in place - i.e. during putting out and downloading
-hydrophones.  
-There are surely many other formats out there - please tell us, if you
-want a specific format added to `prepDetections()`. Future versions will
-allow extraction of detections directly from the vendor provided SQLite
+from csv-files exported from vendor software (millisecond or better time
+resolution is necessary; remember to enable this in export options, if
+needed). We advise to, if possible, apply a linear time correction on
+the detection data based on overall drift of hydrophone internal clock.
+Assuming the format follows the example shown below, the function
+`prepDetections()` can be used. Data should be truncated to only cover
+the period you want to synchronize - i.e. get rid of all detections
+before and after the study period. Also consider to exclude data
+recorded while the system is only partially in place - i.e. during
+installation, retrieval and/or downloading hydrophones. A minimum is to
+exclude data from each hydrophone in periods when it was not deployed at
+the recording position. Data removal is likely most easily done after
+import to R.  
+There are many other formats out there - please tell us, if you want a
+specific format added to `prepDetections()`. Future versions will allow
+extraction of detections directly from the vendor provided SQLite
 database.
 
 ``` r
@@ -338,10 +455,14 @@ database.
     fn <- system.file("extdata", "VUE_Export_ssu1.csv", package="yaps") 
     vue <- data.table::fread(fn, fill=TRUE)
     head(vue, n=3)
-#>        Date and Time (UTC)    Receiver    Transmitter Transmitter Name Transmitter Serial Sensor Value Sensor Unit Station Name Latitude Longitude
-#> 1: 2019-09-09 16:04:11.193 VR2W-128355 A69-1602-59335               NA                 NA           NA          NA       CESI10       NA        NA
-#> 2: 2019-09-09 16:04:12.574 VR2W-128371 A69-1602-59336               NA                 NA           NA          NA       CESI15       NA        NA
-#> 3: 2019-09-09 16:04:43.953 VR2W-128959 A69-1602-59335               NA                 NA           NA          NA       CESI12       NA        NA
+#>        Date and Time (UTC)    Receiver    Transmitter Transmitter Name
+#> 1: 2019-09-09 16:04:11.193 VR2W-128355 A69-1602-59335               NA
+#> 2: 2019-09-09 16:04:12.574 VR2W-128371 A69-1602-59336               NA
+#> 3: 2019-09-09 16:04:43.953 VR2W-128959 A69-1602-59335               NA
+#>    Transmitter Serial Sensor Value Sensor Unit Station Name Latitude Longitude
+#> 1:                 NA           NA          NA       CESI10       NA        NA
+#> 2:                 NA           NA          NA       CESI15       NA        NA
+#> 3:                 NA           NA          NA       CESI12       NA        NA
     detections <- prepDetections(raw_dat=vue, type="vemco_vue")
     head(detections, n=3)
 #>                     ts   tag        epo frac serial
@@ -408,43 +529,3 @@ database.
     lines(y~x, data=teleTrack)
     points(hy~hx, data=hydros, col="green", pch=20, cex=3)
     lines(pl$Y~pl$X, col="red")
-
-## TO DO
-
-  - Check inp\_sync fuck ups in toa-matrix when removing outliers\!\!\!
-  - Add documentation to all functions…
-  - Add temporal plot of residuals to plotSyncModelResids()
-  - Add notes about burst interval distributions…
-  - Change from ping to time in plotSyncModelCheck( by=“ping”)
-  - update link to old readme, when the new one is online
-  - Add figure showing hydrophone drifts to visualoze the need of sync
-  - Add option to extract data from vendor SQLite
-  - Add option to split large data set into smaller chunks for sync
-  - Add a little background on positioning fish…
-  - Add logo to github profile
-  - Add functions to check rbi\_min, rbi\_max is correct and
-    corresponding to what is in TOA when running YAPS
-  - Add example data from Lake Hald\!\!\!
-  - Seems to be something wrong with anchor-links in github-version…
-  - Add network analysis to visualize array connectivity
-  - Add logic to downsampleToaList() to optimize keeping remote hydros
-    in
-  - Add function checking for hydos with consistently large residuals in
-    sync\_model and suggesting to make them non-fixed
-  - Add function checkInpSync():
-      - ensure all hydros have data for all offsets
-  - Add spatial check and compile of sync-hydro-pairs to exclude from
-    shape file
-  - Improve getParamsXYFromCOA() by using an actual CoA-method instead
-    of just averaging detecting hydros
-  - Add description of hald data set and examples
-  - Add details about tables hydros and gps in Appendix - how to prepare
-    data
-  - Add details to prepDetections()
-  - Add 3D to both YAPS and sync\!\!\!
-  - Move example data to external package and get YAPS on CRAN
-  - Add list of papers actually using YAPS - incl. Vanwyck’s thesis
-  - Add logo to github :-)
-  - Add list of locations/species tracked using YAPS
-  - Build github pages
-  - <https://github.com/kaskr/adcomp/issues/233>

@@ -20,7 +20,7 @@ getInpSyncHInfo <- function(sync_dat){
 #' @inheritParams getInpSync
 #' @noRd
 appendDetections <- function(sync_dat){
-	sync_dat$detections[, hydro_idx := data.table::merge.data.table(sync_dat$detections, sync_dat$hydros[, c('serial','idx')], by='serial', sort=FALSE)$idx]
+	sync_dat$detections[, hydro_idx := merge(sync_dat$detections, sync_dat$hydros[, c('serial','idx')], by='serial', sort=FALSE)$idx]
 	if(!"epo" %in% colnames(sync_dat$detections)){
 		sync_dat$detections[, epo := as.numeric(ts)]
 	}

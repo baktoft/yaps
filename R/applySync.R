@@ -31,7 +31,7 @@ applySync <- function(toa, hydros="", sync_model){
 
 		if(!'epofrac' %in% colnames(toa)) {toa[, epofrac:=epo+frac]}
 		if(!'hydro_idx' %in% colnames(toa)){
-			toa[, hydro_idx := data.table::merge.data.table(toa, hydros[, c('serial','idx')], by='serial', sort=FALSE)$idx]
+			toa[, hydro_idx := merge(toa, hydros[, c('serial','idx')], by='serial', sort=FALSE)$idx]
 		}
 
 		sync_dt <- data.table::data.table()

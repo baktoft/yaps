@@ -45,6 +45,10 @@ getDatTmb <- function(hydros, toa, E_dist, n_ss, pingType, rbi_min, rbi_max, ss_
 	
 	toa <- toa - T0
 	
+	# allowing slight out-of-bounds BIs
+	rbi_min <- rbi_min - rbi_min * 0.05
+	rbi_max <- rbi_max + rbi_max * 0.05
+	
 	# attempting to make sure toa is oriented correct
 	if(!nrow(toa) == nrow(hydros)){
 		toa <- t(toa)

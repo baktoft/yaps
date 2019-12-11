@@ -12,7 +12,7 @@ plotYaps <- function(inp, yaps_out, type="map"){
 	pl$Y <- pl$Y + inp$inp_params$Hy0
 	pl$top <- pl$top + inp$inp_params$T0
 	
-	hydros <- cbind(inp$datTmb$H[,1] + inp$inp_params$Hx0, inp$datTmb$H[,2] + inp$inp_params$Hy0)
+	hydros <- data.frame(hx=cbind(inp$datTmb$H[,1] + inp$inp_params$Hx0, hy=inp$datTmb$H[,2] + inp$inp_params$Hy0))
 	
 	if(type=="map"){
 		plot(hy~hx, data=hydros, col="green", pch=20, cex=2, asp=1, xlab="UTM_X", ylab="UTM_Y")

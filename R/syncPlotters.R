@@ -29,7 +29,7 @@ plotSyncModelResids <- function(sync_model, by='overall'){
 		thres <- 00
 		out_quants <- quants[ abs(q10) > thres | abs(q90) > thres]
 		p <- ggplot2::ggplot(data=out_quants) + 
-		geom_point(aes(x=hydro_idx, y=sync_tag_idx, col=abs(q50)), size=5) + 
+		geom_point(aes(x=hydro_idx, y=factor(sync_tag_idx), col=abs(q50)), size=5) + 
 		viridis::scale_color_viridis(option="magma") +
 			labs(y = "sync tag idx")
 	}
@@ -71,11 +71,11 @@ plotSyncModelCheck <- function(sync_model, by=""){
 	} else if(by == "sync_tag"){
 		plot_dat <- sync_check_dat[, .(med_delta=median((delta))), by=c('sync_tag_idx', 'focal_hydro_idx', 'hydro_idx')]
 		p <- ggplot2::ggplot(data=plot_dat) + geom_boxplot(aes(x=factor(focal_hydro_idx), y=med_delta)) + facet_wrap(~sync_tag_idx)
-		p <- p + xlab('hydro_idx') + scale_x_discrete(breaks = pretty(unique(plot_dat$focal_hydro_idx)))
+		p <- p + xlab('hydro_idx') + ggplot2::scale_x_discrete(breaks = pretty(unique(plot_dat$focal_hydro_idx)))
 	} else if(by == "hydro"){
 		plot_dat <- sync_check_dat[, .(med_delta=median((delta))), by=c('sync_tag_idx', 'focal_hydro_idx', 'hydro_idx')]
 		p <- ggplot2::ggplot(data=plot_dat) + geom_boxplot(aes(x=factor(sync_tag_idx), y=med_delta)) + facet_wrap(~focal_hydro_idx)
-		p <- p + xlab('sync_tag_idx') + scale_x_discrete(breaks = pretty(unique(plot_dat$sync_tag_idx)))
+		p <- p + xlab('sync_tag_idx') + ggplot2::scale_x_discrete(breaks = pretty(unique(plot_dat$sync_tag_idx)))
 	}
 	p <- p + ylab("Delta (m)")
 	print(p)

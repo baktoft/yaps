@@ -15,7 +15,11 @@ runYaps <- function(inp, maxIter=1000, getPlsd=TRUE, getRep=TRUE, silent=TRUE){
 			inner.control = list(maxit = maxIter), 
 			silent=silent
 		)
-	opt <- stats::nlminb(inp$inits,obj$fn,obj$gr)
+	if(!silent){
+		opt <- stats::nlminb(inp$inits,obj$fn,obj$gr)
+	} else {
+		suppressWarnings(opt <- stats::nlminb(inp$inits,obj$fn,obj$gr))
+	}
 	obj$fn()
 	pl <- obj$env$parList()   # List of estimates
 	if(getRep){

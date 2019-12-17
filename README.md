@@ -60,6 +60,7 @@ str(outTmb)
 
 # Estimates in pl
 pl <- outTmb$pl
+yaps_out <- data.table::data.table(X=pl$X + inp$inp_params$Hx0, Y=pl$Y + inp$inp_params$Hy0)
 
 # Error estimates in plsd
 plsd <- outTmb$plsd
@@ -68,5 +69,5 @@ plsd <- outTmb$plsd
 plot(y~x, data=trueTrack, type="l", xlim=range(hydros$hx), ylim=range(hydros$hy), asp=1)
 lines(y~x, data=teleTrack)
 points(hy~hx, data=hydros, col="green", pch=20, cex=3)
-lines(pl$Y~pl$X, col="red")
+lines(Y~X, data=yaps_out, col="red")
 ```

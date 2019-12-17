@@ -1,7 +1,7 @@
 Package: yaps
 Title: Track estimation using YAPS (Yet Another Positioning Solver)
-Version: 1.2.0.9000
-Authors@R: c(	person("Henrik", "Baktoft", email = "hba@aqua.dtu.dk", role = c("cre")),
+Version: 1.2.0.9100
+Authors@R: c(	person("Henrik", "Baktoft", email = "hba@aqua.dtu.dk", role = c("cre", "aut")),
 				person("Karl", "Gjelland", role=c("aut")),
 				person("Uffe H.", "Thygesen", role=c("aut")),
 				person("Finn", "Økland", role=c("aut"))

@@ -32,6 +32,13 @@ if (getRversion() >= "2.15.1"){
 }
 #' @importFrom Rcpp sourceCpp
 .onAttach <- function(lib, pkg) {
+	new_version_on_github <- newPkgVersion()
     ver <- utils::packageVersion('yaps')
-    packageStartupMessage(paste0('Welcome to yaps, version: ', ver))
+	out_msg <- paste0('Welcome to yaps (v', ver,')')
+	if(new_version_on_github) {
+		out_msg <- paste0(out_msg, '\n There seems to be a new version of yaps available on github - please consider updating using: \n devtools::install_github("baktoft/yaps")')
+	}
+	out_msg <- paste0(out_msg, "\n Please let us know if you experience any trouble using yaps.")
+	
+    packageStartupMessage(out_msg)
  }

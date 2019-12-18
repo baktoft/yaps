@@ -1,25 +1,157 @@
-# YAPS - (Yet Another Positioning Solver) 
-Based on the original [YAPS](https://www.nature.com/articles/s41598-017-14278-z.pdf) presented in Baktoft, Gjelland, Økland & Thygesen (2017): Positioning of aquatic animals based on time-of-arrival and random walk models using YAPS (Yet Another Positioning Solver). [DOI:10.1038/s41598-017-14278-z](https://www.nature.com/articles/s41598-017-14278-z.pdf)  
 
-A few changes have been made to allow track estimation from random burst interval transmitters (by popular demand) and to improve performance.  
+<!-- README_sync.md is generated from README_sync.Rmd. Please edit that file -->
 
-To use on own data, compile a toa-matrix based on synchronized hydrophone data and replace the hydros dataframe with actual hydrophone positions. Jenna Vergeynst have created some functions (python) to achieve this - see her github repos for details [time_synchronization](https://github.com/JennaVergeynst/time_synchronization) and [prepare_toa_for_yaps](https://github.com/JennaVergeynst/prepare_toa_for_yaps).
+# YAPS - (Yet Another Positioning Solver)
 
-The yaps package requires [devtools](https://cran.r-project.org/web/packages/devtools/index.html) and [TMB](https://github.com/kaskr/adcomp).  
-Please see for [instructions](https://github.com/kaskr/adcomp/wiki/Download) on TMB installation. Remember to install [Rtools](https://cran.r-project.org/bin/windows/Rtools/) as specified in the TMB documentation.
+<img src="../yaps_logo_lowRes.png" align="right" width="200" /> Welcome
+to the `yaps` repository. The `yaps` package is based on the original
+YAPS presented in Baktoft, Gjelland, Økland & Thygesen (2017):
+[Positioning of aquatic animals based on time-of-arrival and random walk
+models using YAPS (Yet Another Positioning
+Solver)](https://www.nature.com/articles/s41598-017-14278-z.pdf)
 
-Installation:
+To use `yaps` on own data, you need to compile a TOA-matrix based on
+synchronized hydrophone data and replace the hydros dataframe with
+actual hydrophone positions. A complete step-by-step guide on how to do
+this, can be found in our pre-print paper [Opening the black box of fish
+tracking using acoustic
+telemetry](https://www.biorxiv.org/content/10.1101/2019.12.16.877688v1).
+The example in this guide is based on data collected using a 69 kHz
+PPM-based system (Vemco VR2). We are working towards adding examples
+based on data collected using other manufacturers.
+
+For an alternative approach (in python) to prepare your data for `yaps`,
+have a look at Jenna Vergeynst’s github repos
+[time\_synchronization](https://github.com/JennaVergeynst/time_synchronization)
+and
+[prepare\_toa\_for\_yaps](https://github.com/JennaVergeynst/prepare_toa_for_yaps).
+
+The `yaps` package requires
+[devtools](https://cran.r-project.org/web/packages/devtools/index.html)
+and [TMB](https://github.com/kaskr/adcomp).  
+Please see for
+[instructions](https://github.com/kaskr/adcomp/wiki/Download) on TMB
+installation. Remember to install
+[Rtools](https://cran.r-project.org/bin/windows/Rtools/) as specified in
+the TMB documentation.
+
+## Disclaimer
+
+**`yaps` obeys the fundamental rule of “garbage in, garbage out”.
+Therefore, DO NOT expect `yaps` to salvage a poorly designed study, nor
+to turn crappy data into gold.**  
+We have attempted to make both synchronization process and track
+estimation user-friendly. However, it is not trivial to synchronize
+hydrophones (let alone automating the process) based on detections in a
+variable and often noisy environment. Hydrophones might be
+replaced/shifted and if not fixed securely, hydrophones might move/be
+moved during a study. Additionally, hydrophone performance and output
+format varies considerably among (and within) manufacturers. On top of
+that, hydrophones don’t always behave and perform as expected. For
+instance, some hydrophone models autonomously initiate reboots causing
+perturbation of varying magnitude and/or duration of the internal clock
+at apparently random time intervals. Therefore, the functions in `yaps`
+might perform sub-optimal or even fail miserably when applied to new
+data. If/when this happens, please let us know through a direct message
+or leave a bug-report. Also note, the to-do list for improvements and
+tweaks is long and growing, so stay tuned for updates.
+
+## Installation
+
+Make sure you have the newest version of `yaps` installed. For this, you
+need `devtools` installed - if not already installed, run
+`install.packages('devtools')`.  
+`yaps` relies heavily on use of Template Model Builder
+[TMB](https://github.com/kaskr/adcomp) for fitting the models, so make
+sure `TMB` is installed and working by following the simple [TMB
+instructions](https://github.com/kaskr/adcomp/wiki/Download).  
+Then install the latest version of `yaps` with:
+
+``` r
+    install.packages("devtools")
+    install.packages("TMB")
+    TMB::runExample(all=TRUE)
+    devtools::install_github("baktoft/yaps")
 ```
-install.packages('devtools')
-devtools::install_github("baktoft/yaps")
-```
 
-Usage example:
+## Processing example data ssu1
 
-```
-rm(list=ls())	
+The code below is identical to the example workflow presented in
+[Opening the black box of fish tracking using acoustic
+telemetry](https://www.biorxiv.org/content/10.1101/2019.12.16.877688v1).
+See the pre-print for further explantion.
+
+``` r
 library(yaps)
-set.seed(42)
+
+# set sync parameters 
+max_epo_diff <- 120
+min_hydros <- 2
+time_keeper_idx <- 5
+fixed_hydros_idx <- c(2:3, 6, 8, 11, 13:17)
+n_offset_day <- 2
+n_ss_day <- 2
+
+# get input data ready for getSyncModel()
+inp_sync <- getInpSync(sync_dat=ssu1, max_epo_diff, min_hydros, time_keeper_idx, 
+    fixed_hydros_idx, n_offset_day, n_ss_day)
+
+# fit the sync model
+sync_model <- getSyncModel(inp_sync, silent=TRUE)
+
+# Plot model residuals and model check plots to ensure the synchronization process was successful...
+plotSyncModelResids(sync_model, by='overall')       
+plotSyncModelResids(sync_model, by='sync_tag')      
+plotSyncModelResids(sync_model, by='hydro')         
+
+plotSyncModelCheck(sync_model, by="sync_bin_sync")  
+plotSyncModelCheck(sync_model, by="sync_bin_hydro") 
+plotSyncModelCheck(sync_model, by="sync_tag")       
+plotSyncModelCheck(sync_model, by="hydro")          
+
+# Apply the synchronization model to all data
+detections_synced <- applySync(toa=ssu1$detections, hydros=ssu1$hydros, sync_model)
+
+# Prepare to estimate track using `yaps` on newly synchronized `ssu1` data
+hydros_yaps <- data.table::data.table(sync_model$pl$TRUE_H)
+colnames(hydros_yaps) <- c('hx','hy','hz')
+
+# Specify focal tag and tag specific min and max burst intervals
+focal_tag <- 15266
+rbi_min <- 20
+rbi_max <- 40
+
+# Extract relevant data from the synced data
+synced_dat_ssu1 <- detections_synced[tag == focal_tag]
+
+# Compile TOA-matrix to use for yaps
+toa_ssu1 <- getToaYaps(synced_dat_ssu1, hydros_yaps, rbi_min, rbi_max)
+
+# Compile all input data needed for yaps
+inp_ssu1 <- getInp(hydros_yaps, toa_ssu1, E_dist="Mixture", n_ss=2, pingType="rbi", 
+    sdInits=1, rbi_min=rbi_min, rbi_max=rbi_max, ss_data_what="est", ss_data=0)
+
+# Run yaps to obtain estimated track
+yaps_out_ssu1 <- runYaps(inp_ssu1, silent=TRUE) 
+
+# plot the estimated track
+plotYaps(inp=inp_ssu1, yaps_out=yaps_out_ssu1, type="map")
+# Add gps track for direct comparison
+lines(utm_y~utm_x, data=ssu1$gps, lty=2)
+
+par(mfrow=c(2,1))
+plotYaps(inp=inp_ssu1, yaps_out=yaps_out_ssu1, type="coord_X")
+lines(utm_x~ts, data=ssu1$gps, lty=2)
+plotYaps(inp=inp_ssu1, yaps_out=yaps_out_ssu1, type="coord_Y")
+lines(utm_y~ts, data=ssu1$gps, lty=2)
+```
+
+### Example using YAPS on simulated data
+
+``` r
+devtools::install_github("baktoft/yaps")
+rm(list=ls())   
+library(yaps)
 
 # Simulate true track of animal movement of n seconds
 trueTrack <- simTrueTrack(model='crw', n = 15000, deltaTime=1, shape=1, scale=0.5, addDielPattern=TRUE, ss='rw')
@@ -29,11 +161,11 @@ trueTrack <- simTrueTrack(model='crw', n = 15000, deltaTime=1, shape=1, scale=0.
 pingType <- 'sbi'
 
 if(pingType == 'sbi') { # stable BI
-	sbi_mean <- 30; sbi_sd <- 1e-4;
-	teleTrack <- simTelemetryTrack(trueTrack, pingType=pingType, sbi_mean=sbi_mean, sbi_sd=sbi_sd)
+    sbi_mean <- 30; sbi_sd <- 1e-4;
+    teleTrack <- simTelemetryTrack(trueTrack, pingType=pingType, sbi_mean=sbi_mean, sbi_sd=sbi_sd)
 } else if(pingType == 'rbi'){ # random BI
-	pingType <- 'rbi'; rbi_min <- 20; rbi_max <- 40;
-	teleTrack <- simTelemetryTrack(trueTrack, pingType=pingType, rbi_min=rbi_min, rbi_max=rbi_max)
+    pingType <- 'rbi'; rbi_min <- 20; rbi_max <- 40;
+    teleTrack <- simTelemetryTrack(trueTrack, pingType=pingType, rbi_min=rbi_min, rbi_max=rbi_max)
 }
 
 # Simulate hydrophone array
@@ -47,9 +179,9 @@ if(ss_data_what == 'data') {ss_data <- teleTrack$ss} else {ss_data <- 0}
 
 
 if(pingType == 'sbi'){
-	inp <- getInp(hydros, toa, E_dist="Mixture", n_ss=10, pingType=pingType, sdInits=0, ss_data_what=ss_data_what, ss_data=ss_data)
+    inp <- getInp(hydros, toa, E_dist="Mixture", n_ss=10, pingType=pingType, sdInits=0, ss_data_what=ss_data_what, ss_data=ss_data)
 } else if(pingType == 'rbi'){
-	inp <- getInp(hydros, toa, E_dist="Mixture", n_ss=10, pingType=pingType, sdInits=0, rbi_min=rbi_min, rbi_max=rbi_max, ss_data_what=ss_data_what, ss_data=ss_data)
+    inp <- getInp(hydros, toa, E_dist="Mixture", n_ss=10, pingType=pingType, sdInits=0, rbi_min=rbi_min, rbi_max=rbi_max, ss_data_what=ss_data_what, ss_data=ss_data)
 } 
 str(inp)
 
@@ -60,7 +192,10 @@ str(outTmb)
 
 # Estimates in pl
 pl <- outTmb$pl
-yaps_out <- data.table::data.table(X=pl$X + inp$inp_params$Hx0, Y=pl$Y + inp$inp_params$Hy0)
+# Correcting for hydrophone centering
+pl$X <- outTmb$pl$X + inp$inp_params$Hx0
+pl$Y <- outTmb$pl$Y + inp$inp_params$Hy0
+
 
 # Error estimates in plsd
 plsd <- outTmb$plsd
@@ -69,5 +204,27 @@ plsd <- outTmb$plsd
 plot(y~x, data=trueTrack, type="l", xlim=range(hydros$hx), ylim=range(hydros$hy), asp=1)
 lines(y~x, data=teleTrack)
 points(hy~hx, data=hydros, col="green", pch=20, cex=3)
-lines(Y~X, data=yaps_out, col="red")
+lines(pl$Y~pl$X, col="red")
 ```
+
+# Papers using YAPS
+
+## 2019
+
+  - Baktoft, H., Gjelland, K.Ø., Økland, F., Rehage, J.S., Rodemann,
+    J.R., Corujo, R.S., Viadero, N., Thygesen, U.H. (2019). Opening the
+    black box of fish tracking using acoustic telemetry bioRxiv
+    2019.12.16.877688; doi: <https://doi.org/10.1101/2019.12.16.877688>
+
+  - Silva, A.T., Bærum, K.M., Hedger, R.D., Baktoft, H., Fjeldstad, H.,
+    Gjelland, K.Ø., Økland, F. Forseth, T. (2019). Science of the Total
+    Environment The effects of hydrodynamics on the three-dimensional
+    downstream migratory movement of Atlantic salmon. Science of the
+    Total Environment, 135773.
+    <https://doi.org/10.1016/j.scitotenv.2019.135773>
+
+  - Szabo-Meszaros, M., Forseth, T., Baktoft, H., Fjeldstad, H.-P.,
+    Silva, A.T., Gjelland, K.Ø., Økland, F., Uglem, I., Alfredsen, K.
+    (2019). Modelling mitigation measures for smolt migration at dammed
+    river sections. Ecohydrology, e2131.
+    <https://doi.org/10.1002/eco.2131>

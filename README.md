@@ -3,9 +3,9 @@
 
 # YAPS - (Yet Another Positioning Solver)
 
-<img src="man/figures/yaps_logo_lowRes.png" align="right" width="200" />  
-Welcome to the `yaps` repository. The `yaps` package is based on the
-original YAPS presented in Baktoft, Gjelland, Økland & Thygesen (2017):
+<img src="../yaps_logo_lowRes.png" align="right" width="200" /> Welcome
+to the `yaps` repository. The `yaps` package is based on the original
+YAPS presented in Baktoft, Gjelland, Økland & Thygesen (2017):
 [Positioning of aquatic animals based on time-of-arrival and random walk
 models using YAPS (Yet Another Positioning
 Solver)](https://www.nature.com/articles/s41598-017-14278-z.pdf)

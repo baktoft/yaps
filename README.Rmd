@@ -19,10 +19,10 @@ knitr::opts_chunk$set(
 ```
 
 # YAPS - (Yet Another Positioning Solver)
-<img src="man/figures/yaps_logo_lowRes.png" align="right" width="200" />  
+<img src="../yaps_logo_lowRes.png" align="right" width="200" /> 
 Welcome to the `yaps` repository. The `yaps` package is based on the original YAPS presented in Baktoft, Gjelland, Økland & Thygesen (2017): [Positioning of aquatic animals based on time-of-arrival and random walk models using YAPS (Yet Another Positioning Solver)](https://www.nature.com/articles/s41598-017-14278-z.pdf)  
-  
-  
+
+
 To use `yaps` on own data, you need to compile a TOA-matrix based on synchronized hydrophone data and replace the hydros dataframe with actual hydrophone positions. A complete step-by-step guide on how to do this, can be found in our pre-print paper [Opening the black box of fish tracking using acoustic telemetry](https://www.biorxiv.org/content/10.1101/2019.12.16.877688v1). The example in this guide is based on data collected using a 69 kHz PPM-based system (Vemco VR2). We are working towards adding examples based on data collected using other manufacturers.  
 
 

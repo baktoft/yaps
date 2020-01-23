@@ -5,6 +5,8 @@
 #' @export
 getToaYaps <- function(synced_dat, hydros, rbi_min, rbi_max){
 
+	# remove NAs in eposync
+	synced_dat <- synced_dat[!is.na(eposync)]
 	# remove multipaths...
 	data.table::setkey(synced_dat, hydro_idx, eposync)
 	diffs <- synced_dat[, c(diff(eposync),NA), by=hydro_idx]$V1

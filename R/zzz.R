@@ -38,7 +38,7 @@ if (getRversion() >= "2.15.1"){
 	if(new_version_on_github) {
 		out_msg <- paste0(out_msg, '\n There seems to be a new version of yaps available on github - please consider updating using: \n devtools::install_github("baktoft/yaps")')
 	}
-	out_msg <- paste0(out_msg, "\n Please let us know if you experience any trouble using yaps.")
+	out_msg <- paste0(out_msg, "\n Please let us know if you experience any trouble using yaps. \n Run testYaps() to ensure basic functions (incl. TMB) is working.")
 	
     packageStartupMessage(out_msg)
  }

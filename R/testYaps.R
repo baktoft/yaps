@@ -2,6 +2,7 @@
 #'
 #' Run `testYaps()` to check that the core functions of YAPS is working correctly.
 #' Output should be a random simulated (black) and estimated (red) track.
+#' @param silent Logical whether to print output to the console
 #' @export
 testYaps <- function(silent=FALSE){
 	set.seed(42)

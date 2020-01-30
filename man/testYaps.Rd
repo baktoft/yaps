@@ -4,7 +4,10 @@
 \alias{testYaps}
 \title{Test YAPS core functionality}
 \usage{
-testYaps()
+testYaps(silent = FALSE)
+}
+\arguments{
+\item{silent}{Logical whether to print output to the console}
 }
 \description{
 Run `testYaps()` to check that the core functions of YAPS is working correctly.

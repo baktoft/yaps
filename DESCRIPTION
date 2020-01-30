@@ -13,4 +13,4 @@ Encoding: UTF-8
 LazyData: true
 RoxygenNote: 6.1.1
 LinkingTo: Rcpp, TMB, RcppEigen
-Imports: circular, data.table, ggplot2, plyr,Rcpp, RcppEigen, reshape2, splusTimeSeries, stats, tictoc, TMB, viridis,zoo
+Imports: circular, data.table, ggplot2, Matrix (>= 1.2.18), plyr, Rcpp, RcppEigen, reshape2, splusTimeSeries, stats, tictoc, TMB, viridis,zoo

@@ -162,6 +162,10 @@ getOffsetVals <- function(inp_toa_list, n_offset_day){
 	offset_idx <- as.numeric(offset_cuts)
 	offset_labs <- levels(offset_cuts)
 	offset_levels <- cbind(lower = as.numeric( sub("\\((.+),.*", "\\1", offset_labs) ),	  upper = as.numeric( sub("[^,]*,([^]]*)\\]", "\\1", offset_labs) ))
+	
+	offset_levels[1,1] 				<- epo_start
+	offset_levels[n_offset_idx,2] 	<- epo_end
+	
 	dimnames(offset_levels) <- NULL
 	return(list(n_offset_idx=n_offset_idx, offset_idx=offset_idx, offset_levels=offset_levels))
 }

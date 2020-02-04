@@ -183,7 +183,11 @@ getSsVals <- function(inp_toa_list, n_ss_day){
 	ss_cuts <- cut(epo_self_vec, breaks=n_ss_idx, dig.lab=10)
 	ss_idx <- as.numeric(ss_cuts)
 	ss_labs <- levels(ss_cuts)
-	ss_levels <- 	cbind(lower = as.numeric( sub("\\((.+),.*", "\\1", ss_labs) ),	  upper = as.numeric( sub("[^,]*,([^]]*)\\]", "\\1", ss_labs) ))
+	ss_levels <- cbind(lower = as.numeric( sub("\\((.+),.*", "\\1", ss_labs) ),	  upper = as.numeric( sub("[^,]*,([^]]*)\\]", "\\1", ss_labs) ))
+
+	ss_levels[1,1] 				<- epo_start
+	ss_levels[n_ss_idx,2] 		<- epo_end
+
 	dimnames(ss_levels) <- NULL
 
 	return(list(n_ss_idx=n_ss_idx, ss_idx=ss_idx, ss_levels=ss_levels))

@@ -9,7 +9,7 @@ plotSyncModelCheck(sync_model, by = "")
 \arguments{
 \item{sync_model}{Synchronization model obtained using `getSyncModel()`}
 
-\item{by}{What to facet/group the plot by? Currently supports one of 'sync_bin_sync', 'sync_bin_hydro', 'hydro', 'sync_tag'}
+\item{by}{What to facet/group the plot by? Currently supports one of 'sync_bin_sync', 'sync_bin_hydro', 'sync_bin_sync_smooth', 'sync_bin_hydro_smooth', 'hydro', 'sync_tag'}
 }
 \description{
 Delta values indicate absolute difference between true and estimated distances based on pairwise relative distances to sync_tag. 

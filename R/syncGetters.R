@@ -279,11 +279,11 @@ getSyncCheckDat <- function(sync_model, extreme_threshold=10000){
 		sync_check_dat_i <- toa_sync_long[, .(focal_hydro_idx=i, hydro_idx, offset_idx, ping_idx, delta=abs(((toa_sync - toa_sync[hydro_idx==i])*ss) - (dist_to_sync_tag - dist_to_sync_tag[hydro_idx==i]))), by=c('sync_tag_idx')]
 		sync_check_dat_i <- sync_check_dat_i[delta!= 0]
 		sync_check_dat <- rbind(sync_check_dat, sync_check_dat_i)
-		n_extreme <- nrow(sync_check_dat[delta >= extreme_threshold])
-		if(n_extreme > 0){
-			sync_check_dat <- sync_check_dat[delta < extreme_threshold]
-			print(paste0("NOTE: ",n_extreme," extreme outlier(s) (i.e. >= ",extreme_threshold," m) were removed"))
-		}
+	}
+	n_extreme <- nrow(sync_check_dat[delta >= extreme_threshold])
+	if(n_extreme > 0){
+		sync_check_dat <- sync_check_dat[delta < extreme_threshold]
+		print(paste0("NOTE: ",n_extreme," extreme outlier(s) (i.e. >= ",extreme_threshold," m) were ignored"))
 	}
 	
 	return(sync_check_dat)

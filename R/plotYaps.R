@@ -14,8 +14,11 @@ plotYaps <- function(inp, yaps_out, type="map"){
 	
 	hydros <- data.frame(hx=inp$datTmb$H[,1] + inp$inp_params$Hx0, hy=inp$datTmb$H[,2] + inp$inp_params$Hy0)
 	
+	xlim <- range(c(pl$X, hydros$hx))
+	ylim <- range(c(pl$Y, hydros$hy))
+	
 	if(type=="map"){
-		plot(hy~hx, data=hydros, col="green", pch=20, cex=2, asp=1, xlab="UTM_X", ylab="UTM_Y")
+		plot(hy~hx, data=hydros, col="green", pch=20, cex=2, asp=1, xlab="UTM_X", ylab="UTM_Y", xlim=xlim, ylim=ylim)
 		lines(pl$Y~pl$X, col="red")
 	} else if(type=="coord_X"){
 		plot(pl$top, pl$X, type="l", col="red", ylab="UTM_X", xlab="TimeOfPing")

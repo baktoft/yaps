@@ -50,7 +50,7 @@ checkSyncModelResidQuantiles <- function(sync_model){
 #' delta = abs((true_dist(Ht, H1) - true_dist(Ht, H2)) - (est_dist(Ht, H1) - est_dist(Ht, H2)))
 #'
 #' @param sync_model Synchronization model obtained using `getSyncModel()`
-#' @param by What to facet/group the plot by? Currently supports one of 'sync_bin_sync', 'sync_bin_hydro', 'hydro', 'sync_tag'
+#' @param by What to facet/group the plot by? Currently supports one of 'sync_bin_sync', 'sync_bin_hydro', 'sync_bin_sync_smooth', 'sync_bin_hydro_smooth', 'hydro', 'sync_tag'
 #' @export
 plotSyncModelCheck <- function(sync_model, by=""){
 	sync_check_dat <- getSyncCheckDat(sync_model)
@@ -62,22 +62,32 @@ plotSyncModelCheck <- function(sync_model, by=""){
 
 	if(by == "sync_bin_sync"){
 		plot_dat <- sync_check_dat[, .(med_delta=median((delta))), by=c('sync_tag_idx', 'focal_hydro_idx', 'hydro_idx', 'offset_idx')]
-		p <- ggplot2::ggplot(data=plot_dat) + geom_boxplot(aes(x=factor(offset_idx), y=med_delta)) + facet_wrap(~sync_tag_idx)
+		p <- ggplot2::ggplot(data=plot_dat) + geom_boxplot(aes(x=factor(offset_idx), y=(med_delta))) + facet_wrap(~sync_tag_idx)
 		p <- p + xlab("Sync period")
 	} else if(by == "sync_bin_hydro"){
 		plot_dat <- sync_check_dat[, .(med_delta=median((delta))), by=c('sync_tag_idx', 'focal_hydro_idx', 'hydro_idx', 'offset_idx')]
-		p <- ggplot2::ggplot(data=plot_dat) + geom_boxplot(aes(x=factor(offset_idx), y=med_delta)) + facet_wrap(~focal_hydro_idx)
+		p <- ggplot2::ggplot(data=plot_dat) + geom_boxplot(aes(x=factor(offset_idx), y=(med_delta))) + facet_wrap(~focal_hydro_idx)
+		p <- p + xlab("Sync period")
+	} else if(by == "sync_bin_sync_smooth"){
+		plot_dat <- sync_check_dat[, .(med_delta=median((delta))), by=c('sync_tag_idx', 'focal_hydro_idx', 'hydro_idx', 'offset_idx')]
+		p <- ggplot2::ggplot(data=plot_dat) + geom_smooth(aes(x=offset_idx, y=med_delta), method = "gam", formula = y ~ s(x, bs = "cs")) + facet_wrap(~sync_tag_idx)
+		p <- p + xlab("Sync period")
+	} else if(by == "sync_bin_hydro_smooth"){
+		plot_dat <- sync_check_dat[, .(med_delta=median((delta))), by=c('sync_tag_idx', 'focal_hydro_idx', 'hydro_idx', 'offset_idx')]
+		p <- ggplot2::ggplot(data=plot_dat) + geom_smooth(aes(x=offset_idx, y=med_delta), method = "gam", formula = y ~ s(x, bs = "cs")) + facet_wrap(~focal_hydro_idx)
 		p <- p + xlab("Sync period")
 	} else if(by == "sync_tag"){
 		plot_dat <- sync_check_dat[, .(med_delta=median((delta))), by=c('sync_tag_idx', 'focal_hydro_idx', 'hydro_idx')]
-		p <- ggplot2::ggplot(data=plot_dat) + geom_boxplot(aes(x=factor(focal_hydro_idx), y=med_delta)) + facet_wrap(~sync_tag_idx)
+		p <- ggplot2::ggplot(data=plot_dat) + geom_boxplot(aes(x=factor(focal_hydro_idx), y=(med_delta))) + facet_wrap(~sync_tag_idx)
 		p <- p + xlab('hydro_idx') + ggplot2::scale_x_discrete(breaks = pretty(unique(plot_dat$focal_hydro_idx)))
 	} else if(by == "hydro"){
 		plot_dat <- sync_check_dat[, .(med_delta=median((delta))), by=c('sync_tag_idx', 'focal_hydro_idx', 'hydro_idx')]
 		p <- ggplot2::ggplot(data=plot_dat) + geom_boxplot(aes(x=factor(sync_tag_idx), y=med_delta)) + facet_wrap(~focal_hydro_idx)
 		p <- p + xlab('sync_tag_idx') + ggplot2::scale_x_discrete(breaks = pretty(unique(plot_dat$sync_tag_idx)))
 	}
-	p <- p + ylab("Delta (m)")
+	p <- p + geom_hline(yintercept=c(1,10,100), lty=3, col="red")
+	p <- p + scale_y_log10()
+	p <- p + ylab("log(delta) (log(m))")
 	print(p)
 }
 

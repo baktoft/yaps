@@ -73,15 +73,14 @@
 	}
 
 	for(int h=0; h<nh; ++h){
+		nll -= dnorm(TRUE_H(h,2), H(h,2), Type(1e-6), true); // depth of hydros can rarely be estimated due to low vertical coverage and variation of hydros
 		if(fixed_hydros_vec(h) == 1){
 			nll -= dnorm(TRUE_H(h,0), H(h,0), Type(1e-6), true);
 			nll -= dnorm(TRUE_H(h,1), H(h,1), Type(1e-6), true);
-			nll -= dnorm(TRUE_H(h,2), H(h,2), Type(1e-6), true);
 			nll -= dnorm(SIGMA_HYDROS_XY(h), Type(0), Type(1), true);
 		} else {
 			nll -= dnorm(TRUE_H(h,0), H(h,0), SIGMA_HYDROS_XY(h), true);
 			nll -= dnorm(TRUE_H(h,1), H(h,1), SIGMA_HYDROS_XY(h), true);
-			nll -= dnorm(TRUE_H(h,2), H(h,2), SIGMA_HYDROS_XY(h)/5, true);
 		}
 	}
 

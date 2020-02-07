@@ -3,7 +3,7 @@
 #' @param silent Keep TMB quiet
 #' @param fine_tune Logical. Wheter to re-run the sync model excluding residual outliers
 #' @export
-getSyncModel <- function(inp_sync, silent=TRUE, fine_tune=TRUE){
+getSyncModel <- function(inp_sync, silent=TRUE, fine_tune=TRUE, max_iter=100){
 	dat_tmb <- inp_sync$dat_tmb_sync
 	params <- inp_sync$params_tmb_sync
 	random <- inp_sync$random_tmb_sync
@@ -31,7 +31,7 @@ getSyncModel <- function(inp_sync, silent=TRUE, fine_tune=TRUE){
 		# config(DLL="yaps_sync")
 		# ## Reduce memory peak of a parallel model by creating tapes in serial
 		# config(tape.parallel=0, DLL="yaps_sync")
-		obj <- TMB::MakeADFun(data = dat_tmb, parameters = params, random = random, DLL = "yaps", inner.control = list(maxit = 100), silent=silent)
+		obj <- TMB::MakeADFun(data = dat_tmb, parameters = params, random = random, DLL = "yaps", inner.control = list(maxit = max_iter), silent=silent)
 		
 		if(silent){
 			opt <- suppressWarnings(stats::nlminb(inits,obj$fn,obj$gr))

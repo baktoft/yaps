@@ -6,4 +6,5 @@
 * Add sync_model and known burst sequences to example data hald
 * Add option to ignore extreme values when plotting plotSyncModelCheck()
 * Add extra plots to plotSyncModelCheck()
+* Add option to use stationary ref tags as beacons/sync tags without hydro
 

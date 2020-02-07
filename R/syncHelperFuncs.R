@@ -44,6 +44,15 @@ buildToaListGross <- function(sync_dat, excl_self_detect){
 		sync_tag_i_idx <- hydro_i_idx
 		# hydro_st_serial <- hydros[sync_tag == sync_tags[st], serial]
 		self_detections <- detections[tag==sync_tags[i] & hydro_idx==hydro_i_idx]
+		
+		# hack added to support ref tags to serve as beacons without a hydro
+		if(nrow(self_detections) == 0){
+			num_detects_on_hydro <- detections[tag==sync_tags[i], .N, by=hydro_idx]
+			best_hydro_idx <- num_detects_on_hydro[which.max(num_detects_on_hydro$N), hydro_idx]
+			best_other_detections <- detections[tag==sync_tags[i] & hydro_idx==best_hydro_idx]
+			self_detections <- best_other_detections
+		}
+		
 		other_detections <- detections[tag==sync_tags[i] & hydro_idx!=hydro_i_idx]
 		self_detections[, epo_roll:=epofrac]
 		other_detections[, epo_roll:=epofrac]

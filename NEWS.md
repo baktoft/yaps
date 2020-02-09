@@ -8,4 +8,5 @@
 * Add extra plots to plotSyncModelCheck()
 * Add option to use stationary ref tags as beacons/sync tags without hydro
 * Improve diagnostic plots - now violins instead on boxplots
-
+* Add support for using pressure sensor data as z-values in track estimation
+* Add first version of checkInp(). More tests will be added to catch common mistakes

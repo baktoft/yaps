@@ -5,7 +5,7 @@
 \title{Get data for input to TMB}
 \usage{
 getDatTmb(hydros, toa, E_dist, n_ss, pingType, rbi_min, rbi_max,
-  ss_data_what, ss_data, biTable, inp_params)
+  ss_data_what, ss_data, biTable, inp_params, z_vec)
 }
 \arguments{
 \item{hydros}{Dataframe from simHydros() or Dataframe with columns hx and hy containing positions of the receivers. Translate the coordinates to get the grid centre close to (0;0).}
@@ -29,6 +29,8 @@ getDatTmb(hydros, toa, E_dist, n_ss, pingType, rbi_min, rbi_max,
 \item{biTable}{Table of known burst intervals. Only used when pingType == "pbi". Default=NULL}
 
 \item{inp_params}{Selection of parameters used to setup and run YAPS.}
+
+\item{z_vec}{Vector of known depth values (positive real). Default=NULL is which case no 3D is assumed. Estimation of depth from detections is currently not supported.}
 }
 \value{
 List for use in TMB.

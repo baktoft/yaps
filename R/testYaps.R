@@ -10,7 +10,7 @@ testYaps <- function(silent=FALSE){
 	pingType <- 'sbi'
 	sbi_mean <- 20; sbi_sd <- 1e-4;
 	teleTrack <- simTelemetryTrack(trueTrack, pingType=pingType, sbi_mean=sbi_mean, sbi_sd=sbi_sd)
-	hydros <- data.table::data.table(hx=c(-250,-250,250,250), hy=c(-250,250,-250,250))
+	hydros <- data.table::data.table(hx=c(-250,-250,250,250), hy=c(-250,250,-250,250), hz=c(5,5,5,5))
 	toa_list <- simToa(teleTrack, hydros, pingType, sigmaToa=1e-4, pNA=0.25, pMP=0.01)
 	toa <- toa_list$toa
 	ss_data_what <- 'data'

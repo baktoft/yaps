@@ -33,6 +33,7 @@ if (getRversion() >= "2.15.1"){
 #' @importFrom Rcpp sourceCpp
 .onAttach <- function(lib, pkg) {
 	new_version_on_github <- newPkgVersion()
+	if(is.null(new_version_on_github)) { new_version_on_github <- FALSE}
     ver <- utils::packageVersion('yaps')
 	out_msg <- paste0('Welcome to yaps (v', ver,')')
 	if(new_version_on_github) {

@@ -2,6 +2,7 @@
 #' @param inp_sync Input data prepared for the sync model using `getInpSync()`
 #' @param silent Keep TMB quiet
 #' @param fine_tune Logical. Wheter to re-run the sync model excluding residual outliers
+#' @param max_iter Max number of iterations to run TMB. Default=100 seems to work in most cases.
 #' @export
 getSyncModel <- function(inp_sync, silent=TRUE, fine_tune=TRUE, max_iter=100){
 	dat_tmb <- inp_sync$dat_tmb_sync

@@ -15,7 +15,7 @@ alignBurstSeq <- function(synced_dat, burst_seq, seq_lng_min=10, rbi_min, rbi_ma
 	burst_seq_dt[, seq_ping_idx := 1:.N]
 	burst_seq_dt[, cum_bi := c(0, cumsum(bi)[1:(.N-1)] )]
 
-	setorder(synced_dat, hydro_idx, eposync)
+	data.table::setorder(synced_dat, hydro_idx, eposync)
 	synced_dat[, delta_eposync := c(diff(eposync), NA), by=c('hydro_idx')]
 	synced_dat[, ping_idx := 1:.N, by=c('hydro_idx')]
 	
@@ -42,9 +42,9 @@ alignBurstSeq <- function(synced_dat, burst_seq, seq_lng_min=10, rbi_min, rbi_ma
 	
 	# adding burst sequence ping info to table synced_dat
 	burst_seq_dt[, roll_seq_epo := seq_epo]
-	setkey(burst_seq_dt, roll_seq_epo)
+	data.table::setkey(burst_seq_dt, roll_seq_epo)
 	synced_dat[, roll_eposync := eposync]
-	setkey(synced_dat, roll_eposync)
+	data.table::setkey(synced_dat, roll_eposync)
 
 	synced_dat[, c('seq_epo' ,'seq_ping_idx') := burst_seq_dt[synced_dat,  roll="nearest"][, c('seq_epo', 'seq_ping_idx')] ]
 	synced_dat[, roll_eposync := NULL]

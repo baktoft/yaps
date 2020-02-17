@@ -154,18 +154,18 @@ getParamsXYFromCOA <- function(datTmb){
 #' @return Vector of initial values to use in TMB
 #' @export
 getInits <- function(pingType, sdInits=1) {
-	init_logD_xy <- 1
+	init_logD_xy <- -1
 	if(pingType == 'sbi') {
 		init_logSigma_bi <- -6
 	} else if(pingType == 'rbi'){
-		init_logSigma_bi <- 4
+		init_logSigma_bi <- 4 # not used in rbi
 	} else if(pingType == 'pbi'){
 		init_logSigma_bi <- -5
 	}
 	init_logD_v <- 0
-	init_logSigma_toa <- -3
-	init_logScale <- 1
-	init_log_t_part <- -4
+	init_logSigma_toa <- -3 # used in Gaussian and mixture
+	init_logScale <- 1		# used in mixture and pure t
+	init_log_t_part <- -4	# only used in mixture
 	inits <- c(init_logD_xy, init_logSigma_bi,  init_logD_v, init_logSigma_toa, init_logScale, init_log_t_part)
 
 	inits <- stats::rnorm(length(inits), mean=inits, sd=sdInits)

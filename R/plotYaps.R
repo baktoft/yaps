@@ -35,11 +35,11 @@ plotYaps <- function(inp, yaps_out, type="map", xlim=NULL, ylim=NULL, main=NULL)
 		plot(hy~hx, data=hydros, col="green", pch=20, cex=2, asp=1, xlab="UTM_X", ylab="UTM_Y", xlim=xlim, ylim=ylim, main=main)
 		lines(pl$Y~pl$X, col="red")
 	} else if(type=="coord_X"){
-		plot(pl$top, pl$X, type="l", col="red", ylab="UTM_X", xlab="TimeOfPing")
+		plot(pl$top, pl$X, type="l", col="red", ylab="UTM_X", xlab="TimeOfPing", main=main)
 		lines(pl$top, pl$X-plsd$X, col="red", lty=3)
 		lines(pl$top, pl$X+plsd$X, col="red", lty=3)
 	} else if(type == "coord_Y"){
-		plot(pl$top, pl$Y, type="l", col="red", ylab="UTM_Y", xlab="TimeOfPing")
+		plot(pl$top, pl$Y, type="l", col="red", ylab="UTM_Y", xlab="TimeOfPing", main=main)
 		lines(pl$top, pl$Y-plsd$Y, col="red", lty=3)
 		lines(pl$top, pl$Y+plsd$Y, col="red", lty=3)
 	}

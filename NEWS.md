@@ -1,4 +1,4 @@
-# yaps 1.2.0.9102
+# yaps v1.2.0.9110
 
 * Added a `NEWS.md` file to track changes to the package.
 * Fixed bug in getToaYaps() when is.na(eposync) == TRUE

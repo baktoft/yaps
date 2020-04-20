@@ -11,13 +11,14 @@
 #' @param ss_data_what What speed of sound (ss) data to be used. Default ss_data_what='est': ss is estimated by the model. Alternatively, if ss_data_what='data': ss_data must be provided and length(ss_data) == ncol(toa)
 #' @param ss_data Vector of ss-data to be used if ss_data_what = 'est'. Otherwise ss_data <- 0 (default)
 #' @param biTable Table of known burst intervals. Only used when pingType == "pbi". Default=NULL
+#' @param z_vec Vector of known depth values (positive real). Default=NULL is which case no 3D is assumed. Estimation of depth from detections is currently not supported.
 
 
 #' @return List of input data ready for use in TMB-call
 #' @export
-getInp <- function(hydros, toa, E_dist, n_ss, pingType, sdInits=1, rbi_min=0, rbi_max=0, ss_data_what='est', ss_data=0, biTable=NULL){
+getInp <- function(hydros, toa, E_dist, n_ss, pingType, sdInits=1, rbi_min=0, rbi_max=0, ss_data_what='est', ss_data=0, biTable=NULL, z_vec=NULL){
 	inp_params <- getInpParams(hydros, toa, pingType)
-	datTmb <- getDatTmb(hydros, toa, E_dist, n_ss, pingType, rbi_min, rbi_max, ss_data_what, ss_data, biTable, inp_params)
+	datTmb <- getDatTmb(hydros, toa, E_dist, n_ss, pingType, rbi_min, rbi_max, ss_data_what, ss_data, biTable, inp_params, z_vec)
 	params <- getParams(datTmb)
 	inits <- getInits(pingType, sdInits)
 	return(list(
@@ -38,7 +39,7 @@ getInp <- function(hydros, toa, E_dist, n_ss, pingType, sdInits=1, rbi_min=0, rb
 #'
 #' @return List for use in TMB.
 #' @export
-getDatTmb <- function(hydros, toa, E_dist, n_ss, pingType, rbi_min, rbi_max, ss_data_what, ss_data, biTable, inp_params){
+getDatTmb <- function(hydros, toa, E_dist, n_ss, pingType, rbi_min, rbi_max, ss_data_what, ss_data, biTable, inp_params, z_vec){
 	T0 <- inp_params$T0
 	Hx0 <- inp_params$Hx0
 	Hy0 <- inp_params$Hy0
@@ -68,10 +69,16 @@ getDatTmb <- function(hydros, toa, E_dist, n_ss, pingType, rbi_min, rbi_max, ss_
 	if(E_dist == "Mixture") {Edist[2] <- 1}
 	if(E_dist == "t") {Edist[3] <- 1}
 	
+	if(is.null(z_vec)){
+		how_3d <- 'none'
+		z_vec <- c(1)
+	} else {
+		how_3d <- 'data'
+	}
 
 	datTmb <- list(
 		model = "yaps_track",
-		H = matrix(c(hydros$hx-Hx0, hydros$hy-Hy0), ncol=2),
+		H = matrix(c(hydros$hx-Hx0, hydros$hy-Hy0, hydros$hz), ncol=3),
 		nh = nrow(hydros),
 		np = ncol(toa),
 		Edist = Edist,
@@ -86,7 +93,9 @@ getDatTmb <- function(hydros, toa, E_dist, n_ss, pingType, rbi_min, rbi_max, ss_
 		ss_data_what = ss_data_what,
 		ss_data = ss_data,
 		approxBI = approxBI,
-		biTable = c(1)
+		biTable = c(1),
+		how_3d = how_3d,
+		z_vec = z_vec
 	)
 	if(pingType == 'pbi') {datTmb$biTable = biTable}
 
@@ -145,18 +154,18 @@ getParamsXYFromCOA <- function(datTmb){
 #' @return Vector of initial values to use in TMB
 #' @export
 getInits <- function(pingType, sdInits=1) {
-	init_logD_xy <- 1
+	init_logD_xy <- -1
 	if(pingType == 'sbi') {
 		init_logSigma_bi <- -6
 	} else if(pingType == 'rbi'){
-		init_logSigma_bi <- 4
+		init_logSigma_bi <- 4 # not used in rbi
 	} else if(pingType == 'pbi'){
 		init_logSigma_bi <- -5
 	}
 	init_logD_v <- 0
-	init_logSigma_toa <- -3
-	init_logScale <- 1
-	init_log_t_part <- -4
+	init_logSigma_toa <- -3 # used in Gaussian and mixture
+	init_logScale <- 1		# used in mixture and pure t
+	init_log_t_part <- -4	# only used in mixture
 	inits <- c(init_logD_xy, init_logSigma_bi,  init_logD_v, init_logSigma_toa, init_logScale, init_log_t_part)
 
 	inits <- stats::rnorm(length(inits), mean=inits, sd=sdInits)

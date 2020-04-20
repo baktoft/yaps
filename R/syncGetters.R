@@ -2,8 +2,9 @@
 #' @param inp_sync Input data prepared for the sync model using `getInpSync()`
 #' @param silent Keep TMB quiet
 #' @param fine_tune Logical. Wheter to re-run the sync model excluding residual outliers
+#' @param max_iter Max number of iterations to run TMB. Default=100 seems to work in most cases.
 #' @export
-getSyncModel <- function(inp_sync, silent=TRUE, fine_tune=TRUE){
+getSyncModel <- function(inp_sync, silent=TRUE, fine_tune=TRUE, max_iter=100){
 	dat_tmb <- inp_sync$dat_tmb_sync
 	params <- inp_sync$params_tmb_sync
 	random <- inp_sync$random_tmb_sync
@@ -31,7 +32,7 @@ getSyncModel <- function(inp_sync, silent=TRUE, fine_tune=TRUE){
 		# config(DLL="yaps_sync")
 		# ## Reduce memory peak of a parallel model by creating tapes in serial
 		# config(tape.parallel=0, DLL="yaps_sync")
-		obj <- TMB::MakeADFun(data = dat_tmb, parameters = params, random = random, DLL = "yaps", inner.control = list(maxit = 100), silent=silent)
+		obj <- TMB::MakeADFun(data = dat_tmb, parameters = params, random = random, DLL = "yaps", inner.control = list(maxit = max_iter), silent=silent)
 		
 		if(silent){
 			opt <- suppressWarnings(stats::nlminb(inits,obj$fn,obj$gr))
@@ -70,6 +71,12 @@ getSyncModel <- function(inp_sync, silent=TRUE, fine_tune=TRUE){
 	pl$TRUE_H[,1] <- pl$TRUE_H[,1] + inp_params$Hx0
 	pl$TRUE_H[,2] <- pl$TRUE_H[,2] + inp_params$Hy0
 	eps_long <- getEpsLong(report, pl, inp_sync)
+	
+	offset_nas <- which(pl$OFFSET == 0)
+	pl$OFFSET[offset_nas] <- NA
+	pl$SLOPE1[offset_nas] <- NA
+	pl$SLOPE2[offset_nas] <- NA
+	
 	cat("Sync model done \n")
 	cat("Consider saving the sync model for later use - e.g. save(sync_model, file='path_to_sync_save'). \n")
 	tictoc::toc()
@@ -162,6 +169,10 @@ getOffsetVals <- function(inp_toa_list, n_offset_day){
 	offset_idx <- as.numeric(offset_cuts)
 	offset_labs <- levels(offset_cuts)
 	offset_levels <- cbind(lower = as.numeric( sub("\\((.+),.*", "\\1", offset_labs) ),	  upper = as.numeric( sub("[^,]*,([^]]*)\\]", "\\1", offset_labs) ))
+	
+	offset_levels[1,1] 				<- epo_start
+	offset_levels[n_offset_idx,2] 	<- epo_end
+	
 	dimnames(offset_levels) <- NULL
 	return(list(n_offset_idx=n_offset_idx, offset_idx=offset_idx, offset_levels=offset_levels))
 }
@@ -179,7 +190,11 @@ getSsVals <- function(inp_toa_list, n_ss_day){
 	ss_cuts <- cut(epo_self_vec, breaks=n_ss_idx, dig.lab=10)
 	ss_idx <- as.numeric(ss_cuts)
 	ss_labs <- levels(ss_cuts)
-	ss_levels <- 	cbind(lower = as.numeric( sub("\\((.+),.*", "\\1", ss_labs) ),	  upper = as.numeric( sub("[^,]*,([^]]*)\\]", "\\1", ss_labs) ))
+	ss_levels <- cbind(lower = as.numeric( sub("\\((.+),.*", "\\1", ss_labs) ),	  upper = as.numeric( sub("[^,]*,([^]]*)\\]", "\\1", ss_labs) ))
+
+	ss_levels[1,1] 				<- epo_start
+	ss_levels[n_ss_idx,2] 		<- epo_end
+
 	dimnames(ss_levels) <- NULL
 
 	return(list(n_ss_idx=n_ss_idx, ss_idx=ss_idx, ss_levels=ss_levels))
@@ -249,9 +264,10 @@ getEpsLong <- function(report, pl, inp_sync){
 
 
 #' Internal function to get data for checking sync_model
+#' @param extreme_threshold Ignore delta values larger than this threshold. 
 #' @inheritParams getInpSync
 #' @noRd
-getSyncCheckDat <- function(sync_model){
+getSyncCheckDat <- function(sync_model, extreme_threshold=10000){
 	toa <- sync_model$inp_synced$inp_params$toa
 	toa_sync <- applySync(toa, sync_model=sync_model)
 
@@ -278,6 +294,11 @@ getSyncCheckDat <- function(sync_model){
 		sync_check_dat_i <- toa_sync_long[, .(focal_hydro_idx=i, hydro_idx, offset_idx, ping_idx, delta=abs(((toa_sync - toa_sync[hydro_idx==i])*ss) - (dist_to_sync_tag - dist_to_sync_tag[hydro_idx==i]))), by=c('sync_tag_idx')]
 		sync_check_dat_i <- sync_check_dat_i[delta!= 0]
 		sync_check_dat <- rbind(sync_check_dat, sync_check_dat_i)
+	}
+	n_extreme <- nrow(sync_check_dat[delta >= extreme_threshold])
+	if(n_extreme > 0){
+		sync_check_dat <- sync_check_dat[delta < extreme_threshold]
+		print(paste0("NOTE: ",n_extreme," extreme outlier(s) (i.e. >= ",extreme_threshold," m) were ignored"))
 	}
 	
 	return(sync_check_dat)

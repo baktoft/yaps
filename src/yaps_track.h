@@ -15,6 +15,8 @@
 	DATA_VECTOR(Edist);
 	DATA_VECTOR(biTable);
 
+	DATA_STRING(how_3d);
+	DATA_VECTOR(z_vec);
 	
 	
 	PARAMETER_VECTOR(X);	//Position at time of ping
@@ -68,7 +70,11 @@
 	{
 		for(int h=0; h<nh; ++h){ //iterate hydros
 			if(!isNA(toa(h,i))){ //ignore NA's...
-				dist(h,i) = sqrt((H(h,0)-X(i))*(H(h,0)-X(i)) + (H(h,1)-Y(i))*(H(h,1)-Y(i)));
+				if(how_3d == "none"){
+					dist(h,i) = sqrt((H(h,0)-X(i))*(H(h,0)-X(i)) + (H(h,1)-Y(i))*(H(h,1)-Y(i)));
+				} else if(how_3d == "data"){
+					dist(h,i) = sqrt((H(h,0)-X(i))*(H(h,0)-X(i)) + (H(h,1)-Y(i))*(H(h,1)-Y(i)) + (H(h,2)-z_vec(i))*(H(h,2)-z_vec(i)));
+				}
 				if(ss_data_what == "est"){
 					mu_toa(h,i) = top(i) +  dist(h,i)/ss(ss_idx(i));
 				} else {
@@ -104,9 +110,10 @@
 	}
 	
 	// //speed of sound component
-	nll -= dnorm(ss(0),Type(1430.0),Type(10.0),true);		
+	nll -= dnorm(ss(0),Type(1475.0),Type(40.0),true);		
 	for(int i = 1; i < n_ss; ++i){
 		nll -= dnorm(ss(i), ss(i-1),sqrt(2*D_v), true);
+		nll -= dnorm(ss(i),Type(1475.0),Type(100.0),true);		
 	}
 	
 	//burst interval component

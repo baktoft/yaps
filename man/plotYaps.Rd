@@ -4,7 +4,8 @@
 \alias{plotYaps}
 \title{Basic plots of yaps output}
 \usage{
-plotYaps(inp, yaps_out, type = "map")
+plotYaps(inp, yaps_out, type = "map", xlim = NULL, ylim = NULL,
+  main = NULL)
 }
 \arguments{
 \item{inp}{Input object obtained using \code{getInp()}}
@@ -12,6 +13,10 @@ plotYaps(inp, yaps_out, type = "map")
 \item{yaps_out}{Output from succesful run of \code{runYaps()}}
 
 \item{type}{Plot type. \code{type="map"} prodces a basic map of estimated track and hydrophones; \code{type="coord_X"}, \code{type="coord_Y"} produces plots of X and Y coordinated including +- 1 standard error.}
+
+\item{xlim, ylim}{Optional vectors of length 2 to set xlim and/or ylim.}
+
+\item{main}{Title of plot - optional.}
 }
 \description{
 Basic plots of yaps output

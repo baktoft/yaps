@@ -11,5 +11,6 @@ then, we have worked on improving the code, adding more features and
 adding examples and tutorials to help users implementing YAPS in their
 studies.
 
-Not much to see here yet, but have a look at the step-by-step guides
-found under Articles.
+Have a look at the step-by-step guides found under
+[Articles](https://baktoft.github.io/yaps/articles/) for a quick intro
+to hands-on working with YAPS.

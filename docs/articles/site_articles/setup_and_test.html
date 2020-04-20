@@ -176,14 +176,14 @@
     <span class="no">fixed_hydros_idx</span>, <span class="no">n_offset_day</span>, <span class="no">n_ss_day</span>, <span class="kw">keep_rate</span><span class="kw">=</span><span class="fl">0.25</span>)</pre></body></html></div>
 <p>Then, obtain a synchronization model using <code><a href="../../reference/getSyncModel.html">getSyncModel()</a></code></p>
 <div class="sourceCode" id="cb17"><html><body><pre class="r"><span class="no">sync_model</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../../reference/getSyncModel.html">getSyncModel</a></span>(<span class="no">inp_sync</span>, <span class="kw">silent</span><span class="kw">=</span><span class="fl">TRUE</span>)</pre></body></html></div>
-<pre><code>## 2020-04-20 18:49:28 
+<pre><code>## 2020-04-20 18:59:12 
 ## . Running optimization of the sync model. Please be patient - this can take a long time. 
-## .. 2020-04-20 18:49:36  
+## .. 2020-04-20 18:59:20  
 ## .... obj =  -9087.91  
-## ... iteration 1: 8.53 sec elapsed
+## ... iteration 1: 8.03 sec elapsed
 ## Sync model done 
 ## Consider saving the sync model for later use - e.g. save(sync_model, file='path_to_sync_save'). 
-## Fitting sync model: : 8.53 sec elapsed</code></pre>
+## Fitting sync model: : 8.04 sec elapsed</code></pre>
 <p>Use the diagnostic plots to ensure the obtained synchronization model is good. Basically, we want all number to be as close to zero as possible. Note, that a few outliers far away from zero is not serious, as the synchronization model follows a scaled t-distribution allowing long tails in the residuals.</p>
 <div class="sourceCode" id="cb19"><html><body><pre class="r"><span class="fu"><a href="../../reference/plotSyncModelResids.html">plotSyncModelResids</a></span>(<span class="no">sync_model</span>, <span class="kw">by</span><span class="kw">=</span><span class="st">'overall'</span>)</pre></body></html></div>
 <p><img src="setup_and_test_files/figure-html/unnamed-chunk-11-1.png" width="700"></p>

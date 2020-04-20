@@ -1,0 +1,15 @@
+
+# YAPS - (Yet Another Positioning Solver) <img src="man/figures/yaps_logo.png" align="right" alt="" width="100" />
+
+YAPS is an open source alternative to estimate tracks of aquatic animals
+tagged with acoustic transmitters. The original version of YAPS was
+presented in Baktoft, Gjelland, Økland & Thygesen (2017): [Positioning
+of aquatic animals based on time-of-arrival and random walk models using
+YAPS (Yet Another Positioning
+Solver)](https://www.nature.com/articles/s41598-017-14278-z.pdf). Since
+then, we have worked on improving the code, adding more features and
+adding examples and tutorials to help users implementing YAPS in their
+studies.
+
+Not much to see here yet, but have a look at the step-by-step guides
+found under Articles.

@@ -16,19 +16,12 @@ knitr::opts_chunk$set(
 )
 ```
 
-# YAPS - (Yet Another Positioning Solver)
-Welcome to the `yaps` repository. The `yaps` package is based on the original YAPS presented in Baktoft, Gjelland, Økland & Thygesen (2017): [Positioning of aquatic animals based on time-of-arrival and random walk models using YAPS (Yet Another Positioning Solver)](https://www.nature.com/articles/s41598-017-14278-z.pdf)  
+# YAPS - (Yet Another Positioning Solver) <img src="man/figures/yaps_logo.png" align="right" alt="" width="100" />
+YAPS is an open source alternative to estimate tracks of aquatic animals tagged with acoustic transmitters. The original version of YAPS was presented in Baktoft, Gjelland, Økland & Thygesen (2017): [Positioning of aquatic animals based on time-of-arrival and random walk models using YAPS (Yet Another Positioning Solver)](https://www.nature.com/articles/s41598-017-14278-z.pdf). Since then, we have worked on improving the code, adding more features and adding examples and tutorials to help users implementing YAPS in their studies.  
 
-To use `yaps` on own data, you need to compile a TOA-matrix based on synchronized hydrophone data and replace the hydros dataframe with actual hydrophone positions. A complete step-by-step guide on how to do this, can be found in our pre-print paper [Opening the black box of fish tracking using acoustic telemetry](https://www.biorxiv.org/content/10.1101/2019.12.16.877688v1). The example in this guide is based on data collected using a 69 kHz PPM-based system (Vemco VR2). We are working towards adding examples based on data collected using other manufacturers.  
-
-
-For an alternative approach (in python) to prepare your data for `yaps`, have a look at Jenna Vergeynst's github repos [time_synchronization](https://github.com/JennaVergeynst/time_synchronization) and [prepare_toa_for_yaps](https://github.com/JennaVergeynst/prepare_toa_for_yaps).  
+Not much to see here yet, but have a look at the step-by-step guides found under Articles.
 
 
-The `yaps` package requires [devtools](https://cran.r-project.org/web/packages/devtools/index.html) and [TMB](https://github.com/kaskr/adcomp).  
-Please see for [instructions](https://github.com/kaskr/adcomp/wiki/Download) on TMB installation. Remember to install [Rtools](https://cran.r-project.org/bin/windows/Rtools/) as specified in the TMB documentation.  
 
 
-## Disclaimer
-**`yaps` obeys the fundamental rule of “garbage in, garbage out”. Therefore, DO NOT expect `yaps` to salvage a poorly designed study, nor to turn crappy data into gold.**  
-We have attempted to make both synchronization process and track estimation user-friendly. However, it is not trivial to synchronize hydrophones (let alone automating the process) based on detections in a variable and often noisy environment. Hydrophones might be replaced/shifted and if not fixed securely, hydrophones might move/be moved during a study. Additionally, hydrophone performance and output format varies considerably among (and within) manufacturers. On top of that, hydrophones don't always behave and perform as expected. For instance, some hydrophone models autonomously initiate reboots causing perturbation of varying magnitude and/or duration of the internal clock at apparently random time intervals. Therefore, the functions in `yaps` might perform sub-optimal or even fail miserably when applied to new data. If/when this happens, please let us know through a direct message or leave a bug-report. Also note, the to-do list for improvements and tweaks is long and growing, so stay tuned for updates.  
+

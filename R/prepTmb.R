@@ -118,14 +118,18 @@ getParams <- function(datTmb){
 		, top = zoo::na.approx(apply(datTmb$toa, 2, function(k) {stats::median(k, na.rm=TRUE)}), rule=2)	#time of ping
 		, ss=stats::rnorm(datTmb$n_ss, 1450, 5) 	#speed of sound
 		, logD_xy = 0				#diffusivity of transmitter movement (D_xy in ms)
-		, logSigma_bi = 0			#sigma  burst interval (sigma_bi in ms)
 		, logD_v = 0				#diffusivity of speed of sound (D_v in ms)
 		, logSigma_toa = 0			#sigma for Gaussian
 		, logScale = 0				#scale parameter for t-distribution
 		, log_t_part = 0				#Mixture ratio between Gaussian and t
 	)
 	
+	if(datTmb$pingType == 'sbi'){
+		out$logSigma_bi <- 0			#sigma  burst interval (sigma_bi in ms)
+	}
+	
 	if(datTmb$pingType == 'pbi'){
+		out$logSigma_bi <- 0			#sigma  burst interval (sigma_bi in ms)
 		out$tag_drift <- stats::rnorm(datTmb$np, 0, 1e-2)
 	}
 	
@@ -171,8 +175,14 @@ getInits <- function(pingType, sdInits=1) {
 	init_logSigma_toa <- -3 # used in Gaussian and mixture
 	init_logScale <- 1		# used in mixture and pure t
 	init_log_t_part <- -4	# only used in mixture
-	inits <- c(init_logD_xy, init_logSigma_bi,  init_logD_v, init_logSigma_toa, init_logScale, init_log_t_part)
-
+	
+	if(pingType == 'sbi'){
+		inits <- c(init_logD_xy, init_logSigma_bi,  init_logD_v, init_logSigma_toa, init_logScale, init_log_t_part)
+	} else if (pingType == 'rbi'){
+		inits <- c(init_logD_xy, 					init_logD_v, init_logSigma_toa, init_logScale, init_log_t_part)
+	} else if (pingType == 'pbi'){
+		inits <- c(init_logD_xy, init_logSigma_bi,  init_logD_v, init_logSigma_toa, init_logScale, init_log_t_part)
+	}
 	inits <- stats::rnorm(length(inits), mean=inits, sd=sdInits)
 	return(inits)
 }

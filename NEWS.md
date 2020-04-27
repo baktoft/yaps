@@ -1,3 +1,10 @@
+# yaps v1.2.0.9111
+
+## New stuff
+* Split cpp file into pingType and Edist specifics
+* Add option to specify pingType in testYaps(). PingType can be 'sbi' (default), 'rbi' or 'pbi'
+
+
 # yaps v1.2.0.9110
 
 ## New stuff

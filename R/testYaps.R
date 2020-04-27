@@ -9,7 +9,7 @@ testYaps <- function(silent=FALSE, pingType='sbi'){
 	trueTrack <- simTrueTrack(model='crw', n = 2000, deltaTime=1, shape=1, scale=0.5, addDielPattern=TRUE, ss='rw')
 	# pingType <- 'sbi'
 	if(pingType == 'sbi'){
-		sbi_mean <- 20; sbi_sd <- 1e-4;
+		sbi_mean <- 20; sbi_sd <- 1e-3;
 		rbi_min <- 0; rbi_max <- 0;
 		teleTrack <- simTelemetryTrack(trueTrack, pingType=pingType, sbi_mean=sbi_mean, sbi_sd=sbi_sd)
 	} else {
@@ -29,6 +29,7 @@ testYaps <- function(silent=FALSE, pingType='sbi'){
 	ss_data_what <- 'data'
 	ss_data <- teleTrack$ss
 	inp <- getInp(hydros, toa, E_dist="t", n_ss=2, pingType=pingType, sdInits=0, ss_data_what=ss_data_what, ss_data=ss_data, rbi_min=rbi_min, rbi_max=rbi_max, biTable=biTable)
+	print(str(inp))
 	maxIter <- 100
 	suppressWarnings(outTmb <- runTmb(inp, maxIter=maxIter, getPlsd=TRUE, getRep=TRUE))
 	# print(str(outTmb))

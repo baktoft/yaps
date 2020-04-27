@@ -37,7 +37,7 @@ testYaps <- function(silent=FALSE, pingType='sbi', est_ss=TRUE){
 	inp <- getInp(hydros, toa, E_dist="t", n_ss=2, pingType=pingType, sdInits=0, ss_data_what=ss_data_what, ss_data=ss_data, rbi_min=rbi_min, rbi_max=rbi_max, biTable=biTable)
 	# print(str(inp))
 	maxIter <- 100
-	suppressWarnings(outTmb <- runTmb(inp, maxIter=maxIter, getPlsd=TRUE, getRep=TRUE))
+	suppressWarnings(outTmb <- runTmb(inp, maxIter=maxIter, getPlsd=TRUE, getRep=TRUE, x.tol=1E-3))
 	# print(str(outTmb))
 	pl <- outTmb$pl
 	yaps_out <- data.table::data.table(X=pl$X + inp$inp_params$Hx0, Y=pl$Y + inp$inp_params$Hy0)

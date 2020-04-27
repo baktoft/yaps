@@ -17,8 +17,6 @@ runYaps <- function(inp, maxIter=1000, getPlsd=TRUE, getRep=TRUE, silent=TRUE, x
 		random <- c(random, "tag_drift")
 	}
 	
-	inp$inits <- rnorm(length(inp$inits), 0, 3)
-
 	obj <- TMB::MakeADFun(
 			data = inp$datTmb,
 			parameters = inp$params,
@@ -27,13 +25,14 @@ runYaps <- function(inp, maxIter=1000, getPlsd=TRUE, getRep=TRUE, silent=TRUE, x
 			inner.control = list(maxit = maxIter), 
 			silent=silent
 		)
-	if(!silent){
-		opt <- stats::nlminb(inp$inits,obj$fn,obj$gr, control = list(x.tol=x.tol))
-	} else {
-		suppressWarnings(opt <- stats::nlminb(inp$inits,obj$fn,obj$gr))
-	}
+
+	control_list <- list(x.tol=x.tol)
 	
-	# opt$message
+	if(!silent){
+		opt <- stats::nlminb(inp$inits,obj$fn,obj$gr, control = control_list)
+	} else {
+		suppressWarnings(opt <- stats::nlminb(inp$inits,obj$fn,obj$gr, control = control_list))
+	}
 	
 	pl <- obj$env$parList()   # List of estimates
 	if(getRep){

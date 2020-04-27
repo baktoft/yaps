@@ -4,7 +4,7 @@
 \alias{testYaps}
 \title{Test YAPS core functionality}
 \usage{
-testYaps(silent = FALSE)
+testYaps(silent = FALSE, pingType = "sbi", est_ss = TRUE)
 }
 \arguments{
 \item{silent}{Logical whether to print output to the console}

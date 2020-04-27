@@ -4,11 +4,9 @@
 \alias{getInits}
 \title{Get inits for use in TMB}
 \usage{
-getInits(pingType, sdInits = 1)
+getInits(datTmb, sdInits = 1)
 }
 \arguments{
-\item{pingType}{Type of transmitter to simulate - either stable burst interval ('sbi'), random burst interval ('rbi') or random burst interval but where the random sequence is known a priori}
-
 \item{sdInits}{If >0 initial values will be randomized around the normally fixed value using rnorm(length(inits), mean=inits, sd=sdInits)}
 }
 \value{

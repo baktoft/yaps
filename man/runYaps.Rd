@@ -6,10 +6,10 @@
 \title{Function to run TMB to estimate track}
 \usage{
 runYaps(inp, maxIter = 1000, getPlsd = TRUE, getRep = TRUE,
-  silent = TRUE)
+  silent = TRUE, x.tol = 1.5e-08)
 
 runTmb(inp, maxIter = 1000, getPlsd = TRUE, getRep = TRUE,
-  silent = TRUE)
+  silent = TRUE, x.tol = 1.5e-08)
 }
 \arguments{
 \item{inp}{inp-object obtained from getInp()}
@@ -19,6 +19,8 @@ runTmb(inp, maxIter = 1000, getPlsd = TRUE, getRep = TRUE,
 \item{getPlsd, getRep}{Whether or not to get sd estimates (plsd=TRUE) and reported values (getRep=TRUE).}
 
 \item{silent}{Logical whether to keep the optimization quiet.}
+
+\item{x.tol}{X tolerance for the optimizer. Default is 1.5E-8. `?nlminb` for details.}
 }
 \description{
 Function to run TMB to estimate track

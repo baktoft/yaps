@@ -3,6 +3,8 @@
 #' Run `testYaps()` to check that the core functions of YAPS is working correctly.
 #' Output should be a random simulated (black) and estimated (red) track.
 #' @param silent Logical whether to print output to the console
+#' @param est_ss Logical whether to test using ss_data_what = 'est' (est_ss = TRUE) or ss_data_what = 'data' (est_ss = FALSE)
+#' @inheritParams getInp
 #' @export
 testYaps <- function(silent=FALSE, pingType='sbi', est_ss=TRUE){
 	set.seed(42)

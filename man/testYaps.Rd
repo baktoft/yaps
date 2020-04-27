@@ -8,6 +8,10 @@ testYaps(silent = FALSE, pingType = "sbi", est_ss = TRUE)
 }
 \arguments{
 \item{silent}{Logical whether to print output to the console}
+
+\item{pingType}{Type of transmitter to simulate - either stable burst interval ('sbi'), random burst interval ('rbi') or random burst interval but where the random sequence is known a priori}
+
+\item{est_ss}{Logical whether to test using ss_data_what = 'est' (est_ss = TRUE) or ss_data_what = 'data' (est_ss = FALSE)}
 }
 \description{
 Run `testYaps()` to check that the core functions of YAPS is working correctly.

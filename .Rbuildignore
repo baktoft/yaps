@@ -5,3 +5,6 @@
 ^_pkgdown\.yml$
 ^docs$
 ^pkgdown$
+^index\.Rmd$
+^index\.md$
+^vignettes$

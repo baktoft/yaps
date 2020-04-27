@@ -17,10 +17,10 @@
 #' @return List of input data ready for use in TMB-call
 #' @export
 getInp <- function(hydros, toa, E_dist, n_ss, pingType, sdInits=1, rbi_min=0, rbi_max=0, ss_data_what='est', ss_data=0, biTable=NULL, z_vec=NULL){
-	inp_params <- yaps:::getInpParams(hydros, toa, pingType)
-	datTmb <- yaps:::getDatTmb(hydros, toa, E_dist, n_ss, pingType, rbi_min, rbi_max, ss_data_what, ss_data, biTable, inp_params, z_vec)
-	params <- getParams(datTmb)
-	inits <- getInits(datTmb, sdInits)
+	inp_params 	<- getInpParams(hydros, toa, pingType)
+	datTmb 		<- getDatTmb(hydros, toa, E_dist, n_ss, pingType, rbi_min, rbi_max, ss_data_what, ss_data, biTable, inp_params, z_vec)
+	params 		<- getParams(datTmb)
+	inits 		<- getInits(datTmb, sdInits)
 	return(list(
 		datTmb = datTmb,
 		params= params,
@@ -109,7 +109,7 @@ getDatTmb <- function(hydros, toa, E_dist, n_ss, pingType, rbi_min, rbi_max, ss_
 #' @return List of params for use in TMB
 #' @export
 getParams <- function(datTmb){
-	params_XY <- yaps:::getParamsXYFromCOA(datTmb)
+	params_XY <- getParamsXYFromCOA(datTmb)
 	out <- list(
 		  X = params_XY$X + stats::rnorm(ncol(datTmb$toa), sd=10)
 		, Y = params_XY$Y + stats::rnorm(ncol(datTmb$toa), sd=10)
@@ -179,6 +179,7 @@ getParamsXYFromCOA <- function(datTmb){
 #'
 #' Compile a vector of initial values to use in TMB. One value for each estimated parameter (not random effects).
 #' Should all be in a credible range.
+#' @param datTmb Object obtained using getDatTmb()
 #' @inheritParams getInp
 #' @return Vector of initial values to use in TMB
 #' @export

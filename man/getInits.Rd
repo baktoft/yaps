@@ -7,6 +7,8 @@
 getInits(datTmb, sdInits = 1)
 }
 \arguments{
+\item{datTmb}{Object obtained using getDatTmb()}
+
 \item{sdInits}{If >0 initial values will be randomized around the normally fixed value using rnorm(length(inits), mean=inits, sd=sdInits)}
 }
 \value{

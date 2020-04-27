@@ -7,7 +7,11 @@
 #' @export
 runYaps <- function(inp, maxIter=1000, getPlsd=TRUE, getRep=TRUE, silent=TRUE){
 	print("Running yaps...")
-	random <- c("X", "Y", "ss", "top", "tag_drift")
+	if(inp$datTmb$pingType != 'pbi'){
+		random <- c("X", "Y", "ss", "top")
+	} else {
+		random <- c("X", "Y", "ss", "top", "tag_drift")
+	}
 	obj <- TMB::MakeADFun(
 			data = inp$datTmb,
 			parameters = inp$params,

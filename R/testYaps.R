@@ -4,18 +4,31 @@
 #' Output should be a random simulated (black) and estimated (red) track.
 #' @param silent Logical whether to print output to the console
 #' @export
-testYaps <- function(silent=FALSE){
+testYaps <- function(silent=FALSE, pingType='sbi'){
 	set.seed(42)
 	trueTrack <- simTrueTrack(model='crw', n = 2000, deltaTime=1, shape=1, scale=0.5, addDielPattern=TRUE, ss='rw')
-	pingType <- 'sbi'
-	sbi_mean <- 20; sbi_sd <- 1e-4;
-	teleTrack <- simTelemetryTrack(trueTrack, pingType=pingType, sbi_mean=sbi_mean, sbi_sd=sbi_sd)
+	# pingType <- 'sbi'
+	if(pingType == 'sbi'){
+		sbi_mean <- 20; sbi_sd <- 1e-4;
+		rbi_min <- 0; rbi_max <- 0;
+		teleTrack <- simTelemetryTrack(trueTrack, pingType=pingType, sbi_mean=sbi_mean, sbi_sd=sbi_sd)
+	} else {
+		rbi_min = 30
+		rbi_max = 90
+		if(pingType == 'rbi'){
+			teleTrack <- simTelemetryTrack(trueTrack, pingType=pingType, rbi_min=rbi_min, rbi_max=rbi_max)
+		} else {
+			teleTrack_list <- simTelemetryTrack(trueTrack, pingType=pingType, rbi_min=rbi_min, rbi_max=rbi_max)
+			teleTrack <- teleTrack_list[['out']]
+			biTable   <- teleTrack_list[['biTable']]
+		}
+	}
 	hydros <- data.table::data.table(hx=c(-250,-250,250,250), hy=c(-250,250,-250,250), hz=c(5,5,5,5))
 	toa_list <- simToa(teleTrack, hydros, pingType, sigmaToa=1e-4, pNA=0.25, pMP=0.01)
 	toa <- toa_list$toa
 	ss_data_what <- 'data'
 	ss_data <- teleTrack$ss
-	inp <- getInp(hydros, toa, E_dist="t", n_ss=2, pingType=pingType, sdInits=0, ss_data_what=ss_data_what, ss_data=ss_data)
+	inp <- getInp(hydros, toa, E_dist="t", n_ss=2, pingType=pingType, sdInits=0, ss_data_what=ss_data_what, ss_data=ss_data, rbi_min=rbi_min, rbi_max=rbi_max, biTable=biTable)
 	maxIter <- 100
 	suppressWarnings(outTmb <- runTmb(inp, maxIter=maxIter, getPlsd=TRUE, getRep=TRUE))
 	# print(str(outTmb))

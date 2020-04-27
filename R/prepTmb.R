@@ -17,8 +17,8 @@
 #' @return List of input data ready for use in TMB-call
 #' @export
 getInp <- function(hydros, toa, E_dist, n_ss, pingType, sdInits=1, rbi_min=0, rbi_max=0, ss_data_what='est', ss_data=0, biTable=NULL, z_vec=NULL){
-	inp_params <- getInpParams(hydros, toa, pingType)
-	datTmb <- getDatTmb(hydros, toa, E_dist, n_ss, pingType, rbi_min, rbi_max, ss_data_what, ss_data, biTable, inp_params, z_vec)
+	inp_params <- yaps:::getInpParams(hydros, toa, pingType)
+	datTmb <- yaps:::getDatTmb(hydros, toa, E_dist, n_ss, pingType, rbi_min, rbi_max, ss_data_what, ss_data, biTable, inp_params, z_vec)
 	params <- getParams(datTmb)
 	inits <- getInits(pingType, sdInits)
 	return(list(
@@ -109,8 +109,8 @@ getDatTmb <- function(hydros, toa, E_dist, n_ss, pingType, rbi_min, rbi_max, ss_
 #' @return List of params for use in TMB
 #' @export
 getParams <- function(datTmb){
-	params_XY <- getParamsXYFromCOA(datTmb)
-	list(
+	params_XY <- yaps:::getParamsXYFromCOA(datTmb)
+	out <- list(
 		  X = params_XY$X + stats::rnorm(ncol(datTmb$toa), sd=10)
 		, Y = params_XY$Y + stats::rnorm(ncol(datTmb$toa), sd=10)
 		  # X = 0 + stats::rnorm(ncol(datTmb$toa), sd=10)
@@ -123,8 +123,13 @@ getParams <- function(datTmb){
 		, logSigma_toa = 0			#sigma for Gaussian
 		, logScale = 0				#scale parameter for t-distribution
 		, log_t_part = 0				#Mixture ratio between Gaussian and t
-		, tag_drift = stats::rnorm(datTmb$np, 0, 1e-2)
 	)
+	
+	if(datTmb$pingType == 'pbi'){
+		out$tag_drift <- stats::rnorm(datTmb$np, 0, 1e-2)
+	}
+	
+	return(out)
 }
 
 #' Get initial values for X and Y based on Center Of Activity - i.e. hydrophones positions

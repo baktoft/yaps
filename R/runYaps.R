@@ -51,7 +51,7 @@ runYaps <- function(inp, maxIter=1000, getPlsd=TRUE, getRep=TRUE, silent=TRUE){
 	if(is.na(obj_out) | is.null(opt$convergence)) {
 		print("...yaps failed to converge!. Rerun getInp() to get new starting values and try again.")
 	} else {
-		print(paste0("...yaps converged (obj: ",obj_out,")"))
+		print(paste0("...yaps converged (obj: ",obj_out,") with message: ",opt$message,""))
 	}
 	return(list(pl=pl, plsd=plsd, rep=rep, obj=obj_out, inp=inp))
 }

@@ -32,21 +32,31 @@
 
 	PARAMETER(logD_v);    		// Diffusivity of sound speed
 	Type D_v = exp(logD_v);
+
+
+	// if(Edist(0) ==1){
+		// #include "params_gaus-dist.h"
+	// } else if (Edist(1) == 1){
+		// #include "params_mix-dist.h"
+	// } else if(Edist(2) == 1){
+		// #include "params_t-dist.h"
+	// }
 	
-	PARAMETER(logSigma_toa);	// Sigma TimeOfArrival
-	Type sigma_toa = exp(logSigma_toa);
+	// PARAMETER(logSigma_toa);	// Sigma TimeOfArrival
+	// Type sigma_toa = exp(logSigma_toa);
 
-	PARAMETER(logScale);		// scale-parameter for t-dist
-	Type scale = exp(logScale);
+	// PARAMETER(logScale);		// scale-parameter for t-dist
+	// Type scale = exp(logScale);
 
-	PARAMETER(log_t_part);		// t-part of mixture model 
-	Type t_part = exp(log_t_part);
-	Type G_part = Type(1.0) - t_part; //Gaussian part of mixture model
+	// PARAMETER(log_t_part);		// t-part of mixture model 
+	// Type t_part = exp(log_t_part);
+	// Type G_part = Type(1.0) - t_part; //Gaussian part of mixture model
 
 	// PARAMETER_VECTOR(tag_drift);
 
 	array<Type> mu_toa(nh,np);  // mu-matrix
 	array<Type> dist(nh,np);	// dist-matrix
+	array<Type> eps(nh,np);		// eps-matrix
 	vector<Type> top_pbi(np);
 	vector<Type> top_sbi(np);
 
@@ -80,26 +90,31 @@
 				} else {
 					mu_toa(h,i) = top(i) +  dist(h,i)/ss_data(i);
 				}
-				Type eps = toa(h,i) - mu_toa(h,i);
-				
-				nll -= Edist(0) * dnorm(eps, Type(0), sigma_toa, true); 					//Gaussian part					
-				
-				nll -= Edist(1) * log( G_part * dnorm(eps, Type(0),sigma_toa,false) + 		//Gaussian part
-						t_part * dt(eps/scale, Type(3.0), false) );					//t part
-				
-				nll -= Edist(2) * log(dt(eps/scale, Type(3.0), false)/scale);
-
+				eps(h,i) = toa(h,i) - mu_toa(h,i);
 			}
 		}
 	}
 	
+	if(Edist(0) ==1){
+		#include "nll_gaus-dist.h"
+		// nll -= Edist(0) * dnorm(eps(h,i), Type(0), sigma_toa, true); 					//Gaussian part					
+	} else if (Edist(1) == 1){
+		#include "nll_mix-dist.h"
+		// nll -= Edist(1) * log( G_part * dnorm(eps(h,i), Type(0),sigma_toa,false) + 		//Gaussian part
+			// t_part * dt(eps(h,i)/scale, Type(3.0), false) );					//t part
+	} else if(Edist(2) == 1){
+		#include "nll_t-dist.h"
+		// nll -= Edist(2) * log(dt(eps(h,i)/scale, Type(3.0), false)/scale);		// t
+	}
+
+	
 	// Needed to ensure positive definite Hessian...
-	nll -= dnorm(log_t_part, Type(0), Type(25), true);
-	nll -= dnorm(logSigma_toa, Type(0), Type(25), true);
-	nll -= dnorm(logScale, Type(0), Type(25), true);
+	// nll -= dnorm(log_t_part, Type(0), Type(25), true);
+	// nll -= dnorm(logSigma_toa, Type(0), Type(25), true);
+	// nll -= dnorm(logScale, Type(0), Type(25), true);
 	// nll -= dnorm(logSigma_bi, Type(0), Type(25), true);
 	nll -= dnorm(logD_v, Type(0), Type(25), true);
-	nll -= dnorm(logD_xy, Type(0), Type(25), true);
+	// nll -= dnorm(logD_xy, Type(0), Type(25), true);
 
 	//position component
 	nll -= dnorm(X(0),Type(0),Type(10000),true);

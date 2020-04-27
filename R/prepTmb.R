@@ -126,8 +126,8 @@ getParams <- function(datTmb){
 	
 	# # # ss related
 	if(datTmb$ss_data_what == 'est'){
-		out$ss <- stats::rnorm(datTmb$n_ss, 1450, 5) 	#speed of sound
 		out$logD_v <- 0				#diffusivity of speed of sound (D_v in ms)
+		out$ss <- stats::rnorm(datTmb$n_ss, 1450, 5) 	#speed of sound
 	}
 	
 	# # # Edist realted

@@ -3,6 +3,8 @@
 	Type sigma_bi = exp(logSigma_bi);
 	
 	PARAMETER_VECTOR(tag_drift);
+	
+	vector<Type> top_pbi(np);
 
 	top_pbi(0) = Type(0.0);
 	for(int i = 1; i < np; ++i)	{

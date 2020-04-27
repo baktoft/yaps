@@ -116,23 +116,21 @@ getParams <- function(datTmb){
 		  # X = 0 + stats::rnorm(ncol(datTmb$toa), sd=10)
 		# , Y = 0 + stats::rnorm(ncol(datTmb$toa), sd=10)
 		, top = zoo::na.approx(apply(datTmb$toa, 2, function(k) {stats::median(k, na.rm=TRUE)}), rule=2)	#time of ping
-		, ss=stats::rnorm(datTmb$n_ss, 1450, 5) 	#speed of sound
+		# , ss=stats::rnorm(datTmb$n_ss, 1450, 5) 	#speed of sound
 		, logD_xy = 0				#diffusivity of transmitter movement (D_xy in ms)
-		, logD_v = 0				#diffusivity of speed of sound (D_v in ms)
+		# , logD_v = 0				#diffusivity of speed of sound (D_v in ms)
 		# , logSigma_toa = 0			#sigma for Gaussian
 		# , logScale = 0				#scale parameter for t-distribution
 		# , log_t_part = 0				#Mixture ratio between Gaussian and t
 	)
 	
-	if(datTmb$pingType == 'sbi'){
-		out$logSigma_bi <- 0			#sigma  burst interval (sigma_bi in ms)
+	# # # ss related
+	if(datTmb$ss_data_what == 'est'){
+		out$ss <- stats::rnorm(datTmb$n_ss, 1450, 5) 	#speed of sound
+		out$logD_v <- 0				#diffusivity of speed of sound (D_v in ms)
 	}
 	
-	if(datTmb$pingType == 'pbi'){
-		out$logSigma_bi <- 0			#sigma  burst interval (sigma_bi in ms)
-		out$tag_drift <- stats::rnorm(datTmb$np, 0, 1e-2)
-	}
-	
+	# # # Edist realted
 	if(datTmb$Edist[1] == 1){
 		out$logSigma_toa = 0			#sigma for Gaussian
 	} else if(datTmb$Edist[2] == 1){
@@ -142,6 +140,17 @@ getParams <- function(datTmb){
 	} else if(datTmb$Edist[3] == 1){
 		out$logScale = 0				#scale parameter for t-distribution
 	}
+
+	# # # Ping type related
+	if(datTmb$pingType == 'sbi'){
+		out$logSigma_bi <- 0			#sigma  burst interval (sigma_bi in ms)
+	}
+	
+	if(datTmb$pingType == 'pbi'){
+		out$logSigma_bi <- 0			#sigma  burst interval (sigma_bi in ms)
+		out$tag_drift <- stats::rnorm(datTmb$np, 0, 1e-2)
+	}
+	
 	
 	
 	return(out)
@@ -175,6 +184,7 @@ getParamsXYFromCOA <- function(datTmb){
 #' @export
 getInits <- function(datTmb, sdInits=1) {
 	init_logD_xy <- -1
+
 	if(datTmb$pingType == 'sbi') {
 		init_logSigma_bi <- -6
 	} else if(datTmb$pingType == 'rbi'){
@@ -182,20 +192,19 @@ getInits <- function(datTmb, sdInits=1) {
 	} else if(datTmb$pingType == 'pbi'){
 		init_logSigma_bi <- -5
 	}
+	
 	init_logD_v <- 0
 	init_logSigma_toa <- -3 # used in Gaussian and mixture
 	init_logScale <- 1		# used in mixture and pure t
 	init_log_t_part <- -4	# only used in mixture
+
+	inits <- c(init_logD_xy)
 	
-	if(datTmb$pingType == 'sbi'){
-		inits <- c(init_logD_xy, init_logSigma_bi,  init_logD_v)#, init_logSigma_toa, init_logScale, init_log_t_part)
-	} else if (datTmb$pingType == 'rbi'){
-		inits <- c(init_logD_xy, 					init_logD_v)#, init_logSigma_toa, init_logScale, init_log_t_part)
-	} else if (datTmb$pingType == 'pbi'){
-		inits <- c(init_logD_xy, init_logSigma_bi,  init_logD_v)#, init_logSigma_toa, init_logScale, init_log_t_part)
+	if(datTmb$ss_data_what == 'est'){
+		inits <- c(inits, init_logD_v)
 	}
 	
-	
+
 	if(datTmb$Edist[1] == 1){
 		inits <- c(inits, init_logSigma_toa)
 	} else if(datTmb$Edist[2] == 1){
@@ -203,6 +212,15 @@ getInits <- function(datTmb, sdInits=1) {
 	} else if(datTmb$Edist[3] == 1){
 		inits <- c(inits, init_logScale)
 	}
+	
+	if(datTmb$pingType == 'sbi'){
+		inits <- c(inits, init_logSigma_bi)#,  init_logD_v)#, init_logSigma_toa, init_logScale, init_log_t_part)
+	} else if (datTmb$pingType == 'rbi'){
+		inits <- c(inits)#, 					init_logD_v)#, init_logSigma_toa, init_logScale, init_log_t_part)
+	} else if (datTmb$pingType == 'pbi'){
+		inits <- c(inits, init_logSigma_bi)#,  init_logD_v)#, init_logSigma_toa, init_logScale, init_log_t_part)
+	}
+
 	
 	inits <- stats::rnorm(length(inits), mean=inits, sd=sdInits)
 	return(inits)

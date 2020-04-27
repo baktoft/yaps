@@ -22,7 +22,7 @@
 	PARAMETER_VECTOR(X);	//Position at time of ping
 	PARAMETER_VECTOR(Y);	//Position at time of ping
 	PARAMETER_VECTOR(top);		// Estimated time of pings
-	PARAMETER_VECTOR(ss);		// Estimated speed of sound
+	// PARAMETER_VECTOR(ss);		// Estimated speed of sound
 
 	PARAMETER(logD_xy);    		// Diffusivity of fish
 	Type D_xy = exp(logD_xy);
@@ -30,8 +30,8 @@
 	// PARAMETER(logSigma_bi);		// Sigma for burst interval
 	// Type sigma_bi = exp(logSigma_bi);
 
-	PARAMETER(logD_v);    		// Diffusivity of sound speed
-	Type D_v = exp(logD_v);
+	// PARAMETER(logD_v);    		// Diffusivity of sound speed
+	// Type D_v = exp(logD_v);
 
 
 	// if(Edist(0) ==1){
@@ -57,8 +57,8 @@
 	array<Type> mu_toa(nh,np);  // mu-matrix
 	array<Type> dist(nh,np);	// dist-matrix
 	array<Type> eps(nh,np);		// eps-matrix
-	vector<Type> top_pbi(np);
-	vector<Type> top_sbi(np);
+	vector<Type> ss_i(np);
+	// vector<Type> top_pbi(np);
 
 	Type nll = 0.0;
 
@@ -76,6 +76,41 @@
 	// }
 
 
+	// for(int i=0; i<np; ++i) //iterate pings
+	// {
+		// if(ss_data_what == "est"){
+		// } else {
+		// }
+	// }
+	
+	
+	
+	if(ss_data_what != "est"){
+		// ss_i = ss_data;
+		#include "nll_ss_data.h"
+	} else {
+		#include "nll_ss_est.h"
+	}
+	
+
+	if(ss_data_what == "est"){
+		// PARAMETER(logD_v);    		// Diffusivity of sound speed
+		// Type D_v = exp(logD_v);
+
+		// PARAMETER_VECTOR(ss);		// Estimated speed of sound
+
+		// nll -= dnorm(ss(0),Type(1475.0),Type(40.0),true);		
+		// for(int i = 1; i < n_ss; ++i){
+			// nll -= dnorm(ss(i), ss(i-1),sqrt(2*D_v), true);
+			// nll -= dnorm(ss(i),Type(1475.0),Type(100.0),true);		
+		// }
+		
+		// for(int i = 0; i < np; i++){
+			// ss_i(i) = ss(ss_idx(i));
+		// }
+	}
+
+
 	for(int i=0; i<np; ++i) //iterate pings
 	{
 		for(int h=0; h<nh; ++h){ //iterate hydros
@@ -85,15 +120,13 @@
 				} else if(how_3d == "data"){
 					dist(h,i) = sqrt((H(h,0)-X(i))*(H(h,0)-X(i)) + (H(h,1)-Y(i))*(H(h,1)-Y(i)) + (H(h,2)-z_vec(i))*(H(h,2)-z_vec(i)));
 				}
-				if(ss_data_what == "est"){
-					mu_toa(h,i) = top(i) +  dist(h,i)/ss(ss_idx(i));
-				} else {
-					mu_toa(h,i) = top(i) +  dist(h,i)/ss_data(i);
-				}
+				mu_toa(h,i) = top(i) +  dist(h,i)/ss_i(i);
 				eps(h,i) = toa(h,i) - mu_toa(h,i);
 			}
 		}
 	}
+	
+	
 	
 	if(Edist(0) ==1){
 		#include "nll_gaus-dist.h"
@@ -113,8 +146,11 @@
 	// nll -= dnorm(logSigma_toa, Type(0), Type(25), true);
 	// nll -= dnorm(logScale, Type(0), Type(25), true);
 	// nll -= dnorm(logSigma_bi, Type(0), Type(25), true);
-	nll -= dnorm(logD_v, Type(0), Type(25), true);
+	// nll -= dnorm(logD_v, Type(0), Type(25), true);
 	// nll -= dnorm(logD_xy, Type(0), Type(25), true);
+
+
+
 
 	//position component
 	nll -= dnorm(X(0),Type(0),Type(10000),true);
@@ -123,14 +159,12 @@
 		nll -= dnorm(X(i), X(i-1),sqrt(2*D_xy*(top(i) - top(i-1))),true);	
 		nll -= dnorm(Y(i), Y(i-1),sqrt(2*D_xy*(top(i) - top(i-1))),true);
 	}
-	
-	// //speed of sound component
-	nll -= dnorm(ss(0),Type(1475.0),Type(40.0),true);		
-	for(int i = 1; i < n_ss; ++i){
-		nll -= dnorm(ss(i), ss(i-1),sqrt(2*D_v), true);
-		nll -= dnorm(ss(i),Type(1475.0),Type(100.0),true);		
-	}
-	
+
+
+
+
+
+
 	//burst interval component
 	if(pingType == "sbi"){
 	    #include "nll_pingtype_sbi.h"

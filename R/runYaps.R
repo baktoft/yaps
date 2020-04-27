@@ -4,8 +4,9 @@
 #' @param maxIter Sets inner.control(maxit) of the tmb-call. Increase if model is not converging.
 #' @param getPlsd,getRep Whether or not to get sd estimates (plsd=TRUE) and reported values (getRep=TRUE).
 #' @param silent Logical whether to keep the optimization quiet.
+#' @param x.tol X tolerance for the optimizer. Default is 1.5E-8. `?nlminb` for details.
 #' @export
-runYaps <- function(inp, maxIter=1000, getPlsd=TRUE, getRep=TRUE, silent=TRUE){
+runYaps <- function(inp, maxIter=1000, getPlsd=TRUE, getRep=TRUE, silent=TRUE, x.tol=1.5E-8){
 	print("Running yaps...")
 	random <- c("X", "Y", "top")
 	if(inp$datTmb$ss_data_what == 'est'){
@@ -15,6 +16,8 @@ runYaps <- function(inp, maxIter=1000, getPlsd=TRUE, getRep=TRUE, silent=TRUE){
 	if(inp$datTmb$pingType == 'pbi'){
 		random <- c(random, "tag_drift")
 	}
+	
+	inp$inits <- rnorm(length(inp$inits), 0, 3)
 
 	obj <- TMB::MakeADFun(
 			data = inp$datTmb,
@@ -25,10 +28,12 @@ runYaps <- function(inp, maxIter=1000, getPlsd=TRUE, getRep=TRUE, silent=TRUE){
 			silent=silent
 		)
 	if(!silent){
-		opt <- stats::nlminb(inp$inits,obj$fn,obj$gr)
+		opt <- stats::nlminb(inp$inits,obj$fn,obj$gr, control = list(x.tol=x.tol))
 	} else {
 		suppressWarnings(opt <- stats::nlminb(inp$inits,obj$fn,obj$gr))
 	}
+	
+	# opt$message
 	
 	pl <- obj$env$parList()   # List of estimates
 	if(getRep){

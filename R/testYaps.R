@@ -5,8 +5,9 @@
 #' @param silent Logical whether to print output to the console
 #' @param est_ss Logical whether to test using ss_data_what = 'est' (est_ss = TRUE) or ss_data_what = 'data' (est_ss = FALSE)
 #' @inheritParams getInp
+#' @inheritParams runYaps
 #' @export
-testYaps <- function(silent=FALSE, pingType='sbi', est_ss=TRUE){
+testYaps <- function(silent=TRUE, pingType='sbi', est_ss=TRUE, opt_fun='nlminb', opt_controls=list(), bounds=list()){
 	set.seed(42)
 	trueTrack <- simTrueTrack(model='crw', n = 2000, deltaTime=1, shape=1, scale=0.5, addDielPattern=TRUE, ss='rw')
 	# pingType <- 'sbi'
@@ -39,7 +40,8 @@ testYaps <- function(silent=FALSE, pingType='sbi', est_ss=TRUE){
 	inp <- getInp(hydros, toa, E_dist="t", n_ss=2, pingType=pingType, sdInits=0, ss_data_what=ss_data_what, ss_data=ss_data, rbi_min=rbi_min, rbi_max=rbi_max, biTable=biTable)
 	# print(str(inp))
 	maxIter <- 100
-	suppressWarnings(outTmb <- runTmb(inp, maxIter=maxIter, getPlsd=TRUE, getRep=TRUE, x.tol=1E-3))
+	# suppressWarnings(outTmb <- runTmb(inp, maxIter=maxIter, getPlsd=TRUE, getRep=TRUE, x.tol=1E-3))
+	outTmb <- runTmb(inp, maxIter=maxIter, getPlsd=TRUE, getRep=TRUE, silent=silent, opt_fun=opt_fun, opt_controls, bounds)
 	# print(str(outTmb))
 	pl <- outTmb$pl
 	yaps_out <- data.table::data.table(X=pl$X + inp$inp_params$Hx0, Y=pl$Y + inp$inp_params$Hy0)

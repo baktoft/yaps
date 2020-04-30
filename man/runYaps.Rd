@@ -6,10 +6,12 @@
 \title{Function to run TMB to estimate track}
 \usage{
 runYaps(inp, maxIter = 1000, getPlsd = TRUE, getRep = TRUE,
-  silent = TRUE, x.tol = 1.5e-08)
+  silent = TRUE, opt_fun = "nlminb", opt_controls = list(),
+  bounds = list())
 
 runTmb(inp, maxIter = 1000, getPlsd = TRUE, getRep = TRUE,
-  silent = TRUE, x.tol = 1.5e-08)
+  silent = TRUE, opt_fun = "nlminb", opt_controls = list(),
+  bounds = list())
 }
 \arguments{
 \item{inp}{inp-object obtained from getInp()}
@@ -20,7 +22,11 @@ runTmb(inp, maxIter = 1000, getPlsd = TRUE, getRep = TRUE,
 
 \item{silent}{Logical whether to keep the optimization quiet.}
 
-\item{x.tol}{X tolerance for the optimizer. Default is 1.5E-8. `?nlminb` for details.}
+\item{opt_fun}{Which optimization function to use. Default is 'nlminb' - alternative is 'nloptr' (experimental!). If using 'nloptr', `opt_controls` must be specified.}
+
+\item{opt_controls}{List of controls passed to optimization function. For instances, tolerances such as x.tol=1E-8. If opt_fun = 'nloptr', `opt_controls` must be a list formatted appropriately. For instance: opt_controls <- list(algorithm="NLOPT_LD_AUGLAG", xtol_abs=1e-12, maxeval=2E+4, print_level = 1, local_opts= list(algorithm="NLOPT_LD_AUGLAG_EQ", xtol_rel=1e-4) ). See `?nloptr` and the NLopt site https://nlopt.readthedocs.io/en/latest/ for more info. Some algorithms in `nloptr` require bounded parameters - see `bounds`.}
+
+\item{bounds}{List of two vectors specifying lower and upper bounds of fixed parameters. Length of each vector must be equal to number of fixed parameters. For instance, bounds = list(lb = c(-3, -1, -2), ub = c(2,0,1) ).}
 }
 \description{
 Function to run TMB to estimate track

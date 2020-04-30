@@ -4,7 +4,8 @@
 \alias{testYaps}
 \title{Test YAPS core functionality}
 \usage{
-testYaps(silent = FALSE, pingType = "sbi", est_ss = TRUE)
+testYaps(silent = TRUE, pingType = "sbi", est_ss = TRUE,
+  opt_fun = "nlminb", opt_controls = list(), bounds = list())
 }
 \arguments{
 \item{silent}{Logical whether to print output to the console}
@@ -12,6 +13,12 @@ testYaps(silent = FALSE, pingType = "sbi", est_ss = TRUE)
 \item{pingType}{Type of transmitter to simulate - either stable burst interval ('sbi'), random burst interval ('rbi') or random burst interval but where the random sequence is known a priori}
 
 \item{est_ss}{Logical whether to test using ss_data_what = 'est' (est_ss = TRUE) or ss_data_what = 'data' (est_ss = FALSE)}
+
+\item{opt_fun}{Which optimization function to use. Default is 'nlminb' - alternative is 'nloptr' (experimental!). If using 'nloptr', `opt_controls` must be specified.}
+
+\item{opt_controls}{List of controls passed to optimization function. For instances, tolerances such as x.tol=1E-8. If opt_fun = 'nloptr', `opt_controls` must be a list formatted appropriately. For instance: opt_controls <- list(algorithm="NLOPT_LD_AUGLAG", xtol_abs=1e-12, maxeval=2E+4, print_level = 1, local_opts= list(algorithm="NLOPT_LD_AUGLAG_EQ", xtol_rel=1e-4) ). See `?nloptr` and the NLopt site https://nlopt.readthedocs.io/en/latest/ for more info. Some algorithms in `nloptr` require bounded parameters - see `bounds`.}
+
+\item{bounds}{List of two vectors specifying lower and upper bounds of fixed parameters. Length of each vector must be equal to number of fixed parameters. For instance, bounds = list(lb = c(-3, -1, -2), ub = c(2,0,1) ).}
 }
 \description{
 Run `testYaps()` to check that the core functions of YAPS is working correctly.

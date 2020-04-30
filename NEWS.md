@@ -1,9 +1,12 @@
 # yaps v1.2.0.9111
 
-## New stuff
-* Split cpp file into pingType and Edist specifics
+* Add option to use alternative optimization function. Try nloptr() instead of default nlminb(), if you have issues with e.g. false convergence.
+* Split cpp file into pingType, Edist and ss specifics. Make code more readable and eliminates the need for 'diffuse priors' on parameters.
 * Add option to specify pingType in testYaps(). PingType can be 'sbi' (default), 'rbi' or 'pbi'
-
+* Create site to github pages intended to collect yaps-related resources, how-tos etc. (https://baktoft.github.io/yaps/)
+* Add first step-by-step tutorial to yaps pages
+* Implement testthat functions to ensure we don't break anything. Work in progress...
+* Fix bug in prepDetections(). Thanks to Hugh Pederson for reporting it.
 
 # yaps v1.2.0.9110
 

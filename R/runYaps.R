@@ -72,15 +72,21 @@ runYaps <- function(inp, maxIter=1000, getPlsd=TRUE, getRep=TRUE, silent=TRUE, o
 	
 	obj_out <- obj$fn()
 	if(opt_fun == 'nloptr'){
-		print(paste0("...yaps converged (obj: ",obj_out,") with status message: status=",opt$status, " - ", opt$message,""))
+		conv_status <- opt$status
+		conv_message <- opt$message
+		
+		print(paste0("...yaps converged (obj: ",obj_out,") with status message: status=",conv_status, " - ", conv_message,""))
 	} else if(opt_fun == 'nlminb'){
 		if(is.na(obj_out) | is.null(opt$convergence)) {
 			print("...yaps failed to converge!. Rerun getInp() to get new starting values and try again.")
 		} else {
-			print(paste0("...yaps converged (obj: ",obj_out,") with message: ",opt$message,""))
+			conv_status <- opt$convergence
+			conv_message <- opt$message
+
+			print(paste0("...yaps converged (obj: ",obj_out,") with message: ",conv_message,""))
 		}
 	}
-	return(list(pl=pl, plsd=plsd, rep=rep, obj=obj_out, inp=inp))
+	return(list(pl=pl, plsd=plsd, rep=rep, obj=obj_out, inp=inp, conv_status=conv_status, conv_message=conv_message))
 }
 
 

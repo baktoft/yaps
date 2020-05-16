@@ -6,7 +6,7 @@
 \usage{
 getInpSync(sync_dat, max_epo_diff, min_hydros, time_keeper_idx,
   fixed_hydros_idx, n_offset_day, n_ss_day, keep_rate = 1,
-  excl_self_detect = TRUE)
+  excl_self_detect = TRUE, lin_corr_coeffs = NA)
 }
 \arguments{
 \item{sync_dat}{List containing data.tables with hydrophone information and detections. See e.g. `?ssu1` for example}
@@ -26,6 +26,8 @@ getInpSync(sync_dat, max_epo_diff, min_hydros, time_keeper_idx,
 \item{keep_rate}{Syncing large data sets can take a long time. However, there is typically an excess number of sync tag detections and a sub-sample is typically enough for good synchronization. This parameter specifies the proportion (0-1) of data to keep when sub-sampling.}
 
 \item{excl_self_detect}{Logical whether to excluded detections of sync tags on the hydros they are co-located with. Sometimes self detections can introduce excessive residuals in the sync model in which case they should be excluded.}
+
+\item{lin_cor_coeffs}{Matrix of coefficients used for pre-sync linear correction. dim(lin_corr_coeffs)=(#hydros, 2).}
 }
 \description{
 Get object inp for synchronization

@@ -4,8 +4,8 @@
 #' @param sync_model Synchronization model obtained using `getSyncModel()`
 #' @export
 applySync <- function(toa, hydros="", sync_model){
-	if(is.matrix(toa)) {type <- "toa_matrix"}
-	else if(data.table::is.data.table(toa)) {type <- "detections_table"}
+	if(is.matrix(toa)) {type <- "toa_matrix"
+	} else if(data.table::is.data.table(toa)) {type <- "detections_table"}
 
 	inp_synced <- sync_model$inp_synced
 
@@ -29,7 +29,9 @@ applySync <- function(toa, hydros="", sync_model){
 
 	if(type=="detections_table"){
 
-		if(!'epofrac' %in% colnames(toa)) {toa[, epofrac:=epo+frac]}
+		# if(!'epofrac' %in% colnames(toa)) {toa[, epofrac:=epo+frac]}
+		# resetting epofrac - this might have been changed by other function previously, e.g. related to lin_corr_coeffs
+		toa[, epofrac:=epo+frac]
 		if(!'hydro_idx' %in% colnames(toa)){
 			toa[, hydro_idx := merge(toa, hydros[, c('serial','idx')], by='serial', sort=FALSE)$idx]
 		}
@@ -43,6 +45,10 @@ applySync <- function(toa, hydros="", sync_model){
 		sync_dt[!offset_idx %in% 1:length(ks), 'offset_idx'] <- NA
 		sync_dt[, offset_level:= inp_synced$inp_params$offset_levels[offset_idx,1] ]
 		# sync_dt[, offset_hydro_idx:=toa$hydro_idx]
+		
+		lin_corr_coeffs <- data.table::data.table(sync_model$inp_synced$inp_params$lin_corr_coeffs)
+		colnames(lin_corr_coeffs) <- c('lin_corr_coeffs_offset','lin_corr_coeffs_slope')
+		lin_corr_coeffs[, hydro_idx:=1:.N]
 
 		OFFSET_long <- data.table::data.table(reshape2::melt(sync_model$pl$OFFSET))
 		colnames(OFFSET_long) <- c('hydro_idx', 'offset_idx', 'OFFSET')
@@ -50,6 +56,8 @@ applySync <- function(toa, hydros="", sync_model){
 		colnames(SLOPE1_long) <- c('hydro_idx', 'offset_idx', 'SLOPE1')
 		SLOPE2_long <- data.table::data.table(reshape2::melt(sync_model$pl$SLOPE2))
 		colnames(SLOPE2_long) <- c('hydro_idx', 'offset_idx', 'SLOPE2')
+		
+		sync_dt <- merge(sync_dt, lin_corr_coeffs, sort=FALSE, all.x=TRUE)
 		
 		sync_dt <- merge(sync_dt, OFFSET_long, sort=FALSE, all.x=TRUE)
 		sync_dt <- merge(sync_dt, SLOPE1_long, sort=FALSE, all.x=TRUE)
@@ -65,10 +73,10 @@ applySync <- function(toa, hydros="", sync_model){
 		# table(sync_dt$OFFSET)
 		# table(sync_dt$OFFSET, sync_dt$hydro_idx)
 		
-
-		sync_dt[, eposync := epofrac - OFFSET - SLOPE1*(epofrac - offset_level)/1E6 - SLOPE2*(((epofrac - offset_level)/1E6)^2)]
-		sync_dt[, slope1 := SLOPE1*(epofrac - offset_level)/1E6]
-		sync_dt[, slope2 := SLOPE2*(((epofrac - offset_level)/1E6)^2)]
+		sync_dt[, epofrac_lin_corr := epofrac - lin_corr_coeffs_offset - lin_corr_coeffs_slope*epofrac]
+		sync_dt[, eposync := epofrac_lin_corr - OFFSET - SLOPE1*(epofrac_lin_corr - offset_level)/1E6 - SLOPE2*(((epofrac_lin_corr - offset_level)/1E6)^2)]
+		sync_dt[, slope1 := SLOPE1*(epofrac_lin_corr - offset_level)/1E6]
+		sync_dt[, slope2 := SLOPE2*(((epofrac_lin_corr - offset_level)/1E6)^2)]
 		
 		
 		toa[, eposync := sync_dt[, eposync]]

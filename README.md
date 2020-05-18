@@ -1,7 +1,7 @@
 
 <!-- README_sync.md is generated from README_sync.Rmd. Please edit that file -->
 
-# YAPS - (Yet Another Positioning Solver)<img src="man/figures/yaps_logo.png" align="right" width="120" />
+# YAPS - (Yet Another Positioning Solver)<img src="vignettes/yaps_logo.png" align="right" width="120" />
 
 Welcome to the `yaps` repository. The `yaps` package is based on the
 original YAPS presented in Baktoft, Gjelland, Økland & Thygesen (2017):
@@ -27,7 +27,7 @@ click the screenshot below). The track estimation is done on-the-fly
 using `yaps`, but the live-stream of detection data is at the moment
 computer generated from manually downloaded data.
 
-[<img src="man/figures/yaps-live.png" alt="yaps-live" />](https://baktoft.shinyapps.io/yapslive/)
+[<img src="vignettes/yaps-live.png" alt="yaps-live" />](https://baktoft.shinyapps.io/yapslive/)
 
 ## Dependencies
 

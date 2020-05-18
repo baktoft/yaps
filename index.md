@@ -1,5 +1,5 @@
 
-# YAPS - (Yet Another Positioning Solver) <img src="man/figures/yaps_logo.png" align="right" alt="" width="100" />
+# YAPS - (Yet Another Positioning Solver) <img src="vignettes/yaps_logo.png" align="right" alt="" width="100" />
 
 YAPS is an open source alternative to estimate tracks of aquatic animals
 tagged with acoustic transmitters. The original version of YAPS was

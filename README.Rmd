@@ -28,7 +28,7 @@ To use `yaps` on own data, you need to compile a TOA-matrix based on synchronize
 ## See YAPS in action
 We are working towards true live tracking for aquatic animals. Check out our prototype of [yaps-live](https://baktoft.shinyapps.io/yapslive/) (or click the screenshot below). The track estimation is done on-the-fly using `yaps`, but the live-stream of detection data is at the moment computer generated from manually downloaded data.   
 
-[<img src="vignettes/yaps-live.png" alt="yaps-live" />](https://baktoft.shinyapps.io/yapslive/)
+[<img src="vignettes/yaps_live.png" alt="yaps-live" />](https://baktoft.shinyapps.io/yapslive/)
 
 
 ## Dependencies

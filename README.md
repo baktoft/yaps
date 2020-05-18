@@ -27,7 +27,7 @@ click the screenshot below). The track estimation is done on-the-fly
 using `yaps`, but the live-stream of detection data is at the moment
 computer generated from manually downloaded data.
 
-[<img src="vignettes/yaps-live.png" alt="yaps-live" />](https://baktoft.shinyapps.io/yapslive/)
+[<img src="vignettes/yaps_live.png" alt="yaps-live" />](https://baktoft.shinyapps.io/yapslive/)
 
 ## Dependencies
 

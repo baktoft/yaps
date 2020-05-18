@@ -27,7 +27,7 @@ getInpSync(sync_dat, max_epo_diff, min_hydros, time_keeper_idx,
 
 \item{excl_self_detect}{Logical whether to excluded detections of sync tags on the hydros they are co-located with. Sometimes self detections can introduce excessive residuals in the sync model in which case they should be excluded.}
 
-\item{lin_cor_coeffs}{Matrix of coefficients used for pre-sync linear correction. dim(lin_corr_coeffs)=(#hydros, 2).}
+\item{lin_corr_coeffs}{Matrix of coefficients used for pre-sync linear correction. dim(lin_corr_coeffs)=(#hydros, 2).}
 }
 \description{
 Get object inp for synchronization

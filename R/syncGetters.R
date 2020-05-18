@@ -96,17 +96,17 @@ getSyncModel <- function(inp_sync, silent=TRUE, fine_tune=TRUE, max_iter=100){
 #' @param n_ss_day Specifies number of speed of sound to estimate per day. Future versions will enable use of logged water temperature instead. However, estimating SS gives an extra option for sanity-checking the final sync-model.
 #' @param keep_rate Syncing large data sets can take a long time. However, there is typically an excess number of sync tag detections and a sub-sample is typically enough for good synchronization. This parameter specifies the proportion (0-1) of data to keep when sub-sampling.
 #' @param excl_self_detect Logical whether to excluded detections of sync tags on the hydros they are co-located with. Sometimes self detections can introduce excessive residuals in the sync model in which case they should be excluded.
-#' @param lin_cor_coeffs Matrix of coefficients used for pre-sync linear correction. dim(lin_corr_coeffs)=(#hydros, 2). 
+#' @param lin_corr_coeffs Matrix of coefficients used for pre-sync linear correction. dim(lin_corr_coeffs)=(#hydros, 2). 
 #' @export
 getInpSync <- function(sync_dat, max_epo_diff, min_hydros, time_keeper_idx, fixed_hydros_idx, n_offset_day, n_ss_day, keep_rate=1, excl_self_detect=TRUE, lin_corr_coeffs=NA){
-	sync_dat <- yaps:::appendDetections(sync_dat)
+	sync_dat <- appendDetections(sync_dat)
 	
 		
 	if(is.na(lin_corr_coeffs[1])){
 		lin_corr_coeffs <- matrix(0, nrow=nrow(sync_dat$hydros), ncol=2, byrow=TRUE)
 	}
 
-	sync_dat <- yaps:::applyLinCorCoeffsInpSync(sync_dat, lin_corr_coeffs)
+	sync_dat <- applyLinCorCoeffsInpSync(sync_dat, lin_corr_coeffs)
 	
 	T0 <- min(sync_dat$detections$epo)
 
@@ -149,9 +149,9 @@ applyLinCorCoeffsInpSync <- function(sync_dat, lin_corr_coeffs){
 #' @inheritParams getInpSync
 #' @noRd
 getInpSyncToaList <- function(sync_dat, max_epo_diff, min_hydros, excl_self_detect, keep_rate, lin_corr_coeffs){
-	toa_list_gross   		<- yaps:::buildToaListGross(sync_dat, excl_self_detect)
-	toa_list_pruned 		<- yaps:::pruneToaListGross(toa_list_gross, max_epo_diff, min_hydros)
-	toa_list_downsampled 	<- yaps:::downsampleToaList(toa_list_pruned, keep_rate)
+	toa_list_gross   		<- buildToaListGross(sync_dat, excl_self_detect)
+	toa_list_pruned 		<- pruneToaListGross(toa_list_gross, max_epo_diff, min_hydros)
+	toa_list_downsampled 	<- downsampleToaList(toa_list_pruned, keep_rate)
 	
 	return(toa_list_downsampled)
 }

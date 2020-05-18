@@ -1,7 +1,7 @@
 
 <!-- README_sync.md is generated from README_sync.Rmd. Please edit that file -->
 
-# YAPS - (Yet Another Positioning Solver)
+# YAPS - (Yet Another Positioning Solver)<img src="man/figures/yaps_logo.png" align="right" width="120" />
 
 Welcome to the `yaps` repository. The `yaps` package is based on the
 original YAPS presented in Baktoft, Gjelland, Økland & Thygesen (2017):
@@ -19,18 +19,23 @@ The example in this guide is based on data collected using a 69 kHz
 PPM-based system (Vemco VR2). We are working towards adding examples
 based on data collected using other manufacturers.
 
-For an alternative approach (in python) to prepare your data for `yaps`,
-have a look at Jenna Vergeynst’s github repos
-[time\_synchronization](https://github.com/JennaVergeynst/time_synchronization)
-and
-[prepare\_toa\_for\_yaps](https://github.com/JennaVergeynst/prepare_toa_for_yaps).
+## See YAPS in action
+
+We are working towards true live tracking for aquatic animals. Check out
+our prototype of [yaps-live](https://baktoft.shinyapps.io/yapslive/) (or
+click the screenshot below). The track estimation is done on-the-fly
+using `yaps`, but the live-stream of detection data is at the moment
+computer generated from manually downloaded data.
+
+[<img src="man/figures/yaps-live.png" alt="yaps-live" />](https://baktoft.shinyapps.io/yapslive/)
+
+## Dependencies
 
 The `yaps` package requires
 [devtools](https://cran.r-project.org/web/packages/devtools/index.html)
-and [TMB](https://github.com/kaskr/adcomp).  
-Please see for
+and [TMB](https://github.com/kaskr/adcomp). Please see
 [instructions](https://github.com/kaskr/adcomp/wiki/Download) on TMB
-installation. Remember to install
+installation. If working on Windows, you might also need to install
 [Rtools](https://cran.r-project.org/bin/windows/Rtools/) as specified in
 the TMB documentation.
 
@@ -191,7 +196,10 @@ str(outTmb)
 
 # Estimates in pl
 pl <- outTmb$pl
-yaps_out <- data.table::data.table(X=pl$X + inp$inp_params$Hx0, Y=pl$Y + inp$inp_params$Hy0)
+# Correcting for hydrophone centering
+pl$X <- outTmb$pl$X + inp$inp_params$Hx0
+pl$Y <- outTmb$pl$Y + inp$inp_params$Hy0
+
 
 # Error estimates in plsd
 plsd <- outTmb$plsd
@@ -200,7 +208,7 @@ plsd <- outTmb$plsd
 plot(y~x, data=trueTrack, type="l", xlim=range(hydros$hx), ylim=range(hydros$hy), asp=1)
 lines(y~x, data=teleTrack)
 points(hy~hx, data=hydros, col="green", pch=20, cex=3)
-lines(Y~X, data=yaps_out, col="red")
+lines(pl$Y~pl$X, col="red")
 ```
 
 # Papers using YAPS

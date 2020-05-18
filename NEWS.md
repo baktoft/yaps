@@ -1,13 +1,20 @@
 # yaps v1.2.0.9111
 
+## New stuff
 * Add option to use alternative optimization function (EXPERIMENTAL). Try nloptr() instead of default nlminb(), if you have issues with e.g. false convergence.
-* Split cpp file into pingType, Edist and ss specifics. Make code more readable and eliminates the need for 'diffuse priors' on parameters.
-* Add option to specify pingType in testYaps(). PingType can be 'sbi' (default), 'rbi' or 'pbi'
-* Create site to github pages intended to collect yaps-related resources, how-tos etc. (https://baktoft.github.io/yaps/)
-* Add first step-by-step tutorial to yaps pages
-* Implement testthat functions to ensure we don't break anything. Work in progress...
-* Fix bug in prepDetections(). Thanks to Hugh Pederson for reporting it.
 * Add option to use linear correction information when running the sync model (EXPERIMENTAL).
+* Add option to specify all three ping types in testYaps(). PingType can be 'sbi' (default), 'rbi' or 'pbi'
+* Not related to package development, but check out [yaps-live](https://baktoft.shinyapps.io/yapslive/) to see `yaps` in action.
+
+
+## Minor new stuff
+* Split cpp file into pingType, Edist and ss specifics. Make code more readable and eliminates the need for 'diffuse priors' on parameters.
+* Implement testthat functions to ensure future updates doesn't break anything. Work in progress...
+* Update readMe.md
+
+## Bug fixes
+* Fix bug in prepDetections(). Thanks to Hugh Pederson for reporting it.
+
 
 # yaps v1.2.0.9110
 

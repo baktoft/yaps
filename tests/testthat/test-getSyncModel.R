@@ -26,5 +26,9 @@ sync_model <- getSyncModel(inp_sync, silent=TRUE)
 
 test_that("sync_model is as expected", {
 	load("sync_model_ref.RData")
-	expect_equal(sync_model, sync_model_ref)
+	expect_equal(sync_model$pl, sync_model_ref$pl)
+	expect_equal(sync_model$report, sync_model_ref$report)
+	expect_equal(sync_model$obj_val, sync_model_ref$obj_val)
+	expect_equal(sync_model$eps_long, sync_model_ref$eps_long)
+	expect_equal(sync_model$inp_synced, sync_model_ref$inp_synced)
 })

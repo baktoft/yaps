@@ -1,3 +1,9 @@
+# yaps v1.2.0.9112
+* New site add to github pages intended to collect yaps-related resources, how-tos etc. (https://baktoft.github.io/yaps/)
+* Add first step-by-step tutorial to yaps pages
+
+
+
 # yaps v1.2.0.9111
 
 ## New stuff

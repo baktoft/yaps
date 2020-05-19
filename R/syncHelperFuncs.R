@@ -54,6 +54,12 @@ buildToaListGross <- function(sync_dat, excl_self_detect){
 		}
 		
 		other_detections <- detections[tag==sync_tags[i] & hydro_idx!=hydro_i_idx]
+		
+		# if no other hydro detected the sync_tag it is useless...
+		if(nrow(other_detections) == 0){
+			next
+		}
+		
 		self_detections[, epo_roll:=epofrac]
 		other_detections[, epo_roll:=epofrac]
 		toa_i <- t(plyr::daply(.data=other_detections, .variables="hydro_idx", .fun=function(k){

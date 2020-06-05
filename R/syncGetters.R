@@ -1,10 +1,10 @@
 #' Get sync model from inp_sync object obtained by getInpSync()
 #' @param inp_sync Input data prepared for the sync model using `getInpSync()`
 #' @param silent Keep TMB quiet
-#' @param fine_tune Logical. Wheter to re-run the sync model excluding residual outliers
+#' @param fine_tune Logical. Whether to re-run the sync model excluding residual outliers. Consider to use fineTuneSyncModel() instead.
 #' @param max_iter Max number of iterations to run TMB. Default=100 seems to work in most cases.
 #' @export
-getSyncModel <- function(inp_sync, silent=TRUE, fine_tune=TRUE, max_iter=100){
+getSyncModel <- function(inp_sync, silent=TRUE, fine_tune=FALSE, max_iter=100){
 	dat_tmb <- inp_sync$dat_tmb_sync
 	params <- inp_sync$params_tmb_sync
 	random <- inp_sync$random_tmb_sync
@@ -13,6 +13,7 @@ getSyncModel <- function(inp_sync, silent=TRUE, fine_tune=TRUE, max_iter=100){
 
 	cat(paste0(Sys.time(), " \n"))
 	cat(". Running optimization of the sync model. Please be patient - this can take a long time. \n")
+	if(fine_tune){cat(".... fine tuning is enabled, but is getting deprecated in this function. Consider to use the function fineTuneSyncModel() instead. See ?fineTuneSyncModel for info. \n")}
 
 	tictoc::tic("Fitting sync model: ")
 	opt <- c()
@@ -47,13 +48,14 @@ getSyncModel <- function(inp_sync, silent=TRUE, fine_tune=TRUE, max_iter=100){
 		cat(".... obj = ", obj_val, " \n")
 		report <- obj$report()
 	
-		crazy_outliers <- which(abs(report$eps_toa) > 10)
-		fine_outliers  <- which(abs(report$eps_toa)*1450 > 100)
+		crazy_outliers <- which(abs(report$eps_toa)*1450 > 10000)
+		fine_outliers  <- which(abs(report$eps_toa)*1450 > 1000)
 		if(length(crazy_outliers > 0)){
 			cat(".... some extreme outliers potentially affecting the model where identified and removed - rerunning sync_model \n")
 			dat_tmb$toa_offset[crazy_outliers] <- NA
 		} else if(fine_tune & length(fine_outliers > 0)){
-			cat(".... fine_tune is enable (fine_tune = TRUE) - some outliers where identified and removed - rerunning sync_model \n")
+			cat(".... fine tuning is enabled, but is getting deprecated in this function. Consider to use the function fineTuneSyncModel() instead. See ?fineTuneSyncModel for info. \n")
+			cat(".... fine tuning is enable (fine_tune = TRUE) - some outliers where identified and removed - rerunning sync_model \n")
 			dat_tmb$toa_offset[fine_outliers] <- NA
 		} else {
 			sync_done <- TRUE
@@ -123,7 +125,7 @@ getInpSync <- function(sync_dat, max_epo_diff, min_hydros, time_keeper_idx, fixe
 	inits_tmb_sync <- c(3, rep(-3,dat_tmb_sync$nh))
 	inp_params <- list(toa=inp_toa_list$toa, T0=T0, Hx0=inp_H_info$Hx0, Hy0=inp_H_info$Hy0, offset_levels=offset_vals$offset_levels, 
 		ss_levels=ss_vals$ss_levels, max_epo_diff=max_epo_diff, hydros=sync_dat$hydros,
-		lin_corr_coeffs=lin_corr_coeffs
+		lin_corr_coeffs=lin_corr_coeffs, min_hydros=min_hydros
 	)
 
 	return(list(dat_tmb_sync=dat_tmb_sync, params_tmb_sync=params_tmb_sync, random_tmb_sync=random_tmb_sync, inits_tmb_sync=inits_tmb_sync, inp_params=inp_params))

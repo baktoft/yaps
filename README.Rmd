@@ -182,7 +182,11 @@ points(hy~hx, data=hydros, col="green", pch=20, cex=3)
 lines(pl$Y~pl$X, col="red")
 ```
 
-# Papers using YAPS
+# Papers using or relating to YAPS
+## 2020
+
+* Vergeynst, J., Vanwyck, T., Baeyens, R. et al. (2020). Acoustic positioning in a reflective environment: going beyond point-by-point algorithms. Anim Biotelemetry 8, 16. https://doi.org/10.1186/s40317-020-00203-1
+
 ## 2019  
 
 * Baktoft, H., Gjelland, K.Ø., Økland, F., Rehage, J.S., Rodemann, J.R., Corujo, R.S., Viadero, N., Thygesen, U.H. (2019). Opening the black box of fish tracking using acoustic telemetry

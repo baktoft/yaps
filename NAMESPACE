@@ -2,6 +2,7 @@
 
 export(alignBurstSeq)
 export(applySync)
+export(fineTuneSyncModel)
 export(getDatTmb)
 export(getInits)
 export(getInp)

@@ -20,8 +20,8 @@
 	PARAMETER(LOG_SIGMA_TOA);    		
 	Type SIGMA_TOA = exp(LOG_SIGMA_TOA);
 	
-	PARAMETER_VECTOR(LOG_SIGMA_HYDROS_XY);
-	vector<Type> SIGMA_HYDROS_XY = exp(LOG_SIGMA_HYDROS_XY);
+	// PARAMETER_VECTOR(LOG_SIGMA_HYDROS_XY);
+	// vector<Type> SIGMA_HYDROS_XY = exp(LOG_SIGMA_HYDROS_XY);
 
 	array<Type> mu_toa(np,nh); 
 	array<Type> eps_toa(np,nh);
@@ -77,16 +77,19 @@
 		if(fixed_hydros_vec(h) == 1){
 			nll -= dnorm(TRUE_H(h,0), H(h,0), Type(1e-6), true);
 			nll -= dnorm(TRUE_H(h,1), H(h,1), Type(1e-6), true);
-			nll -= dnorm(SIGMA_HYDROS_XY(h), Type(0), Type(1), true);
-		} else {
-			nll -= dnorm(TRUE_H(h,0), H(h,0), SIGMA_HYDROS_XY(h), true);
-			nll -= dnorm(TRUE_H(h,1), H(h,1), SIGMA_HYDROS_XY(h), true);
+			// nll -= dnorm(SIGMA_HYDROS_XY(h), Type(0), Type(1), true);
+		} 
+		else {
+			// nll -= dnorm(TRUE_H(h,0), H(h,0), SIGMA_HYDROS_XY(h), true);
+			// nll -= dnorm(TRUE_H(h,1), H(h,1), SIGMA_HYDROS_XY(h), true);
+			nll -= dnorm(TRUE_H(h,0), H(h,0), Type(10), true);
+			nll -= dnorm(TRUE_H(h,1), H(h,1), Type(10), true);
 		}
 	}
 
 	//speed of sound component
 	for(int i = 0; i < n_ss_idx; ++i){
-		nll -= dnorm(SS(i), Type(1450.0), Type(20), true);
+		nll -= dnorm(SS(i), Type(1475.0), Type(100), true);
 	}
 	
 	REPORT(eps_toa);

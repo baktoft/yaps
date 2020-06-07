@@ -1,10 +1,17 @@
 # yaps v1.2.0.9112
+## New stuff
 * New site added to github pages intended to collect yaps-related resources, how-tos etc. (https://baktoft.github.io/yaps/)
 * Add first step-by-step tutorial to yaps pages
 * Add function to fine-tune sync_model based on residual threshold
 
 ## Bug fixes
 * Fix bug in getInpSync() - failed if sync_tag was only heard on own hydro
+* Eliminate estimation of log_sigma_hydros_xy in sync_model
+* Relax priors on SS in both track and sync model - consider to switch to softplus instead
+* Return plsd object from getSyncModel
+
+
+
 
 # yaps v1.2.0.9111
 

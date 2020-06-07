@@ -64,11 +64,11 @@ getSyncModel <- function(inp_sync, silent=TRUE, fine_tune=FALSE, max_iter=100){
 		i <- i +1
 	}
 
-	# jointrep <- try(TMB::sdreport(obj, getJointPrecision=TRUE), silent=silent)
-	# param_names <- rownames(summary(jointrep))
-	# sds <- summary(jointrep)[,2]
-	# summ <- data.frame(param=param_names, sd=sds)
-	# plsd <- split(summ[,2], f=summ$param)
+	jointrep <- try(TMB::sdreport(obj, getJointPrecision=TRUE), silent=silent)
+	param_names <- rownames(summary(jointrep))
+	sds <- summary(jointrep)[,2]
+	summ <- data.frame(param=param_names, sd=sds)
+	plsd <- split(summ[,2], f=summ$param)
 	
 	pl$TRUE_H[,1] <- pl$TRUE_H[,1] + inp_params$Hx0
 	pl$TRUE_H[,2] <- pl$TRUE_H[,2] + inp_params$Hy0
@@ -82,7 +82,7 @@ getSyncModel <- function(inp_sync, silent=TRUE, fine_tune=FALSE, max_iter=100){
 	cat("Sync model done \n")
 	cat("Consider saving the sync model for later use - e.g. save(sync_model, file='path_to_sync_save'). \n")
 	tictoc::toc()
-	return(list(pl=pl, report=report, obj_val=obj_val, eps_long=eps_long, inp_synced=inp_sync))
+	return(list(pl=pl, plsd=plsd, report=report, obj_val=obj_val, eps_long=eps_long, inp_synced=inp_sync))
 }
 
 
@@ -122,7 +122,8 @@ getInpSync <- function(sync_dat, max_epo_diff, min_hydros, time_keeper_idx, fixe
 	dat_tmb_sync <- getDatTmbSync(sync_dat, time_keeper_idx, inp_toa_list, fixed_hydros_vec, offset_vals, ss_vals, inp_H_info, T0)
 	params_tmb_sync <- getParamsTmbSync(dat_tmb_sync)
 	random_tmb_sync <- c("TOP", "OFFSET", "SLOPE1", "SLOPE2", "SS", "TRUE_H")
-	inits_tmb_sync <- c(3, rep(-3,dat_tmb_sync$nh))
+	# inits_tmb_sync <- c(3, rep(-3,dat_tmb_sync$nh))
+	inits_tmb_sync <- c(3)
 	inp_params <- list(toa=inp_toa_list$toa, T0=T0, Hx0=inp_H_info$Hx0, Hy0=inp_H_info$Hy0, offset_levels=offset_vals$offset_levels, 
 		ss_levels=ss_vals$ss_levels, max_epo_diff=max_epo_diff, hydros=sync_dat$hydros,
 		lin_corr_coeffs=lin_corr_coeffs, min_hydros=min_hydros
@@ -268,8 +269,8 @@ getParamsTmbSync <- function(dat_tmb_sync){
 		SLOPE2 = matrix(rnorm(dat_tmb_sync$nh*dat_tmb_sync$n_offset_idx, 0, 3), nrow=dat_tmb_sync$nh, ncol=dat_tmb_sync$n_offset_idx),
 		SS = rnorm(dat_tmb_sync$n_ss_idx, 1420, 1),
 		TRUE_H = as.matrix(cbind(dat_tmb_sync$H[,1], dat_tmb_sync$H[,2], dat_tmb_sync$H[,3])),
-		LOG_SIGMA_TOA = 0,
-		LOG_SIGMA_HYDROS_XY = rnorm(dat_tmb_sync$nh,-3,1)
+		LOG_SIGMA_TOA = 0
+		# LOG_SIGMA_HYDROS_XY = rnorm(dat_tmb_sync$nh,-3,1)
 	)
 	return(params_tmb_sync)
 }

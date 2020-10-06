@@ -4,8 +4,14 @@
 \alias{simTOP}
 \title{Simulate time of pings (Internal function)}
 \usage{
-simTOP(trueTrack, pingType, sbi_mean = NULL, sbi_sd = NULL,
-  rbi_min = NULL, rbi_max = NULL)
+simTOP(
+  trueTrack,
+  pingType,
+  sbi_mean = NULL,
+  sbi_sd = NULL,
+  rbi_min = NULL,
+  rbi_max = NULL
+)
 }
 \arguments{
 \item{trueTrack}{Track obtained from simTrueTrack().}

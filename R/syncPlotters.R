@@ -1,7 +1,7 @@
 #' Plot residuals of sync_model to enable check of model
 #' 
 #' @param sync_model Synchronization model obtained using `getSyncModel()`
-#' @param by What to facet/group the plot by? Currently supports one of 'overall', 'sync_tag', 'hydro', 'quantiles'
+#' @param by What to facet/group the plot by? Currently supports one of 'overall', 'sync_tag', 'hydro', 'quantiles', 'temporal', 'temporal_hydro', 'temporal_sync_tag'
 #' @export
 plotSyncModelResids <- function(sync_model, by='overall'){
 	eps_long <- sync_model$eps_long
@@ -30,7 +30,18 @@ plotSyncModelResids <- function(sync_model, by='overall'){
 		out_quants <- quants[ abs(q10) > thres | abs(q90) > thres]
 		p <- ggplot2::ggplot(data=out_quants) + geom_point(aes(x=hydro_idx, y=factor(sync_tag_idx), col=abs(q50), size=N))
 		p <- p + viridis::scale_color_viridis(option="magma") + labs(y = "sync tag idx")
-	
+	} else if(by %in% c('temporal', 'temporal_hydro', 'temporal_sync_tag')){
+		tops <- sync_model$pl$TOP + sync_model$inp_synced$inp_params$T0
+		offset_idx <- sync_model$inp_synced$dat_tmb_sync$offset_idx
+		# offset_levels <- sync_model$inp_synced$inp_params$offset_levels
+		eps_long[, top := tops[ping]]
+		if(by == 'temporal_hydro'){
+			p <- ggplot(data=eps_long) + geom_point(aes(x=top, y=E_m), pch=".") + geom_hline(data=eps_long[, .(mean_E_m=mean(E_m)), by=hydro_idx], aes(yintercept=mean_E_m), col="red") + facet_wrap(~hydro_idx)
+		} else if(by == 'temporal_sync_tag'){
+			p <- ggplot(data=eps_long) + geom_point(aes(x=top, y=E_m), pch=".") + geom_hline(data=eps_long[, .(mean_E_m=mean(E_m)), by=sync_tag_idx], aes(yintercept=mean_E_m), col="red") + facet_wrap(~sync_tag_idx)
+		} else if(by == 'temporal'){
+			p <- ggplot(data=eps_long) + geom_point(aes(x=top, y=E_m), pch=".") + geom_hline(data=eps_long[, .(mean_E_m=mean(E_m)), by=c('hydro_idx', 'sync_tag_idx')], aes(yintercept=mean_E_m), col="red") + facet_grid(sync_tag_idx~hydro_idx)
+		}
 	}
 	
 	suppressWarnings(print(p))

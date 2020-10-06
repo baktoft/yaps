@@ -4,8 +4,14 @@
 \alias{testYaps}
 \title{Test YAPS core functionality}
 \usage{
-testYaps(silent = TRUE, pingType = "sbi", est_ss = TRUE,
-  opt_fun = "nlminb", opt_controls = list(), bounds = list())
+testYaps(
+  silent = TRUE,
+  pingType = "sbi",
+  est_ss = TRUE,
+  opt_fun = "nlminb",
+  opt_controls = list(),
+  bounds = list()
+)
 }
 \arguments{
 \item{silent}{Logical whether to print output to the console}

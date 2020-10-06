@@ -4,8 +4,14 @@
 \alias{alignBurstSeq}
 \title{Align synced data with known burst sequence}
 \usage{
-alignBurstSeq(synced_dat, burst_seq, seq_lng_min = 10, rbi_min, rbi_max,
-  plot_diag = TRUE)
+alignBurstSeq(
+  synced_dat,
+  burst_seq,
+  seq_lng_min = 10,
+  rbi_min,
+  rbi_max,
+  plot_diag = TRUE
+)
 }
 \arguments{
 \item{synced_dat}{data.table obtained using applySync() on a detections_table}

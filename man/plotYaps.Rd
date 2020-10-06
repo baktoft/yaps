@@ -4,8 +4,7 @@
 \alias{plotYaps}
 \title{Basic plots of yaps output}
 \usage{
-plotYaps(inp, yaps_out, type = "map", xlim = NULL, ylim = NULL,
-  main = NULL)
+plotYaps(inp, yaps_out, type = "map", xlim = NULL, ylim = NULL, main = NULL)
 }
 \arguments{
 \item{inp}{Input object obtained using \code{getInp()}}

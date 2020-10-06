@@ -1,8 +1,10 @@
-# yaps v1.2.0.9112
+# yaps v1.2.1.9000
+
 ## New stuff
 * New site added to github pages intended to collect yaps-related resources, how-tos etc. (https://baktoft.github.io/yaps/)
 * Add first step-by-step tutorial to yaps pages
 * Add function to fine-tune sync_model based on residual threshold
+* Add plot to check temporal stability of sync_models. Try plotSyncModelResids(sync_model, by='temporal')
 
 ## Bug fixes
 * Fix bug in getInpSync() - failed if sync_tag was only heard on own hydro

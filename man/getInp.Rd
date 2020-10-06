@@ -4,9 +4,20 @@
 \alias{getInp}
 \title{Get prepared inp-object for use in TMB-call}
 \usage{
-getInp(hydros, toa, E_dist, n_ss, pingType, sdInits = 1, rbi_min = 0,
-  rbi_max = 0, ss_data_what = "est", ss_data = 0, biTable = NULL,
-  z_vec = NULL)
+getInp(
+  hydros,
+  toa,
+  E_dist,
+  n_ss,
+  pingType,
+  sdInits = 1,
+  rbi_min = 0,
+  rbi_max = 0,
+  ss_data_what = "est",
+  ss_data = 0,
+  biTable = NULL,
+  z_vec = NULL
+)
 }
 \arguments{
 \item{hydros}{Dataframe from simHydros() or Dataframe with columns hx and hy containing positions of the receivers. Translate the coordinates to get the grid centre close to (0;0).}

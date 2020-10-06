@@ -4,9 +4,18 @@
 \alias{getInpSync}
 \title{Get object inp for synchronization}
 \usage{
-getInpSync(sync_dat, max_epo_diff, min_hydros, time_keeper_idx,
-  fixed_hydros_idx, n_offset_day, n_ss_day, keep_rate = 1,
-  excl_self_detect = TRUE, lin_corr_coeffs = NA)
+getInpSync(
+  sync_dat,
+  max_epo_diff,
+  min_hydros,
+  time_keeper_idx,
+  fixed_hydros_idx,
+  n_offset_day,
+  n_ss_day,
+  keep_rate = 1,
+  excl_self_detect = TRUE,
+  lin_corr_coeffs = NA
+)
 }
 \arguments{
 \item{sync_dat}{List containing data.tables with hydrophone information and detections. See e.g. `?ssu1` for example}

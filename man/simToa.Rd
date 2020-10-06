@@ -4,8 +4,7 @@
 \alias{simToa}
 \title{Sim TOA matrix for the supplied telemetryTrack}
 \usage{
-simToa(telemetryTrack, hydros, pingType, sigmaToa, pNA, pMP,
-  tempRes = NA)
+simToa(telemetryTrack, hydros, pingType, sigmaToa, pNA, pMP, tempRes = NA)
 }
 \arguments{
 \item{telemetryTrack}{Dataframe obtained from simTelemetryTrack}

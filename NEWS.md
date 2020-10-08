@@ -5,6 +5,7 @@
 * Add first step-by-step tutorial to yaps pages
 * Add function to fine-tune sync_model based on residual threshold
 * Add plot to check temporal stability of sync_models. Try plotSyncModelResids(sync_model, by='temporal')
+* Add option to impose spatial constraints (BBox only) and plot a visual of the constraint. Mainly used to constrain parameter space and increase speed and convergence.
 
 ## Bug fixes
 * Fix bug in getInpSync() - failed if sync_tag was only heard on own hydro

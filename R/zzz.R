@@ -24,7 +24,8 @@ if (getRversion() >= "2.15.1"){
     utils::globalVariables(c("N", "next_ping_too_late", "OFFSET", "offset_idx", "offset_level", "ping2next", "ping_idx", "q10", "q50"))
     utils::globalVariables(c("q90", "roll_eposync", "roll_seq_epo"))
     utils::globalVariables(c("seq_epo", "seq_lng", "seq_ping_idx", "serial", "slope1","SLOPE1", "SLOPE2", "slope2", "ss", "sync_tag", "sync_tag_idx"))
-    utils::globalVariables(c("tag", "toa_idx", "ts", "x", "y"))
+    utils::globalVariables(c("tag", "toa_idx", "ts", "x", "x_synced", "y", "y_synced"))
+    utils::globalVariables(c("Var1", "Var2"))
 }
 
  

@@ -14,6 +14,7 @@
 	DATA_SCALAR(approxBI);
 	DATA_VECTOR(Edist);
 	DATA_VECTOR(biTable);
+	DATA_VECTOR(bbox);
 
 	DATA_STRING(how_3d);
 	DATA_VECTOR(z_vec);
@@ -71,6 +72,11 @@
 	for(int i=1; i<np; ++i)	{
 		nll -= dnorm(X(i), X(i-1),sqrt(2*D_xy*(top(i) - top(i-1))),true);	
 		nll -= dnorm(Y(i), Y(i-1),sqrt(2*D_xy*(top(i) - top(i-1))),true);
+	}
+	
+	// spatial constraints
+	if(!isNA(bbox(0))){
+	    #include "nll_bbox.h"
 	}
 
 	//burst interval component

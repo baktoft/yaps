@@ -12,13 +12,13 @@
 #' @param ss_data Vector of ss-data to be used if ss_data_what = 'est'. Otherwise ss_data <- 0 (default)
 #' @param biTable Table of known burst intervals. Only used when pingType == "pbi". Default=NULL
 #' @param z_vec Vector of known depth values (positive real). Default=NULL is which case no 3D is assumed. Estimation of depth from detections is currently not supported.
-
+#' @param bbox Spatial constraints in the form of a bounding box. See ?getBbox for details.
 
 #' @return List of input data ready for use in TMB-call
 #' @export
-getInp <- function(hydros, toa, E_dist, n_ss, pingType, sdInits=1, rbi_min=0, rbi_max=0, ss_data_what='est', ss_data=0, biTable=NULL, z_vec=NULL){
+getInp <- function(hydros, toa, E_dist, n_ss, pingType, sdInits=1, rbi_min=0, rbi_max=0, ss_data_what='est', ss_data=0, biTable=NULL, z_vec=NULL, bbox=NULL){
 	inp_params 	<- getInpParams(hydros, toa, pingType)
-	datTmb 		<- getDatTmb(hydros, toa, E_dist, n_ss, pingType, rbi_min, rbi_max, ss_data_what, ss_data, biTable, inp_params, z_vec)
+	datTmb 		<- getDatTmb(hydros, toa, E_dist, n_ss, pingType, rbi_min, rbi_max, ss_data_what, ss_data, biTable, inp_params, z_vec, bbox)
 	params 		<- getParams(datTmb)
 	inits 		<- getInits(datTmb, sdInits)
 	return(list(
@@ -39,7 +39,7 @@ getInp <- function(hydros, toa, E_dist, n_ss, pingType, sdInits=1, rbi_min=0, rb
 #'
 #' @return List for use in TMB.
 #' @export
-getDatTmb <- function(hydros, toa, E_dist, n_ss, pingType, rbi_min, rbi_max, ss_data_what, ss_data, biTable, inp_params, z_vec){
+getDatTmb <- function(hydros, toa, E_dist, n_ss, pingType, rbi_min, rbi_max, ss_data_what, ss_data, biTable, inp_params, z_vec, bbox){
 	T0 <- inp_params$T0
 	Hx0 <- inp_params$Hx0
 	Hy0 <- inp_params$Hy0
@@ -75,6 +75,15 @@ getDatTmb <- function(hydros, toa, E_dist, n_ss, pingType, rbi_min, rbi_max, ss_
 	} else {
 		how_3d <- 'data'
 	}
+	
+	if(is.null(bbox)){
+		bbox <- NA
+	} else {
+		bbox[1] <- bbox[1] - inp_params$Hx0
+		bbox[2] <- bbox[2] - inp_params$Hx0
+		bbox[3] <- bbox[3] - inp_params$Hy0
+		bbox[4] <- bbox[4] - inp_params$Hy0
+	}
 
 	datTmb <- list(
 		model = "yaps_track",
@@ -95,7 +104,8 @@ getDatTmb <- function(hydros, toa, E_dist, n_ss, pingType, rbi_min, rbi_max, ss_
 		approxBI = approxBI,
 		biTable = c(1),
 		how_3d = how_3d,
-		z_vec = z_vec
+		z_vec = z_vec,
+		bbox = bbox
 	)
 	if(pingType == 'pbi') {datTmb$biTable = biTable}
 

@@ -36,11 +36,11 @@ plotSyncModelResids <- function(sync_model, by='overall'){
 		# offset_levels <- sync_model$inp_synced$inp_params$offset_levels
 		eps_long[, top := tops[ping]]
 		if(by == 'temporal_hydro'){
-			p <- ggplot(data=eps_long) + geom_point(aes(x=top, y=E_m), pch=".") + geom_hline(data=eps_long[, .(mean_E_m=mean(E_m)), by=hydro_idx], aes(yintercept=mean_E_m), col="red") + facet_wrap(~hydro_idx)
+			p <- ggplot2::ggplot(data=eps_long) + geom_point(aes(x=top, y=E_m), pch=".") + geom_hline(data=eps_long[, .(mean_E_m=mean(E_m)), by=hydro_idx], aes(yintercept=mean_E_m), col="red") + facet_wrap(~hydro_idx)
 		} else if(by == 'temporal_sync_tag'){
-			p <- ggplot(data=eps_long) + geom_point(aes(x=top, y=E_m), pch=".") + geom_hline(data=eps_long[, .(mean_E_m=mean(E_m)), by=sync_tag_idx], aes(yintercept=mean_E_m), col="red") + facet_wrap(~sync_tag_idx)
+			p <- ggplot2::ggplot(data=eps_long) + geom_point(aes(x=top, y=E_m), pch=".") + geom_hline(data=eps_long[, .(mean_E_m=mean(E_m)), by=sync_tag_idx], aes(yintercept=mean_E_m), col="red") + facet_wrap(~sync_tag_idx)
 		} else if(by == 'temporal'){
-			p <- ggplot(data=eps_long) + geom_point(aes(x=top, y=E_m), pch=".") + geom_hline(data=eps_long[, .(mean_E_m=mean(E_m)), by=c('hydro_idx', 'sync_tag_idx')], aes(yintercept=mean_E_m), col="red") + facet_grid(sync_tag_idx~hydro_idx)
+			p <- ggplot2::ggplot(data=eps_long) + geom_point(aes(x=top, y=E_m), pch=".") + geom_hline(data=eps_long[, .(mean_E_m=mean(E_m)), by=c('hydro_idx', 'sync_tag_idx')], aes(yintercept=mean_E_m), col="red") + facet_grid(sync_tag_idx~hydro_idx)
 		}
 	}
 	

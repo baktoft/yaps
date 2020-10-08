@@ -18,14 +18,14 @@ NULL
 # Prevent R CMD check from complaining about the use of standard data.table variables and variables inside data.table calls
 if (getRversion() >= "2.15.1"){
 	utils::globalVariables(c("."))
-    utils::globalVariables(c("bi", "cum_bi", "delta", "delta_eposync", "delta_ping", "dist_to_sync_tag"))
+    utils::globalVariables(c("bi", "coord_fixed", "cum_bi", "delta", "delta_eposync", "delta_ping", "dist_to_sync_tag"))
 	utils::globalVariables(c("E", "E_m", "epo", "epofrac", "epofrac_lin_corr", "epo_roll", "eposync"))
-    utils::globalVariables(c("focal_hydro_idx", "frac", "hx", "hy", "hydro_idx", "id", "idx", "idx med_delta", "in_seq", "lin_corr_coeffs_offset", "lin_corr_coeffs_slope", "med_delta"))
-    utils::globalVariables(c("N", "next_ping_too_late", "OFFSET", "offset_idx", "offset_level", "ping2next", "ping_idx", "q10", "q50"))
+    utils::globalVariables(c("focal_hydro_idx", "frac", "hx", "hy", "hydro_idx", "id", "idx", "idx med_delta", "in_seq", "lin_corr_coeffs_offset", "lin_corr_coeffs_slope", "med_delta", "mean_E_m"))
+    utils::globalVariables(c("N", "next_ping_too_late", "OFFSET", "offset_idx", "offset_level", "ping", "ping2next", "ping_idx", "q10", "q50"))
     utils::globalVariables(c("q90", "roll_eposync", "roll_seq_epo"))
     utils::globalVariables(c("seq_epo", "seq_lng", "seq_ping_idx", "serial", "slope1","SLOPE1", "SLOPE2", "slope2", "ss", "sync_tag", "sync_tag_idx"))
-    utils::globalVariables(c("tag", "toa_idx", "ts", "x", "x_synced", "y", "y_synced"))
-    utils::globalVariables(c("Var1", "Var2"))
+    utils::globalVariables(c("tag", "toa_idx", "top", "ts", "x", "x_synced", "y", "y_synced"))
+    utils::globalVariables(c("value", "Var1", "Var2"))
 }
 
  

@@ -7,6 +7,9 @@
 	DATA_VECTOR(fixed_hydros_vec);
 	DATA_IVECTOR(offset_idx);
 	DATA_INTEGER(n_offset_idx);
+	
+	DATA_STRING(ss_data_what);	// 'est' = estimate SS-data; 'data' = Use SS-data
+	DATA_VECTOR(ss_data_vec);		// Vector of SS-data if used - length(ss_data) = np
 	DATA_IVECTOR(ss_idx);
 	DATA_INTEGER(n_ss_idx);
 	
@@ -14,7 +17,8 @@
 	PARAMETER_ARRAY(OFFSET);
 	PARAMETER_ARRAY(SLOPE1);
 	PARAMETER_ARRAY(SLOPE2);
-	PARAMETER_VECTOR(SS);
+	// PARAMETER_VECTOR(SS);
+
 	PARAMETER_ARRAY(TRUE_H);
 
 	PARAMETER(LOG_SIGMA_TOA);    		
@@ -26,6 +30,7 @@
 	array<Type> mu_toa(np,nh); 
 	array<Type> eps_toa(np,nh);
 	array<Type> dist_mat(nh,nh);
+	vector<Type> ss_i(np);
 	
 	// Adapting to zero-based index in cpp
 	sync_tag_idx_vec = sync_tag_idx_vec - 1;
@@ -45,6 +50,14 @@
 			}
 		}
 	}
+	
+	if(ss_data_what != "est"){
+		#include "nll_sync_ss_data.h"
+	} else {
+		#include "nll_sync_ss_est.h"
+	}
+
+	
 	// OFFSET as 1-D random walks...
 	for(int i = 0; i < n_offset_idx; ++i){	
 		for(int h=0; h <nh;++h){
@@ -63,7 +76,7 @@
 	for(int p = 0; p < np; ++p){   		// iterate pings
 		for(int h=0; h < nh; ++h){		// iterate hydros in ping p
 			if(!isNA(toa_offset(p,h))){
-				mu_toa(p,h) = TOP(p) + dist_mat(sync_tag_idx_vec(p), h)/SS(ss_idx(p)) + OFFSET(h, offset_idx(p)) + SLOPE1(h, offset_idx(p))*(toa_offset(p,h)/1E6) + SLOPE2(h, offset_idx(p))*pow((toa_offset(p,h)/1E6),2);
+				mu_toa(p,h) = TOP(p) + dist_mat(sync_tag_idx_vec(p), h)/ss_i(p) + OFFSET(h, offset_idx(p)) + SLOPE1(h, offset_idx(p))*(toa_offset(p,h)/1E6) + SLOPE2(h, offset_idx(p))*pow((toa_offset(p,h)/1E6),2);
 				eps_toa(p,h) = toa_offset(p,h) - mu_toa(p,h);
 				// nll -= dnorm(eps_toa(p,h), Type(0.0), SIGMA_TOA, true);
 				// nll -= log(dt(eps_toa(p,h)/SCALE, Type(3.0), false)/SCALE);
@@ -86,11 +99,15 @@
 			nll -= dnorm(TRUE_H(h,1), H(h,1), Type(10), true);
 		}
 	}
-
-	//speed of sound component
-	for(int i = 0; i < n_ss_idx; ++i){
-		nll -= dnorm(SS(i), Type(1475.0), Type(100), true);
-	}
+	
+	// //speed of sound component
+	// if(ss_data_what == "est"){
+		// for(int i = 0; i < n_ss_idx; ++i){
+			// nll -= dnorm(SS(i), Type(1475.0), Type(100), true);
+		// }
+	// } else {
+		// SS = ss_data_vec;
+	// }
 	
 	REPORT(eps_toa);
 	REPORT(dist_mat);

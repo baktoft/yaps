@@ -17,7 +17,7 @@ fineTuneSyncModel <- function(sync_model, eps_threshold, silent=TRUE){
 
 	# check if any empty rows now exists - if so get rid of them entirely
 	nobs <- apply(inp_sync$dat_tmb_sync$toa_offset, 1, function(k) sum(!is.na(k)))
-	empty_rows <- which(nobs <= inp_sync$inp_params$min_hydros)
+	empty_rows <- which(nobs < inp_sync$inp_params$min_hydros)
 
 	if(length(empty_rows) > 0){
 		inp_sync$dat_tmb_sync$toa_offset <- inp_sync$dat_tmb_sync$toa_offset[-empty_rows, ]
@@ -25,6 +25,10 @@ fineTuneSyncModel <- function(sync_model, eps_threshold, silent=TRUE){
 		inp_sync$dat_tmb_sync$offset_idx <- inp_sync$dat_tmb_sync$offset_idx[-empty_rows]
 		inp_sync$dat_tmb_sync$ss_idx <- inp_sync$dat_tmb_sync$ss_idx[-empty_rows]
 		inp_sync$dat_tmb_sync$np <- inp_sync$dat_tmb_sync$np - length(empty_rows)
+		
+		if(inp_sync$dat_tmb_sync$ss_data_what == "data"){
+			inp_sync$dat_tmb_sync$ss_data_vec = inp_sync$dat_tmb_sync$ss_data_vec [-empty_rows]
+		}
 		
 		inp_sync$params_tmb_sync$TOP <- inp_sync$params_tmb_sync$TOP[-empty_rows]
 		
@@ -36,8 +40,8 @@ fineTuneSyncModel <- function(sync_model, eps_threshold, silent=TRUE){
 	# inp_sync$params_tmb_sync$OFFSET 				<- sync_model$pl$OFFSET
 	# inp_sync$params_tmb_sync$SLOPE1 				<- sync_model$pl$SLOPE1
 	# inp_sync$params_tmb_sync$SLOPE2 				<- sync_model$pl$SLOPE2
-	inp_sync$params_tmb_sync$SS 					<- sync_model$pl$SS
-	inp_sync$params_tmb_sync$TRUE_H					<- sync_model$pl$TRUE_H
+	# inp_sync$params_tmb_sync$SS 					<- sync_model$pl$SS  # Disabled because option to use ss_data is implemented...
+	inp_sync$params_tmb_sync$TRUE_H					<- sync_model$pl$TRUE_H 
 	inp_sync$params_tmb_sync$LOG_SIGMA_TOA			<- sync_model$pl$LOG_SIGMA_TOA
 	inp_sync$params_tmb_sync$LOG_SIGMA_HYDROS_XY	<- sync_model$pl$LOG_SIGMA_HYDROS_XY
 

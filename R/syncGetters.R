@@ -95,12 +95,14 @@ getSyncModel <- function(inp_sync, silent=TRUE, fine_tune=FALSE, max_iter=100){
 #' @param time_keeper_idx Index of the hydrophone to use as time keeper. Could e.g. be the one with smallest overall clock-drift.
 #' @param fixed_hydros_idx Vector of hydro idx's for all hydrophones where the position is assumed to be known with adequate accuracy and precission. Include as many as possible as fixed hydros to reduce overall computation time and reduce overall variability. As a bare minimum two hydros need to be fixed, but we strongly advice to use more than two.
 #' @param n_offset_day Specifies the number of hydrophone specific quadratic polynomials to use per day. For PPM based systems, 1 or 2 is often adeqaute.
-#' @param n_ss_day Specifies number of speed of sound to estimate per day. Future versions will enable use of logged water temperature instead. However, estimating SS gives an extra option for sanity-checking the final sync-model.
+#' @param n_ss_day Specifies number of speed of sound to estimate per day if no ss data is supplied. It is recommended to use logged water temperature instead. However, estimating SS gives an extra option for sanity-checking the final sync-model.
+#' @param ss_data_what Indicates whether to estimate ("est") speed of sound or to use data based on logged water temperature ("data").
+#' @param ss_data data.table containing timestamp and speed of sound for the entire period to by synchronised. Must contain columns 'ts' (POSIXct timestamp) and 'ss' speed of sound in m/s (typical values range 1400 - 1550).
 #' @param keep_rate Syncing large data sets can take a long time. However, there is typically an excess number of sync tag detections and a sub-sample is typically enough for good synchronization. This parameter specifies the proportion (0-1) of data to keep when sub-sampling.
 #' @param excl_self_detect Logical whether to excluded detections of sync tags on the hydros they are co-located with. Sometimes self detections can introduce excessive residuals in the sync model in which case they should be excluded.
 #' @param lin_corr_coeffs Matrix of coefficients used for pre-sync linear correction. dim(lin_corr_coeffs)=(#hydros, 2). 
 #' @export
-getInpSync <- function(sync_dat, max_epo_diff, min_hydros, time_keeper_idx, fixed_hydros_idx, n_offset_day, n_ss_day, keep_rate=1, excl_self_detect=TRUE, lin_corr_coeffs=NA){
+getInpSync <- function(sync_dat, max_epo_diff, min_hydros, time_keeper_idx, fixed_hydros_idx, n_offset_day, n_ss_day, keep_rate=1, excl_self_detect=TRUE, lin_corr_coeffs=NA, ss_data_what="est", ss_data=c(0)){
 	sync_dat <- appendDetections(sync_dat)
 	
 		
@@ -118,19 +120,36 @@ getInpSync <- function(sync_dat, max_epo_diff, min_hydros, time_keeper_idx, fixe
 	fixed_hydros_vec 	<- getFixedHydrosVec(sync_dat, fixed_hydros_idx)
 	offset_vals 		<- getOffsetVals(inp_toa_list, n_offset_day)
 	ss_vals 			<- getSsVals(inp_toa_list, n_ss_day)
+	ss_data_vec			<- getSsDataVec(inp_toa_list, ss_data)
 
-	dat_tmb_sync <- getDatTmbSync(sync_dat, time_keeper_idx, inp_toa_list, fixed_hydros_vec, offset_vals, ss_vals, inp_H_info, T0)
-	params_tmb_sync <- getParamsTmbSync(dat_tmb_sync)
-	random_tmb_sync <- c("TOP", "OFFSET", "SLOPE1", "SLOPE2", "SS", "TRUE_H")
+	dat_tmb_sync <- getDatTmbSync(sync_dat, time_keeper_idx, inp_toa_list, fixed_hydros_vec, offset_vals, ss_vals, inp_H_info, T0, ss_data_what, ss_data_vec)
+	params_tmb_sync <- getParamsTmbSync(dat_tmb_sync, ss_data_what)
+	if(ss_data_what == "est"){
+		random_tmb_sync <- c("TOP", "OFFSET", "SLOPE1", "SLOPE2", "SS", "TRUE_H")
+	} else {
+		random_tmb_sync <- c("TOP", "OFFSET", "SLOPE1", "SLOPE2", "TRUE_H")
+	}
 	# inits_tmb_sync <- c(3, rep(-3,dat_tmb_sync$nh))
 	inits_tmb_sync <- c(3)
 	inp_params <- list(toa=inp_toa_list$toa, T0=T0, Hx0=inp_H_info$Hx0, Hy0=inp_H_info$Hy0, offset_levels=offset_vals$offset_levels, 
 		ss_levels=ss_vals$ss_levels, max_epo_diff=max_epo_diff, hydros=sync_dat$hydros,
-		lin_corr_coeffs=lin_corr_coeffs, min_hydros=min_hydros
+		lin_corr_coeffs=lin_corr_coeffs, min_hydros=min_hydros, ss_data=ss_data
 	)
 
 	return(list(dat_tmb_sync=dat_tmb_sync, params_tmb_sync=params_tmb_sync, random_tmb_sync=random_tmb_sync, inits_tmb_sync=inits_tmb_sync, inp_params=inp_params))
 	
+}
+
+#' Internal function. Extract speed of sounds for each timestamp used in sync-process from supplied data.
+#' @inheritParams getInpSync
+#' @noRd
+getSsDataVec <- function(inp_toa_list, ss_data){
+	ss_data
+	roll <- data.table::data.table(ts = as.POSIXct(inp_toa_list$epo_self_vec, origin="1970-01-01", tz="UTC"))
+	data.table::setkey(ss_data, ts)
+	data.table::setkey(roll, ts)
+	ss_data_vec <- ss_data[roll, roll="nearest"]$ss
+	return(ss_data_vec)
 }
 
 #' Internal function. Apply linear correction matrix to epofrac before sync
@@ -234,7 +253,7 @@ getSsVals <- function(inp_toa_list, n_ss_day){
 #' Internal function to get dat for TMB sync
 #' @inheritParams getInpSync
 #' @noRd
-getDatTmbSync <- function(sync_dat, time_keeper_idx, inp_toa_list, fixed_hydros_vec, offset_vals, ss_vals, inp_H_info, T0){
+getDatTmbSync <- function(sync_dat, time_keeper_idx, inp_toa_list, fixed_hydros_vec, offset_vals, ss_vals, inp_H_info, T0, ss_data_what, ss_data_vec){
 	H <- as.matrix(inp_H_info$inp_H)
 	dimnames(H) <- NULL
 	
@@ -252,7 +271,9 @@ getDatTmbSync <- function(sync_dat, time_keeper_idx, inp_toa_list, fixed_hydros_
 		offset_idx = offset_vals$offset_idx,
 		n_offset_idx = offset_vals$n_offset_idx,
 		ss_idx = ss_vals$ss_idx,
-		n_ss_idx = ss_vals$n_ss_idx
+		n_ss_idx = ss_vals$n_ss_idx,
+		ss_data_what = ss_data_what,
+		ss_data_vec = ss_data_vec
 	)
 	return(dat_tmb_sync)
 }
@@ -261,17 +282,19 @@ getDatTmbSync <- function(sync_dat, time_keeper_idx, inp_toa_list, fixed_hydros_
 #' Internal function to get params for TMB sync
 #' @inheritParams getInpSync
 #' @noRd
-getParamsTmbSync <- function(dat_tmb_sync){
+getParamsTmbSync <- function(dat_tmb_sync, ss_data_what){
 	params_tmb_sync <- list(
 		TOP = 	rowMeans(dat_tmb_sync$toa, na.rm=TRUE),
 		OFFSET = matrix(rnorm(dat_tmb_sync$nh*dat_tmb_sync$n_offset_idx, 0, 3), nrow=dat_tmb_sync$nh, ncol=dat_tmb_sync$n_offset_idx),
 		SLOPE1 = matrix(rnorm(dat_tmb_sync$nh*dat_tmb_sync$n_offset_idx, 0, 3), nrow=dat_tmb_sync$nh, ncol=dat_tmb_sync$n_offset_idx),
 		SLOPE2 = matrix(rnorm(dat_tmb_sync$nh*dat_tmb_sync$n_offset_idx, 0, 3), nrow=dat_tmb_sync$nh, ncol=dat_tmb_sync$n_offset_idx),
-		SS = rnorm(dat_tmb_sync$n_ss_idx, 1420, 1),
 		TRUE_H = as.matrix(cbind(dat_tmb_sync$H[,1], dat_tmb_sync$H[,2], dat_tmb_sync$H[,3])),
 		LOG_SIGMA_TOA = 0
 		# LOG_SIGMA_HYDROS_XY = rnorm(dat_tmb_sync$nh,-3,1)
 	)
+	if(ss_data_what == "est"){
+		params_tmb_sync[['SS']] <- rnorm(dat_tmb_sync$n_ss_idx, 1420, 1)
+	}
 	return(params_tmb_sync)
 }
 
@@ -280,12 +303,20 @@ getParamsTmbSync <- function(dat_tmb_sync){
 #' @inheritParams getInpSync
 #' @noRd
 getEpsLong <- function(report, pl, inp_sync){
+	
+	if(inp_sync$dat_tmb_sync$ss_data_what == "est"){
+		ss_vec <- pl$SS[inp_sync$dat_tmb_sync$ss_idx]
+	} else {
+		ss_vec <- inp_sync$dat_tmb_sync$ss_data_vec
+	}
+	
+	
 	eps <- report$eps_toa
 	eps[which(eps==0)] <- NA
 	eps_long <- data.table::data.table(reshape2::melt(eps))
 	colnames(eps_long) <- c('ping', 'hydro_idx', 'E')
 	eps_long[, sync_tag_idx:=rep(inp_sync$dat_tmb_sync$sync_tag_idx_vec, times=ncol(eps))]
-	eps_long[, ss:=rep(pl$SS[inp_sync$dat_tmb_sync$ss_idx], times=ncol(eps))]
+	eps_long[, ss:=rep(ss_vec, times=ncol(eps))]
 	eps_long[, E_m:=E*ss]
 	
 	eps_long <- eps_long[!is.na(E)]

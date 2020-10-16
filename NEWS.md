@@ -2,8 +2,9 @@
 
 ## New stuff
 * New site added to github pages intended to collect yaps-related resources, how-tos etc. (https://baktoft.github.io/yaps/)
-* Add option to use speed of sound based on logged temperatur in the synchronisation process.
 * Add first step-by-step tutorial to yaps pages
+* Add function to sequentially fine-tune sync model.
+* Add option to use speed of sound based on logged temperatur in the synchronisation process.
 * Add function to fine-tune sync_model based on residual threshold
 * Add plot to check temporal stability of sync_models. Try plotSyncModelResids(sync_model, by='temporal')
 * Add option to impose spatial constraints (BBox only) and plot a visual of the constraint. Mainly used to constrain parameter space and increase speed and convergence.

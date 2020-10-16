@@ -120,7 +120,11 @@ getInpSync <- function(sync_dat, max_epo_diff, min_hydros, time_keeper_idx, fixe
 	fixed_hydros_vec 	<- getFixedHydrosVec(sync_dat, fixed_hydros_idx)
 	offset_vals 		<- getOffsetVals(inp_toa_list, n_offset_day)
 	ss_vals 			<- getSsVals(inp_toa_list, n_ss_day)
-	ss_data_vec			<- getSsDataVec(inp_toa_list, ss_data)
+	if(ss_data_what == "data"){
+		ss_data_vec			<- getSsDataVec(inp_toa_list, ss_data)
+	} else {
+		ss_data_vec <- c(0)
+	}
 
 	dat_tmb_sync <- getDatTmbSync(sync_dat, time_keeper_idx, inp_toa_list, fixed_hydros_vec, offset_vals, ss_vals, inp_H_info, T0, ss_data_what, ss_data_vec)
 	params_tmb_sync <- getParamsTmbSync(dat_tmb_sync, ss_data_what)
@@ -144,7 +148,6 @@ getInpSync <- function(sync_dat, max_epo_diff, min_hydros, time_keeper_idx, fixe
 #' @inheritParams getInpSync
 #' @noRd
 getSsDataVec <- function(inp_toa_list, ss_data){
-	ss_data
 	roll <- data.table::data.table(ts = as.POSIXct(inp_toa_list$epo_self_vec, origin="1970-01-01", tz="UTC"))
 	data.table::setkey(ss_data, ts)
 	data.table::setkey(roll, ts)

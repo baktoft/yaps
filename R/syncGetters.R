@@ -121,13 +121,13 @@ getInpSync <- function(sync_dat, max_epo_diff, min_hydros, time_keeper_idx, fixe
 	offset_vals 		<- getOffsetVals(inp_toa_list, n_offset_day)
 	ss_vals 			<- getSsVals(inp_toa_list, n_ss_day)
 	if(ss_data_what == "data"){
-		ss_data_vec			<- getSsDataVec(inp_toa_list, ss_data)
+		ss_data_vec		<- getSsDataVec(inp_toa_list, ss_data)
 	} else {
 		ss_data_vec <- c(0)
 	}
 
-	dat_tmb_sync <- getDatTmbSync(sync_dat, time_keeper_idx, inp_toa_list, fixed_hydros_vec, offset_vals, ss_vals, inp_H_info, T0, ss_data_what, ss_data_vec)
-	params_tmb_sync <- getParamsTmbSync(dat_tmb_sync, ss_data_what)
+	dat_tmb_sync 		<- getDatTmbSync(sync_dat, time_keeper_idx, inp_toa_list, fixed_hydros_vec, offset_vals, ss_vals, inp_H_info, T0, ss_data_what, ss_data_vec)
+	params_tmb_sync 	<- getParamsTmbSync(dat_tmb_sync, ss_data_what)
 	if(ss_data_what == "est"){
 		random_tmb_sync <- c("TOP", "OFFSET", "SLOPE1", "SLOPE2", "SS", "TRUE_H")
 	} else {
@@ -175,8 +175,8 @@ applyLinCorCoeffsInpSync <- function(sync_dat, lin_corr_coeffs){
 #' @noRd
 getInpSyncToaList <- function(sync_dat, max_epo_diff, min_hydros, excl_self_detect, keep_rate, lin_corr_coeffs){
 	toa_list_gross   		<- buildToaListGross(sync_dat, excl_self_detect)
-	toa_list_pruned 		<- pruneToaListGross(toa_list_gross, max_epo_diff, min_hydros)
-	toa_list_downsampled 	<- downsampleToaList(toa_list_pruned, keep_rate)
+	toa_list_pruned 		<- yaps:::pruneToaListGross(toa_list_gross, max_epo_diff, min_hydros)
+	toa_list_downsampled 	<- yaps:::downsampleToaList(toa_list_pruned, keep_rate)
 	
 	return(toa_list_downsampled)
 }

@@ -31,16 +31,18 @@ plotSyncModelResids <- function(sync_model, by='overall'){
 		p <- ggplot2::ggplot(data=out_quants) + geom_point(aes(x=hydro_idx, y=factor(sync_tag_idx), col=abs(q50), size=N))
 		p <- p + viridis::scale_color_viridis(option="magma") + labs(y = "sync tag idx")
 	} else if(by %in% c('temporal', 'temporal_hydro', 'temporal_sync_tag')){
-		tops <- sync_model$pl$TOP + sync_model$inp_synced$inp_params$T0
+		T0 <- sync_model$inp_synced$inp_params$T0
 		offset_idx <- sync_model$inp_synced$dat_tmb_sync$offset_idx
-		# offset_levels <- sync_model$inp_synced$inp_params$offset_levels
+		offset_levels <- sync_model$inp_synced$inp_params$offset_levels
+		# tops <- sync_model$pl$TOP + sync_model$inp_synced$inp_params$T0
+		tops <- as.POSIXct(sync_model$pl$TOP + offset_levels[offset_idx, 1], origin="1970-01-01", tz="UTC")
 		eps_long[, top := tops[ping]]
 		if(by == 'temporal_hydro'){
-			p <- ggplot2::ggplot(data=eps_long) + geom_point(aes(x=top, y=E_m), pch=".") + geom_hline(data=eps_long[, .(mean_E_m=mean(E_m)), by=hydro_idx], aes(yintercept=mean_E_m), col="red") + facet_wrap(~hydro_idx)
+			p <- ggplot2::ggplot(data=eps_long) + ggtitle("by hydro") + geom_point(aes(x=top, y=E_m), pch=".") + geom_hline(data=eps_long[, .(mean_E_m=mean(E_m)), by=hydro_idx], aes(yintercept=mean_E_m), col="red") + facet_wrap(~hydro_idx)
 		} else if(by == 'temporal_sync_tag'){
-			p <- ggplot2::ggplot(data=eps_long) + geom_point(aes(x=top, y=E_m), pch=".") + geom_hline(data=eps_long[, .(mean_E_m=mean(E_m)), by=sync_tag_idx], aes(yintercept=mean_E_m), col="red") + facet_wrap(~sync_tag_idx)
+			p <- ggplot2::ggplot(data=eps_long) + ggtitle("by sync tag") + geom_point(aes(x=top, y=E_m), pch=".") + geom_hline(data=eps_long[, .(mean_E_m=mean(E_m)), by=sync_tag_idx], aes(yintercept=mean_E_m), col="red") + facet_wrap(~sync_tag_idx)
 		} else if(by == 'temporal'){
-			p <- ggplot2::ggplot(data=eps_long) + geom_point(aes(x=top, y=E_m), pch=".") + geom_hline(data=eps_long[, .(mean_E_m=mean(E_m)), by=c('hydro_idx', 'sync_tag_idx')], aes(yintercept=mean_E_m), col="red") + facet_grid(sync_tag_idx~hydro_idx)
+			p <- ggplot2::ggplot(data=eps_long) + ggtitle("by hydro (col) X sync tag (row)") + geom_point(aes(x=top, y=E_m), pch=".") + geom_hline(data=eps_long[, .(mean_E_m=mean(E_m)), by=c('hydro_idx', 'sync_tag_idx')], aes(yintercept=mean_E_m), col="red") + facet_grid(sync_tag_idx~hydro_idx)
 		}
 	}
 	

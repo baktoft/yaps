@@ -47,6 +47,12 @@ getToaYaps <- function(synced_dat, hydros, rbi_min, rbi_max){
 	nobs <- apply(toa, 1, function(k) sum(!is.na(k)))
 	first_ping <- 	which(nobs >= 2)[1]
 	last_ping <- 	rev(which(nobs >= 2))[1]
+	
+	if(is.na(first_ping) | is.na(last_ping) | first_ping == last_ping){
+		print("FATAL ERROR: Not enough data to produce toa")
+		return(FALSE)
+	}
+	
 	toa <- toa[first_ping:last_ping, ]
 	
 	# remake toa-matrix to include pings missed by all hydros...

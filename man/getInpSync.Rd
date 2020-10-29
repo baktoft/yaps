@@ -35,7 +35,10 @@ getInpSync(
 
 \item{n_ss_day}{Specifies number of speed of sound to estimate per day if no ss data is supplied. It is recommended to use logged water temperature instead. However, estimating SS gives an extra option for sanity-checking the final sync-model.}
 
-\item{keep_rate}{Syncing large data sets can take a long time. However, there is typically an excess number of sync tag detections and a sub-sample is typically enough for good synchronization. This parameter specifies the proportion (0-1) of data to keep when sub-sampling.}
+\item{keep_rate}{Syncing large data sets can take a really long time. However, there is typically an excess number of sync tag detections 
+and a sub-sample is typically enough for good synchronization. 
+This parameter EITHER specifies a proportion (0-1) of data to keep when sub-sampling 
+OR (if keep_rate > 10) number of pings (approximate) to keep in each hydro X offset_idx combination if enough exists.}
 
 \item{excl_self_detect}{Logical whether to excluded detections of sync tags on the hydros they are co-located with. Sometimes self detections can introduce excessive residuals in the sync model in which case they should be excluded.}
 

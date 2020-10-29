@@ -20,7 +20,7 @@ if (getRversion() >= "2.15.1"){
 	utils::globalVariables(c("."))
     utils::globalVariables(c("bi", "coord_fixed", "cum_bi", "delta", "delta_eposync", "delta_ping", "dist_to_sync_tag"))
 	utils::globalVariables(c("E", "E_m", "epo", "epofrac", "epofrac_lin_corr", "epo_roll", "eposync"))
-    utils::globalVariables(c("focal_hydro_idx", "frac", "hx", "hy", "hydro_idx", "id", "idx", "idx med_delta", "in_seq", "lin_corr_coeffs_offset", "lin_corr_coeffs_slope", "med_delta", "mean_E_m"))
+    utils::globalVariables(c("focal_hydro_idx", "frac", "h_idx", "hx", "hy", "hydro_idx", "id", "idx", "idx med_delta", "in_seq", "lin_corr_coeffs_offset", "lin_corr_coeffs_slope", "med_delta", "mean_E_m"))
     utils::globalVariables(c("N", "next_ping_too_late", "OFFSET", "offset_idx", "offset_level", "ping", "ping2next", "ping_idx", "q10", "q50"))
     utils::globalVariables(c("q90", "roll_eposync", "roll_seq_epo"))
     utils::globalVariables(c("seq_epo", "seq_lng", "seq_ping_idx", "serial", "slope1","SLOPE1", "SLOPE2", "slope2", "ss", "sync_tag", "sync_tag_idx"))

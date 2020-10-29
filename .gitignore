@@ -40,3 +40,4 @@ man/figures/*.png
 rsconnect/
 .Rproj.user
 inst/doc
+debug.log

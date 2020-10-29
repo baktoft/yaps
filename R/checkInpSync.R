@@ -34,6 +34,7 @@ checkInpSync <- function(inp_sync, silent_check){
 	} else if(!silent_check & min(sync_coverage$N) < 50) {
 		cat("NOTE: At least one hydro has less than 50 pings in an offset_idx - try getSyncCoverage(inp_sync, plot=TRUE) for visual\n and rerun getInpSync() with increased keep_rate\n")
 	}
+	return(sync_coverage)
 }
 
 #' Quick overview to check if all hydros have enough data within each offset period.
@@ -53,8 +54,11 @@ getSyncCoverage <- function(inp_sync, plot=FALSE){
 	colnames(sync_coverage) <- c('h', 'offset_idx' ,'N')
 	
 	if(plot){
-		p <- ggplot2::ggplot(sync_coverage) + geom_point(aes(offset_idx, N)) 
-		p <- p + geom_point(data=sync_coverage[N < 50], aes(offset_idx, N), col="red", size=2)
+		p <- ggplot2::ggplot(sync_coverage) 
+		p <- p + geom_point(aes(offset_idx, N), col="steelblue") 
+		p <- p + geom_point(data=sync_coverage[N < 50], aes(offset_idx, N), col="blue", size=2)
+		p <- p + geom_point(data=sync_coverage[N < 10], aes(offset_idx, N), col="orange", size=2)
+		p <- p + geom_point(data=sync_coverage[N <= 5], aes(offset_idx, N), col="red", size=2)
 		p <- p + facet_wrap(~h) + ylim(0, max(sync_coverage$N))
 		print(p)
 	}

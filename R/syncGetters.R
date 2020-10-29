@@ -104,8 +104,12 @@ getSyncModel <- function(inp_sync, silent=TRUE, fine_tune=FALSE, max_iter=100){
 #' @param silent_check Logical whether to get output from checkInpSync(). Default is FALSE
 #' @export
 getInpSync <- function(sync_dat, max_epo_diff, min_hydros, time_keeper_idx, fixed_hydros_idx, n_offset_day, n_ss_day, keep_rate=1, excl_self_detect=TRUE, lin_corr_coeffs=NA, ss_data_what="est", ss_data=c(0), silent_check=FALSE){
-	sync_dat <- appendDetections(sync_dat)
+	if(length(unique(sync_dat$hydros$serial)) != nrow(sync_dat$hydros)){
+		print(sync_dat$hydros[, .N, by=serial][N>=2])
+		stop("ERROR: At least one hydrophone serial number is used more than once in sync_dat$hydros!\n")
+	}
 	
+	sync_dat <- appendDetections(sync_dat)
 		
 	if(is.na(lin_corr_coeffs[1])){
 		lin_corr_coeffs <- matrix(0, nrow=nrow(sync_dat$hydros), ncol=2, byrow=TRUE)
@@ -142,7 +146,7 @@ getInpSync <- function(sync_dat, max_epo_diff, min_hydros, time_keeper_idx, fixe
 	)
 	
 	inp_sync <- list(dat_tmb_sync=dat_tmb_sync, params_tmb_sync=params_tmb_sync, random_tmb_sync=random_tmb_sync, inits_tmb_sync=inits_tmb_sync, inp_params=inp_params)
-	checkInpSync(inp_sync, silent_check)
+	inp_sync$inp_params$sync_coverage <- checkInpSync(inp_sync, silent_check)
 	return(inp_sync)
 	
 }

@@ -4,10 +4,12 @@
 \alias{checkInpSync}
 \title{Check consistency of `inp_sync` object obtained from `getInpSync()`}
 \usage{
-checkInpSync(inp_sync)
+checkInpSync(inp_sync, silent_check)
 }
 \arguments{
 \item{inp_sync}{Object obtained using `getInpSync()`}
+
+\item{silent_check}{Logical whether to get output from checkInpSync(). Default is FALSE}
 }
 \description{
 Check consistency of `inp_sync` object obtained from `getInpSync()`

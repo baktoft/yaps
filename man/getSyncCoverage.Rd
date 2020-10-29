@@ -6,6 +6,11 @@
 \usage{
 getSyncCoverage(inp_sync, plot = FALSE)
 }
+\arguments{
+\item{inp_sync}{Object obtained using `getInpSync()`}
+
+\item{plot}{Logical indicating whether to plot a visual or not.}
+}
 \description{
 Quick overview to check if all hydros have enough data within each offset period.
 }

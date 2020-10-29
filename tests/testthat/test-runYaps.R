@@ -27,17 +27,17 @@ test_that("yaps_out is as expected", {
 	load("yaps_out_ref.RData")
 	
 	# need to run individual tests - somehow order of items in the lists differ when running devtools::check()
-	expect_equal(yaps_out$pl$X, yaps_out_ref$pl$X)
-	expect_equal(yaps_out$pl$Y, yaps_out_ref$pl$Y)
-	expect_equal(yaps_out$pl$top, yaps_out_ref$pl$top)
-	expect_equal(yaps_out$pl$ss, yaps_out_ref$pl$ss)
-	expect_equal(yaps_out$pl$logD_xy, yaps_out_ref$pl$logD_xy)
+	expect_equal(yaps_out$pl$X, yaps_out_ref$pl$X, tolerance=1E-3)
+	expect_equal(yaps_out$pl$Y, yaps_out_ref$pl$Y, tolerance=1E-3)
+	expect_equal(yaps_out$pl$top, yaps_out_ref$pl$top, tolerance=1E-3)
+	expect_equal(yaps_out$pl$ss, yaps_out_ref$pl$ss, tolerance=1E-3)
+	expect_equal(yaps_out$pl$logD_xy, yaps_out_ref$pl$logD_xy, tolerance=1E-3)
 
-	expect_equal(yaps_out$pl_sd$X,   yaps_out_ref$pl_sd$X)
-	expect_equal(yaps_out$pl_sd$Y,   yaps_out_ref$pl_sd$Y)
-	expect_equal(yaps_out$pl_sd$top, yaps_out_ref$pl_sd$top)
-	expect_equal(yaps_out$pl_sd$ss,  yaps_out_ref$pl_sd$ss)
-	expect_equal(yaps_out$pl_sd$logD_xy,  yaps_out_ref$pl_sd$logD_xy)
+	expect_equal(yaps_out$pl_sd$X,   yaps_out_ref$pl_sd$X, tolerance=1E-3)
+	expect_equal(yaps_out$pl_sd$Y,   yaps_out_ref$pl_sd$Y, tolerance=1E-3)
+	expect_equal(yaps_out$pl_sd$top, yaps_out_ref$pl_sd$top, tolerance=1E-3)
+	expect_equal(yaps_out$pl_sd$ss,  yaps_out_ref$pl_sd$ss, tolerance=1E-3)
+	expect_equal(yaps_out$pl_sd$logD_xy,  yaps_out_ref$pl_sd$logD_xy, tolerance=1E-3)
 })
 
 

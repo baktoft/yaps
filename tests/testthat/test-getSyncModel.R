@@ -13,7 +13,7 @@ keep_rate <- 0.1
 
 # get input data ready for getSyncModel()
 inp_sync <- getInpSync(sync_dat=ssu1, max_epo_diff, min_hydros, time_keeper_idx, 
-    fixed_hydros_idx, n_offset_day, n_ss_day, keep_rate=keep_rate)
+    fixed_hydros_idx, n_offset_day, n_ss_day, keep_rate=keep_rate, silent_check=TRUE)
 
 # fit the sync model
 sync_model <- getSyncModel(inp_sync, silent=TRUE)
@@ -26,9 +26,9 @@ sync_model <- getSyncModel(inp_sync, silent=TRUE)
 
 test_that("sync_model is as expected", {
 	load("sync_model_ref.RData")
-	expect_equal(sync_model$pl, sync_model_ref$pl)
-	expect_equal(sync_model$report, sync_model_ref$report)
-	expect_equal(sync_model$obj_val, sync_model_ref$obj_val)
-	expect_equal(sync_model$eps_long, sync_model_ref$eps_long)
-	expect_equal(sync_model$inp_synced, sync_model_ref$inp_synced)
+	expect_equal(sync_model$pl, sync_model_ref$pl, tolerance=1E-3)
+	expect_equal(sync_model$report, sync_model_ref$report, tolerance=1E-3)
+	expect_equal(sync_model$obj_val, sync_model_ref$obj_val, tolerance=1E-3)
+	expect_equal(sync_model$eps_long, sync_model_ref$eps_long, tolerance=1E-3)
+	expect_equal(sync_model$inp_synced, sync_model_ref$inp_synced, tolerance=1E-3)
 })

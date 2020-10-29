@@ -16,7 +16,8 @@ getInpSync(
   excl_self_detect = TRUE,
   lin_corr_coeffs = NA,
   ss_data_what = "est",
-  ss_data = c(0)
+  ss_data = c(0),
+  silent_check = FALSE
 )
 }
 \arguments{
@@ -43,6 +44,8 @@ getInpSync(
 \item{ss_data_what}{Indicates whether to estimate ("est") speed of sound or to use data based on logged water temperature ("data").}
 
 \item{ss_data}{data.table containing timestamp and speed of sound for the entire period to by synchronised. Must contain columns 'ts' (POSIXct timestamp) and 'ss' speed of sound in m/s (typical values range 1400 - 1550).}
+
+\item{silent_check}{Logical whether to get output from checkInpSync(). Default is FALSE}
 }
 \description{
 Get object inp for synchronization

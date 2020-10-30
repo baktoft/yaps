@@ -198,7 +198,7 @@ getDownsampledToaList <- function(inp_toa_list_all, offset_vals_all, keep_rate){
 	} else if(keep_rate > 10){
 		toa_list_downsampled 	<- downsampleToaList_selective(inp_toa_list_all, offset_vals_all, keep_rate)
 	}
-
+	return(toa_list_downsampled)
 }
 
 # Internal function to selectively downsample the toa-matrix for inp_sync

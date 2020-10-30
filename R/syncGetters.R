@@ -20,49 +20,42 @@ getSyncModel <- function(inp_sync, silent=TRUE, fine_tune=FALSE, max_iter=100){
 	pl <- c()
 	plsd <- c()
 	obj <- c()
-	
-	sync_done <- FALSE
-	i <- 1
-	while(!sync_done){
-		tictoc::tic(paste0("... iteration ", i))
-		obj <- c()
-		opt <- c()
-		report <- c()
-		gc()
-		
-		# config(DLL="yaps_sync")
-		# ## Reduce memory peak of a parallel model by creating tapes in serial
-		# config(tape.parallel=0, DLL="yaps_sync")
-		obj <- TMB::MakeADFun(data = dat_tmb, parameters = params, random = random, DLL = "yaps", inner.control = list(maxit = max_iter), silent=silent)
-		
-		if(silent){
-			opt <- suppressWarnings(stats::nlminb(inits,obj$fn,obj$gr))
-		} else {
-			opt <- stats::nlminb(inits,obj$fn,obj$gr)
-		}
 
-		obj$fn()
-		pl <- obj$env$parList()   # List of estimates
-		obj_val <- opt$objective
-		cat(paste0(".. ", Sys.time()), " \n")
-		cat(".... obj = ", obj_val, " \n")
-		report <- obj$report()
+	tictoc::tic()
+	obj <- c()
+	opt <- c()
+	report <- c()
+	gc()
 	
-		crazy_outliers <- which(abs(report$eps_toa)*1450 > 10000)
-		fine_outliers  <- which(abs(report$eps_toa)*1450 > 1000)
-		if(length(crazy_outliers > 0)){
-			cat(".... some extreme outliers potentially affecting the model where identified and removed - rerunning sync_model \n")
-			dat_tmb$toa_offset[crazy_outliers] <- NA
-		} else if(fine_tune & length(fine_outliers > 0)){
-			cat(".... fine tuning is enabled, but is getting deprecated in this function. Consider to use the function fineTuneSyncModel() instead. See ?fineTuneSyncModel for info. \n")
-			cat(".... fine tuning is enable (fine_tune = TRUE) - some outliers where identified and removed - rerunning sync_model \n")
-			dat_tmb$toa_offset[fine_outliers] <- NA
-		} else {
-			sync_done <- TRUE
-		}
-		tictoc::toc()
-		i <- i +1
+	# config(DLL="yaps_sync")
+	# ## Reduce memory peak of a parallel model by creating tapes in serial
+	# config(tape.parallel=0, DLL="yaps_sync")
+	obj <- TMB::MakeADFun(data = dat_tmb, parameters = params, random = random, DLL = "yaps", inner.control = list(maxit = max_iter), silent=silent)
+	
+	if(silent){
+		opt <- suppressWarnings(stats::nlminb(inits,obj$fn,obj$gr))
+	} else {
+		opt <- stats::nlminb(inits,obj$fn,obj$gr)
 	}
+
+	obj$fn()
+	pl <- obj$env$parList()   # List of estimates
+	obj_val <- opt$objective
+	cat(paste0(".. ", Sys.time()), " \n")
+	cat(".... obj = ", obj_val, " \n")
+	report <- obj$report()
+
+	crazy_outliers <- which(abs(report$eps_toa)*1450 > 10000)
+	fine_outliers  <- which(abs(report$eps_toa)*1450 > 1000)
+	if(length(crazy_outliers > 0)){
+		cat(".... some extreme outliers potentially affecting the model where identified \n Consider to run fineTuneSyncModel(sync_model, eps_threshold=10000). See ?fineTuneSyncModel for more info. \n")
+		# dat_tmb$toa_offset[crazy_outliers] <- NA
+	} else if(fine_tune){
+		cat(".... fine tuning is enabled, but is deprecated. Use the function fineTuneSyncModel() instead. See ?fineTuneSyncModel for info. \n")
+		# dat_tmb$toa_offset[fine_outliers] <- NA
+	} 
+
+	tictoc::toc()
 
 	jointrep <- try(TMB::sdreport(obj, getJointPrecision=TRUE), silent=silent)
 	param_names <- rownames(summary(jointrep))
@@ -110,6 +103,10 @@ getInpSync <- function(sync_dat, max_epo_diff, min_hydros, time_keeper_idx, fixe
 	if(length(unique(sync_dat$hydros$serial)) != nrow(sync_dat$hydros)){
 		print(sync_dat$hydros[, .N, by=serial][N>=2])
 		stop("ERROR: At least one hydrophone serial number is used more than once in sync_dat$hydros!\n")
+	}
+	
+	if(keep_rate <=0 | (keep_rate > 1 & keep_rate < 10) | (keep_rate >= 10 & keep_rate %% 1 != 0)){
+		stop("ERROR: Invalid keep_rate! Must be either ]0;1] or integer >= 10\n")
 	}
 	
 	sync_dat <- appendDetections(sync_dat)

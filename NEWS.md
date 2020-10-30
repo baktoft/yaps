@@ -9,6 +9,7 @@
 * Add plot to check temporal stability of sync_models. Try plotSyncModelResids(sync_model, by='temporal')
 * Add option to impose spatial constraints (BBox only) and plot a visual of the constraint. Mainly used to constrain parameter space and increase speed and convergence.
 * Add various checks in checkInpSync()
+* Add option to use selective downsampling in getInpSync(). 
 
 ## Bug fixes
 * Fix bug in getInpSync() - failed if sync_tag was only heard on own hydro

@@ -26,8 +26,7 @@ checkInpSync <- function(inp_sync, silent_check){
 	# trigger thresholds for N is somewhat arbitrary..
 	sync_coverage <- getSyncCoverage(inp_sync, plot=FALSE)
 	if(!silent_check & min(sync_coverage$N) <= 5) {
-		cat("WARNING: At least one hydro x offset_idx combination has less than 5 observations. This hydro cannot be synced in that period!\n Run getSyncCoverage(inp_sync, plot=TRUE) for more info\n")
-		# print(sync_coverage[N <= 5])
+		cat("WARNING: At least one hydro x offset_idx combination has less than 5 observations. This/these hydro(s) might not be synced in that/these period(s)!\n Run getSyncCoverage(inp_sync, plot=TRUE) for more info\n")
 	}
 	if(!silent_check & min(sync_coverage$N) < 10) {
 		cat("WARNING: At least one hydro has less than 10 pings in an offset_idx - try getSyncCoverage(inp_sync, plot=TRUE) for visual\n and rerun getInpSync() with increased keep_rate\n")

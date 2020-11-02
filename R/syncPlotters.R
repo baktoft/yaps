@@ -49,11 +49,33 @@ plotSyncModelResids <- function(sync_model, by='overall'){
 	suppressWarnings(print(p))
 }
 
-checkSyncModelResidQuantiles <- function(sync_model){
-	eps_long <- sync_model$eps_long
+#' Plot hydrophone positions. Especially useful if some hydro re-positioned as part of the sync model.
+#' @param sync_model Synchronization model obtained using `getSyncModel()`
+#' @param by What to facet/group the plot by? Currently supports one of 'sync_bin_sync', 'sync_bin_hydro', 'sync_bin_sync_smooth', 'sync_bin_hydro_smooth', 'hydro', 'sync_tag'
+#' @export
+plotSyncModelHydros <- function(sync_model){
+	h_pos <- data.table::data.table(sync_model$inp_synced$dat_tmb_sync$H)
+	colnames(h_pos) <- c('x','y','z')
+	h_pos[, idx := 1:.N]
+	h_pos[, x := x + sync_model$inp_synced$inp_params$Hx0]
+	h_pos[, y := y + sync_model$inp_synced$inp_params$Hy0]
 	
+	h_pos[, x_synced := sync_model$pl$TRUE_H[,1]]
+	h_pos[, y_synced := sync_model$pl$TRUE_H[,2]]
+	h_pos[, z_synced := sync_model$pl$TRUE_H[,3]]
 	
+	cols <- ifelse(sync_model$inp_synced$dat_tmb_sync$fixed_hydros_vec == 1, "steelblue", "tomato")
+	
+	p1 <- ggplot(h_pos) + geom_point(aes(x=x,y=y), size=3) + geom_point(aes(x=x_synced, y=y_synced), col=cols) + ggrepel::geom_text_repel(aes(x=x_synced, y=y_synced, label=idx)) + coord_fixed(ratio=1)
+	p2 <- ggplot(h_pos) + geom_point(aes(x=idx, y=x-x), size=3) + geom_point(aes(x=idx, y=x-x_synced), col=cols) + ylab("x-x_synced")
+	p3 <- ggplot(h_pos) + geom_point(aes(x=idx, y=y-y), size=3) + geom_point(aes(x=idx, y=y-y_synced), col=cols) + ylab("y-y_synced") 
+	
+	return(cowplot::plot_grid(p1, p2, p3, ncol=1, rel_heights=c(5,1,1)))
+
 }
+
+
+
 
 #' Plot to check how well the sync model is working
 #' 

@@ -10,6 +10,7 @@
 * Add option to impose spatial constraints (BBox only) and plot a visual of the constraint. Mainly used to constrain parameter space and increase speed and convergence.
 * Add various checks in checkInpSync()
 * Add option to use selective downsampling in getInpSync(). 
+* Add function to plot hydros from sync_model - usefull if hydros were re-positioned during getSyncModel().
 
 ## Bug fixes
 * Fix bug in getInpSync() - failed if sync_tag was only heard on own hydro

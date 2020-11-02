@@ -195,7 +195,7 @@ getInpSyncToaList <- function(sync_dat, max_epo_diff, min_hydros, excl_self_dete
 getDownsampledToaList <- function(inp_toa_list_all, offset_vals_all, keep_rate){
 	if(keep_rate > 0 & keep_rate <= 1){
 		toa_list_downsampled 	<- downsampleToaList_random(inp_toa_list_all, keep_rate)
-	} else if(keep_rate > 10){
+	} else if(keep_rate >= 10){
 		toa_list_downsampled 	<- downsampleToaList_selective(inp_toa_list_all, offset_vals_all, keep_rate)
 	}
 	return(toa_list_downsampled)
@@ -396,7 +396,7 @@ getEpsLong <- function(report, pl, inp_sync){
 #' @param extreme_threshold Ignore delta values larger than this threshold. 
 #' @inheritParams getInpSync
 #' @noRd
-getSyncCheckDat <- function(sync_model, extreme_threshold=10000){
+getSyncCheckDat <- function(sync_model, extreme_threshold=1000){
 	toa <- sync_model$inp_synced$inp_params$toa
 	toa_sync <- applySync(toa, sync_model=sync_model)
 
@@ -408,7 +408,11 @@ getSyncCheckDat <- function(sync_model, extreme_threshold=10000){
 	true_y <- sync_model$pl$TRUE_H[,2]
 	true_z <- sync_model$pl$TRUE_H[,3]
 
-	ss_long <- sync_model$pl$SS[ss_idx]
+	if(sync_model$inp_synced$dat_tmb_sync$dd_data_what == "est"){
+		ss_long <- sync_model$pl$SS[ss_idx]
+	} else {
+		ss_long <- sync_model$inp_synced$dat_tmb_sync$ss_data_vec[ss_idx]
+	}
 
 	toa_sync_long <- data.table::data.table(reshape2::melt(toa_sync))
 	colnames(toa_sync_long) <- c('ping_idx','hydro_idx', 'toa_sync')

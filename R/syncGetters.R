@@ -408,10 +408,10 @@ getSyncCheckDat <- function(sync_model, extreme_threshold=1000){
 	true_y <- sync_model$pl$TRUE_H[,2]
 	true_z <- sync_model$pl$TRUE_H[,3]
 
-	if(sync_model$inp_synced$dat_tmb_sync$dd_data_what == "est"){
+	if(sync_model$inp_synced$dat_tmb_sync$ss_data_what == "est"){
 		ss_long <- sync_model$pl$SS[ss_idx]
 	} else {
-		ss_long <- sync_model$inp_synced$dat_tmb_sync$ss_data_vec[ss_idx]
+		ss_long <- sync_model$inp_synced$dat_tmb_sync$ss_data_vec
 	}
 
 	toa_sync_long <- data.table::data.table(reshape2::melt(toa_sync))

@@ -41,9 +41,9 @@ fineTuneSyncModel <- function(sync_model, eps_threshold, silent=TRUE){
 	# inp_sync$params_tmb_sync$SLOPE1 				<- sync_model$pl$SLOPE1
 	# inp_sync$params_tmb_sync$SLOPE2 				<- sync_model$pl$SLOPE2
 	# inp_sync$params_tmb_sync$SS 					<- sync_model$pl$SS  # Disabled because option to use ss_data is implemented...
+	# inp_sync$params_tmb_sync$LOG_SIGMA_HYDROS_XY	<- sync_model$pl$LOG_SIGMA_HYDROS_XY
 	inp_sync$params_tmb_sync$TRUE_H					<- sync_model$pl$TRUE_H 
 	inp_sync$params_tmb_sync$LOG_SIGMA_TOA			<- sync_model$pl$LOG_SIGMA_TOA
-	inp_sync$params_tmb_sync$LOG_SIGMA_HYDROS_XY	<- sync_model$pl$LOG_SIGMA_HYDROS_XY
 
 	# run getSyncModel() using the tuned inp_sync
 	sync_model_tuned <- getSyncModel(inp_sync, silent=silent)

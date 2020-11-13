@@ -43,7 +43,7 @@ getDatTmb(
 
 \item{inp_params}{Selection of parameters used to setup and run YAPS.}
 
-\item{z_vec}{Vector of known depth values (positive real). Default=NULL is which case no 3D is assumed. Estimation of depth from detections is currently not supported.}
+\item{z_vec}{Vector of known depth values (positive real). Default=NULL is which case no 3D is assumed. If z_vec = "est" depth will be estimated.}
 
 \item{bbox}{Spatial constraints in the form of a bounding box. See ?getBbox for details.}
 }

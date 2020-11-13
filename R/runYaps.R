@@ -12,6 +12,9 @@
 runYaps <- function(inp, maxIter=1000, getPlsd=TRUE, getRep=TRUE, silent=TRUE, opt_fun='nlminb', opt_controls=list(), bounds=list()){
 	print("Running yaps...")
 	random <- c("X", "Y", "top")
+	if(inp$datTmb$how_3d == "est"){
+		random <- c(random, "Z")
+	}	
 	if(inp$datTmb$ss_data_what == 'est'){
 		random <- c(random, 'ss')
 	}

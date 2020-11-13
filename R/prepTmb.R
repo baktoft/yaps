@@ -11,7 +11,7 @@
 #' @param ss_data_what What speed of sound (ss) data to be used. Default ss_data_what='est': ss is estimated by the model. Alternatively, if ss_data_what='data': ss_data must be provided and length(ss_data) == ncol(toa)
 #' @param ss_data Vector of ss-data to be used if ss_data_what = 'est'. Otherwise ss_data <- 0 (default)
 #' @param biTable Table of known burst intervals. Only used when pingType == "pbi". Default=NULL
-#' @param z_vec Vector of known depth values (positive real). Default=NULL is which case no 3D is assumed. Estimation of depth from detections is currently not supported.
+#' @param z_vec Vector of known depth values (positive real). Default=NULL is which case no 3D is assumed. If z_vec = "est" depth will be estimated.
 #' @param bbox Spatial constraints in the form of a bounding box. See ?getBbox for details.
 
 #' @return List of input data ready for use in TMB-call
@@ -71,6 +71,9 @@ getDatTmb <- function(hydros, toa, E_dist, n_ss, pingType, rbi_min, rbi_max, ss_
 	
 	if(is.null(z_vec)){
 		how_3d <- 'none'
+		z_vec <- c(1)
+	} else if(z_vec == "est") {
+		how_3d <- 'est'
 		z_vec <- c(1)
 	} else {
 		how_3d <- 'data'
@@ -134,13 +137,17 @@ getParams <- function(datTmb){
 		# , log_t_part = 0				#Mixture ratio between Gaussian and t
 	)
 	
+	if(datTmb$how_3d == "est"){
+		out$Z <- stats::runif(ncol(datTmb$toa), -10, 0)
+	}
+	
 	# # # ss related
 	if(datTmb$ss_data_what == 'est'){
 		out$logD_v <- 0				#diffusivity of speed of sound (D_v in ms)
 		out$ss <- stats::rnorm(datTmb$n_ss, 1450, 5) 	#speed of sound
 	}
 	
-	# # # Edist realted
+	# # # Edist related
 	if(datTmb$Edist[1] == 1){
 		out$logSigma_toa = 0			#sigma for Gaussian
 	} else if(datTmb$Edist[2] == 1){

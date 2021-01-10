@@ -19,6 +19,7 @@
 * Eliminate estimation of log_sigma_hydros_xy in sync_model
 * Relax priors on SS in both track and sync model - consider to switch to softplus instead
 * Return plsd object from getSyncModel
+* Fix bug in getToaYaps() that allowed too short/too high BI to pass through when using ping_type='rbi' and very fast transmitters
 
 
 

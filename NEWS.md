@@ -11,8 +11,10 @@
 * Add various checks in checkInpSync()
 * Add option to use selective downsampling in getInpSync(). 
 * Add function to plot hydros from sync_model - usefull if hydros were re-positioned during getSyncModel().
+* Add option to estimate Z-dimension (depth) of tracks.
 
 ## Bug fixes
+* Fix nasty bug in likelihood contribution of ToP-estimation when using random burst interval (ping_type = 'rbi')
 * Fix bug in getInpSync() - failed if sync_tag was only heard on own hydro
 * Eliminate estimation of log_sigma_hydros_xy in sync_model
 * Relax priors on SS in both track and sync model - consider to switch to softplus instead

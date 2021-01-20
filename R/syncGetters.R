@@ -119,6 +119,8 @@ getInpSync <- function(sync_dat, max_epo_diff, min_hydros, time_keeper_idx, fixe
 	
 	T0 <- min(sync_dat$detections$epo)
 
+	if (is.null(sync_dat$hydros$hlabel)) sync_dat$hydros[, hlabel := paste(idx)] # Each hydrofone may have a label different from it's idx, if provided on input
+	
 	inp_H_info <- getInpSyncHInfo(sync_dat)
 
 	inp_toa_list_all		<- getInpSyncToaList(sync_dat, max_epo_diff, min_hydros, excl_self_detect)

@@ -219,16 +219,36 @@ lines(pl$Y~pl$X, col="red")
 
 ## 2020
 
+-   Baktoft, H., Gjelland, K., Szabo-Meszaros, M. et al (2020). Can
+    energy depletion of wild atlantic salmon kelts negotiating
+    hydropower facilities lead to reduced survival? Sustain. 12, 1–12.
+    <https://doi.org/10.3390/SU12187341>
+
+-   Hubert, J., Campbell, J. & Slabbekoorn, H. (2020). Effects of
+    seismic airgun playbacks on swimming patterns and behavioural states
+    of Atlantic cod in a net pen. Marine Pollution Bulletin. 160.
+    111680. <https://doi.org/10.1016/j.marpolbul.2020.111680>
+
+-   Vergeynst, J., Pauwels, I., Baeyens, R. et al. (2020). Shipping
+    canals on the downstream migration route of European eel ( Anguilla
+    anguilla ): Opportunity or bottleneck?. Ecology of Freshwater
+    Fish. 30. <https://doi.org/10.1111/eff.12565>
+
 -   Vergeynst, J., Vanwyck, T., Baeyens, R. et al. (2020). Acoustic
     positioning in a reflective environment: going beyond point-by-point
     algorithms. Anim Biotelemetry 8, 16.
     <https://doi.org/10.1186/s40317-020-00203-1>
 
+-   Vergeynst, J., Baktoft, H., Mouton, A. et al. (2020). The influence
+    of system settings on positioning accuracy in acoustic telemetry,
+    using the YAPS algorithm. Anim. Biotelemetry, 8, 1–12,
+    <https://doi.org/10.1186/s40317-020-00211-1>
+
 ## 2019
 
 -   Baktoft, H., Gjelland, K.Ø., Økland, F., Rehage, J.S., Rodemann,
     J.R., Corujo, R.S., Viadero, N., Thygesen, U.H. (2019). Opening the
-    black box of fish tracking using acoustic telemetry bioRxiv
+    black box of fish tracking using acoustic telemetry. bioRxiv
     2019.12.16.877688; doi: <https://doi.org/10.1101/2019.12.16.877688>
 
 -   Silva, A.T., Bærum, K.M., Hedger, R.D., Baktoft, H., Fjeldstad, H.,

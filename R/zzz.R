@@ -25,7 +25,7 @@ if (getRversion() >= "2.15.1"){
     utils::globalVariables(c("q90", "roll_eposync", "roll_seq_epo"))
     utils::globalVariables(c("seq_epo", "seq_lng", "seq_ping_idx", "serial", "slope1","SLOPE1", "SLOPE2", "slope2", "ss", "sync_tag", "sync_tag_idx"))
     utils::globalVariables(c("tag", "toa_idx", "top", "ts", "x", "x_synced", "y", "y_synced"))
-    utils::globalVariables(c("value", "Var1", "Var2"))
+    utils::globalVariables(c("value"))
 }
 
  

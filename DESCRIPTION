@@ -1,5 +1,5 @@
 Package: yaps
-Title: Track estimation using YAPS (Yet Another Positioning Solver)
+Title: Track Estimation using YAPS (Yet Another Positioning Solver)
 Version: 1.2.1.9000
 Authors@R: c(	person("Henrik", "Baktoft", email = "hba@aqua.dtu.dk", role = c("cre", "aut")),
 				person("Karl", "Gjelland", role=c("aut")),
@@ -13,7 +13,7 @@ Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.1.1
 LinkingTo: Rcpp, TMB, RcppEigen
-Imports: circular, data.table, ggplot2, Matrix, nloptr, plyr, Rcpp, RcppEigen, reshape2, splusTimeSeries, stats, tictoc, TMB, viridis, zoo
+Imports: circular, cowplot, data.table, ggplot2, ggrepel, Matrix, nloptr, plyr, Rcpp, reshape2, splusTimeSeries, stats, tictoc, TMB, viridis, zoo
 Suggests: 
     testthat (>= 2.1.0),
     knitr,

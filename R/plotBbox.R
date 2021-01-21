@@ -2,6 +2,7 @@
 #' @inheritParams getInp
 #' @export
 plotBbox <- function(hydros, bbox){
+	Var1 <- Var2 <- NULL
 	softplus <- function(x, eps){return (0.5*(x+sqrt(x*x+eps*eps)))	}
 
 	x_space_min <- floor(hydros[which.min(hydros$hx), hx] - 20)

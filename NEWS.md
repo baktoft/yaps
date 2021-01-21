@@ -12,6 +12,8 @@
 * Add option to use selective downsampling in getInpSync(). 
 * Add function to plot hydros from sync_model - usefull if hydros were re-positioned during getSyncModel().
 * Add option to estimate Z-dimension (depth) of tracks.
+* Add function to calucate speed of sound from water temperature, salinity and depth - tempToSs(temp, sal, depth).
+
 
 ## Bug fixes
 * Fix nasty bug in likelihood contribution of ToP-estimation when using random burst interval (ping_type = 'rbi')
@@ -20,8 +22,7 @@
 * Relax priors on SS in both track and sync model - consider to switch to softplus instead
 * Return plsd object from getSyncModel
 * Fix bug in getToaYaps() that allowed too short/too high BI to pass through when using ping_type='rbi' and very fast transmitters
-
-
+* Fix bug in getToaYaps() that added to many empty pings when ping_type='sbi'.
 
 
 # yaps v1.2.0.9111

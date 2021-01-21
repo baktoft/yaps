@@ -8,8 +8,6 @@ plotSyncModelHydros(sync_model)
 }
 \arguments{
 \item{sync_model}{Synchronization model obtained using `getSyncModel()`}
-
-\item{by}{What to facet/group the plot by? Currently supports one of 'sync_bin_sync', 'sync_bin_hydro', 'sync_bin_sync_smooth', 'sync_bin_hydro_smooth', 'hydro', 'sync_tag'}
 }
 \description{
 Plot hydrophone positions. Especially useful if some hydro re-positioned as part of the sync model.

@@ -51,9 +51,9 @@ plotSyncModelResids <- function(sync_model, by='overall'){
 
 #' Plot hydrophone positions. Especially useful if some hydro re-positioned as part of the sync model.
 #' @param sync_model Synchronization model obtained using `getSyncModel()`
-#' @param by What to facet/group the plot by? Currently supports one of 'sync_bin_sync', 'sync_bin_hydro', 'sync_bin_sync_smooth', 'sync_bin_hydro_smooth', 'hydro', 'sync_tag'
 #' @export
 plotSyncModelHydros <- function(sync_model){
+	z_synced <- NULL
 	h_pos <- data.table::data.table(sync_model$inp_synced$dat_tmb_sync$H)
 	colnames(h_pos) <- c('x','y','z')
 	h_pos[, idx := 1:.N]
@@ -66,9 +66,9 @@ plotSyncModelHydros <- function(sync_model){
 	
 	cols <- ifelse(sync_model$inp_synced$dat_tmb_sync$fixed_hydros_vec == 1, "steelblue", "tomato")
 	
-	p1 <- ggplot(h_pos) + geom_point(aes(x=x,y=y), size=3) + geom_point(aes(x=x_synced, y=y_synced), col=cols) + ggrepel::geom_text_repel(aes(x=x_synced, y=y_synced, label=idx)) + coord_fixed(ratio=1)
-	p2 <- ggplot(h_pos) + geom_point(aes(x=idx, y=x-x), size=3) + geom_point(aes(x=idx, y=x-x_synced), col=cols) + ylab("x-x_synced")
-	p3 <- ggplot(h_pos) + geom_point(aes(x=idx, y=y-y), size=3) + geom_point(aes(x=idx, y=y-y_synced), col=cols) + ylab("y-y_synced") 
+	p1 <- ggplot2::ggplot(h_pos) + geom_point(aes(x=x,y=y), size=3) + geom_point(aes(x=x_synced, y=y_synced), col=cols) + ggrepel::geom_text_repel(aes(x=x_synced, y=y_synced, label=idx)) + coord_fixed(ratio=1)
+	p2 <- ggplot2::ggplot(h_pos) + geom_point(aes(x=idx, y=x-x), size=3) + geom_point(aes(x=idx, y=x-x_synced), col=cols) + ylab("x-x_synced")
+	p3 <- ggplot2::ggplot(h_pos) + geom_point(aes(x=idx, y=y-y), size=3) + geom_point(aes(x=idx, y=y-y_synced), col=cols) + ylab("y-y_synced") 
 	
 	return(cowplot::plot_grid(p1, p2, p3, ncol=1, rel_heights=c(5,1,1)))
 

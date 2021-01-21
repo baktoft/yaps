@@ -54,11 +54,6 @@ jobs:
         # env:
           # RHUB_PLATFORM: linux-x86_64-ubuntu-gcc
         run: |
-          # # # # custom hack to ensure correct version of Matrix for TMB
-          # sudo apt-get install -y --allow-downgrades r-cran-matrix=1.2-18-1focal0
-          # R -e "install.packages('TMB', type = 'source')"
-          # # # # custom hack end
-          
           while read -r cmd
           do
             eval sudo $cmd
@@ -75,6 +70,16 @@ jobs:
           _R_CHECK_CRAN_INCOMING_REMOTE_: false
         run: rcmdcheck::rcmdcheck(args = c("--no-manual", "--as-cran"), error_on = "warning", check_dir = "check")
         shell: Rscript {0}
+
+      - name: Run codecov
+        if: runner.os == 'Linux'
+        run: |
+          covr::codecov()
+        shell: Rscript {0}
+
+      - name: Upload coverage to Codecov
+        if: runner.os == 'Linux'
+        uses: codecov/codecov-action@v1
 
       - name: Upload check results
         if: failure()

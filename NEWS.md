@@ -1,12 +1,3 @@
-# yaps v1.2.2.9000
-
-## New stuff
-
-
-## Bug fixes
-
-
-
 # yaps v1.2.2
 
 ## New stuff

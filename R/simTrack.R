@@ -174,7 +174,7 @@ simHydros <- function(auto=TRUE, trueTrack=NULL){
 	hx <- c(hx.min,hx.min,hx.max,hx.max, 0, 500,  500, -500, -500)
 	hy <- c(hy.min,hy.max,hy.max,hy.min, 0, 500, -500, -500, 500)
 
-	hydros <- data.table::data.table(hx=hx, hy=hy)
+	hydros <- data.table::data.table(hx=hx, hy=hy, hz=1)
 
 	return(hydros)
 }

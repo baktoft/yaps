@@ -14,7 +14,9 @@ applySync <- function(toa, hydros="", sync_model){
 	
 	
 	if(type=="toa_matrix"){
-		print("WARNING: USE OF LINEAR CORRECTION IS NOT IMPLEMENTED WHEN APPLYING SYNC TO A MATRIX YET - LINEAR CORRECTIONS ARE IGNORED!!!")
+		if(sum(inp_synced$inp_params$lin_corr_coeffs != 0)){
+			stop("ERROR: Use of linear correction is not yet implemented in applying sync to a matrix!\n If linear corrections are used in sync, these are ignored in this step and results will be wrong!\n")
+		}
 		offset_idx_mat <- matrix(findInterval(toa, ks), ncol=ncol(toa))
 		offset_level_mat <- matrix(inp_synced$inp_params$offset_levels[offset_idx_mat, 1], ncol=ncol(offset_idx_mat))
 		

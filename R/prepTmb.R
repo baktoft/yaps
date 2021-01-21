@@ -11,14 +11,14 @@
 #' @param ss_data_what What speed of sound (ss) data to be used. Default ss_data_what='est': ss is estimated by the model. Alternatively, if ss_data_what='data': ss_data must be provided and length(ss_data) == ncol(toa)
 #' @param ss_data Vector of ss-data to be used if ss_data_what = 'est'. Otherwise ss_data <- 0 (default)
 #' @param biTable Table of known burst intervals. Only used when pingType == "pbi". Default=NULL
-#' @param z_vec Vector of known depth values (positive real). Default=NULL is which case no 3D is assumed. Estimation of depth from detections is currently not supported.
-
+#' @param z_vec Vector of known depth values (positive real). Default=NULL is which case no 3D is assumed. If z_vec = "est" depth will be estimated.
+#' @param bbox Spatial constraints in the form of a bounding box. See ?getBbox for details.
 
 #' @return List of input data ready for use in TMB-call
 #' @export
-getInp <- function(hydros, toa, E_dist, n_ss, pingType, sdInits=1, rbi_min=0, rbi_max=0, ss_data_what='est', ss_data=0, biTable=NULL, z_vec=NULL){
+getInp <- function(hydros, toa, E_dist, n_ss, pingType, sdInits=1, rbi_min=0, rbi_max=0, ss_data_what='est', ss_data=0, biTable=NULL, z_vec=NULL, bbox=NULL){
 	inp_params 	<- getInpParams(hydros, toa, pingType)
-	datTmb 		<- getDatTmb(hydros, toa, E_dist, n_ss, pingType, rbi_min, rbi_max, ss_data_what, ss_data, biTable, inp_params, z_vec)
+	datTmb 		<- getDatTmb(hydros, toa, E_dist, n_ss, pingType, rbi_min, rbi_max, ss_data_what, ss_data, biTable, inp_params, z_vec, bbox)
 	params 		<- getParams(datTmb)
 	inits 		<- getInits(datTmb, sdInits)
 	return(list(
@@ -39,7 +39,7 @@ getInp <- function(hydros, toa, E_dist, n_ss, pingType, sdInits=1, rbi_min=0, rb
 #'
 #' @return List for use in TMB.
 #' @export
-getDatTmb <- function(hydros, toa, E_dist, n_ss, pingType, rbi_min, rbi_max, ss_data_what, ss_data, biTable, inp_params, z_vec){
+getDatTmb <- function(hydros, toa, E_dist, n_ss, pingType, rbi_min, rbi_max, ss_data_what, ss_data, biTable, inp_params, z_vec, bbox){
 	T0 <- inp_params$T0
 	Hx0 <- inp_params$Hx0
 	Hy0 <- inp_params$Hy0
@@ -72,8 +72,20 @@ getDatTmb <- function(hydros, toa, E_dist, n_ss, pingType, rbi_min, rbi_max, ss_
 	if(is.null(z_vec)){
 		how_3d <- 'none'
 		z_vec <- c(1)
+	} else if(z_vec == "est") {
+		how_3d <- 'est'
+		z_vec <- c(1)
 	} else {
 		how_3d <- 'data'
+	}
+	
+	if(is.null(bbox)){
+		bbox <- NA
+	} else {
+		bbox[1] <- bbox[1] - inp_params$Hx0
+		bbox[2] <- bbox[2] - inp_params$Hx0
+		bbox[3] <- bbox[3] - inp_params$Hy0
+		bbox[4] <- bbox[4] - inp_params$Hy0
 	}
 
 	datTmb <- list(
@@ -95,7 +107,8 @@ getDatTmb <- function(hydros, toa, E_dist, n_ss, pingType, rbi_min, rbi_max, ss_
 		approxBI = approxBI,
 		biTable = c(1),
 		how_3d = how_3d,
-		z_vec = z_vec
+		z_vec = z_vec,
+		bbox = bbox
 	)
 	if(pingType == 'pbi') {datTmb$biTable = biTable}
 
@@ -124,13 +137,17 @@ getParams <- function(datTmb){
 		# , log_t_part = 0				#Mixture ratio between Gaussian and t
 	)
 	
+	if(datTmb$how_3d == "est"){
+		out$Z <- stats::runif(ncol(datTmb$toa), -10, 0)
+	}
+	
 	# # # ss related
 	if(datTmb$ss_data_what == 'est'){
 		out$logD_v <- 0				#diffusivity of speed of sound (D_v in ms)
 		out$ss <- stats::rnorm(datTmb$n_ss, 1450, 5) 	#speed of sound
 	}
 	
-	# # # Edist realted
+	# # # Edist related
 	if(datTmb$Edist[1] == 1){
 		out$logSigma_toa = 0			#sigma for Gaussian
 	} else if(datTmb$Edist[2] == 1){

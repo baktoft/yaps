@@ -1,3 +1,30 @@
+# yaps v1.2.2
+
+## New stuff
+* New site added to github pages intended to collect yaps-related resources, how-tos etc. (https://baktoft.github.io/yaps/)
+* Add first step-by-step tutorial to yaps pages
+* Add function to sequentially fine-tune sync model.
+* Add option to use speed of sound based on logged temperatur in the synchronisation process.
+* Add function to fine-tune sync_model based on residual threshold
+* Add plot to check temporal stability of sync_models. Try plotSyncModelResids(sync_model, by='temporal')
+* Add option to impose spatial constraints (BBox only) and plot a visual of the constraint. Mainly used to constrain parameter space and increase speed and convergence.
+* Add various checks in checkInpSync()
+* Add option to use selective downsampling in getInpSync(). 
+* Add function to plot hydros from sync_model - usefull if hydros were re-positioned during getSyncModel().
+* Add option to estimate Z-dimension (depth) of tracks.
+* Add function to calucate speed of sound from water temperature, salinity and depth - tempToSs(temp, sal, depth).
+* Add github actions to hopefully ensure nothing breaks from now on...
+
+## Bug fixes
+* Fix nasty bug in likelihood contribution of ToP-estimation when using random burst interval (ping_type = 'rbi')
+* Fix bug in getInpSync() - failed if sync_tag was only heard on own hydro
+* Eliminate estimation of log_sigma_hydros_xy in sync_model
+* Relax priors on SS in both track and sync model - consider to switch to softplus instead
+* Return plsd object from getSyncModel
+* Fix bug in getToaYaps() that allowed too short/too high BI to pass through when using ping_type='rbi' and very fast transmitters
+* Fix bug in getToaYaps() that added to many empty pings when ping_type='sbi'.
+
+
 # yaps v1.2.0.9111
 
 ## New stuff

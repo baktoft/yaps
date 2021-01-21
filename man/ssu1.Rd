@@ -4,7 +4,8 @@
 \name{ssu1}
 \alias{ssu1}
 \title{Test data from Florida Bay}
-\format{A list containing 3 data.tables:
+\format{
+A list containing 3 data.tables:
 \describe{
   \item{hydros}{
     \itemize{
@@ -29,7 +30,8 @@
        \item utm_x, utm_y Coordinates of position. Same projection and coordinate system as used in hydros.
      }
   }
-}}
+}
+}
 \usage{
 ssu1
 }

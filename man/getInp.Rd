@@ -4,9 +4,21 @@
 \alias{getInp}
 \title{Get prepared inp-object for use in TMB-call}
 \usage{
-getInp(hydros, toa, E_dist, n_ss, pingType, sdInits = 1, rbi_min = 0,
-  rbi_max = 0, ss_data_what = "est", ss_data = 0, biTable = NULL,
-  z_vec = NULL)
+getInp(
+  hydros,
+  toa,
+  E_dist,
+  n_ss,
+  pingType,
+  sdInits = 1,
+  rbi_min = 0,
+  rbi_max = 0,
+  ss_data_what = "est",
+  ss_data = 0,
+  biTable = NULL,
+  z_vec = NULL,
+  bbox = NULL
+)
 }
 \arguments{
 \item{hydros}{Dataframe from simHydros() or Dataframe with columns hx and hy containing positions of the receivers. Translate the coordinates to get the grid centre close to (0;0).}
@@ -29,7 +41,9 @@ getInp(hydros, toa, E_dist, n_ss, pingType, sdInits = 1, rbi_min = 0,
 
 \item{biTable}{Table of known burst intervals. Only used when pingType == "pbi". Default=NULL}
 
-\item{z_vec}{Vector of known depth values (positive real). Default=NULL is which case no 3D is assumed. Estimation of depth from detections is currently not supported.}
+\item{z_vec}{Vector of known depth values (positive real). Default=NULL is which case no 3D is assumed. If z_vec = "est" depth will be estimated.}
+
+\item{bbox}{Spatial constraints in the form of a bounding box. See ?getBbox for details.}
 }
 \value{
 List of input data ready for use in TMB-call

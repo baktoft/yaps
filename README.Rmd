@@ -18,6 +18,11 @@ knitr::opts_chunk$set(
 )
 ```
 
+<!-- badges: start -->
+[![R-CMD-check](https://github.com/baktoft/yaps/workflows/R-CMD-check/badge.svg)](https://github.com/baktoft/yaps/actions)
+<!-- badges: end -->
+
+
 # YAPS - (Yet Another Positioning Solver)<img src="vignettes/yaps_logo.png" align="right" width="120" />
 
 Welcome to the `yaps` repository. The `yaps` package is based on the original YAPS presented in Baktoft, Gjelland, Økland & Thygesen (2017): [Positioning of aquatic animals based on time-of-arrival and random walk models using YAPS (Yet Another Positioning Solver)](https://www.nature.com/articles/s41598-017-14278-z.pdf)  
@@ -182,7 +187,11 @@ points(hy~hx, data=hydros, col="green", pch=20, cex=3)
 lines(pl$Y~pl$X, col="red")
 ```
 
-# Papers using YAPS
+# Papers using or relating to YAPS
+## 2020
+
+* Vergeynst, J., Vanwyck, T., Baeyens, R. et al. (2020). Acoustic positioning in a reflective environment: going beyond point-by-point algorithms. Anim Biotelemetry 8, 16. https://doi.org/10.1186/s40317-020-00203-1
+
 ## 2019  
 
 * Baktoft, H., Gjelland, K.Ø., Økland, F., Rehage, J.S., Rodemann, J.R., Corujo, R.S., Viadero, N., Thygesen, U.H. (2019). Opening the black box of fish tracking using acoustic telemetry

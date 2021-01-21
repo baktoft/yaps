@@ -4,9 +4,21 @@
 \alias{getInpSync}
 \title{Get object inp for synchronization}
 \usage{
-getInpSync(sync_dat, max_epo_diff, min_hydros, time_keeper_idx,
-  fixed_hydros_idx, n_offset_day, n_ss_day, keep_rate = 1,
-  excl_self_detect = TRUE, lin_corr_coeffs = NA)
+getInpSync(
+  sync_dat,
+  max_epo_diff,
+  min_hydros,
+  time_keeper_idx,
+  fixed_hydros_idx,
+  n_offset_day,
+  n_ss_day,
+  keep_rate = 1,
+  excl_self_detect = TRUE,
+  lin_corr_coeffs = NA,
+  ss_data_what = "est",
+  ss_data = c(0),
+  silent_check = FALSE
+)
 }
 \arguments{
 \item{sync_dat}{List containing data.tables with hydrophone information and detections. See e.g. `?ssu1` for example}
@@ -21,13 +33,22 @@ getInpSync(sync_dat, max_epo_diff, min_hydros, time_keeper_idx,
 
 \item{n_offset_day}{Specifies the number of hydrophone specific quadratic polynomials to use per day. For PPM based systems, 1 or 2 is often adeqaute.}
 
-\item{n_ss_day}{Specifies number of speed of sound to estimate per day. Future versions will enable use of logged water temperature instead. However, estimating SS gives an extra option for sanity-checking the final sync-model.}
+\item{n_ss_day}{Specifies number of speed of sound to estimate per day if no ss data is supplied. It is recommended to use logged water temperature instead. However, estimating SS gives an extra option for sanity-checking the final sync-model.}
 
-\item{keep_rate}{Syncing large data sets can take a long time. However, there is typically an excess number of sync tag detections and a sub-sample is typically enough for good synchronization. This parameter specifies the proportion (0-1) of data to keep when sub-sampling.}
+\item{keep_rate}{Syncing large data sets can take a really long time. However, there is typically an excess number of sync tag detections 
+and a sub-sample is typically enough for good synchronization. 
+This parameter EITHER specifies a proportion (0-1) of data to keep when sub-sampling 
+OR (if keep_rate > 10) number of pings (approximate) to keep in each hydro X offset_idx combination if enough exists.}
 
 \item{excl_self_detect}{Logical whether to excluded detections of sync tags on the hydros they are co-located with. Sometimes self detections can introduce excessive residuals in the sync model in which case they should be excluded.}
 
 \item{lin_corr_coeffs}{Matrix of coefficients used for pre-sync linear correction. dim(lin_corr_coeffs)=(#hydros, 2).}
+
+\item{ss_data_what}{Indicates whether to estimate ("est") speed of sound or to use data based on logged water temperature ("data").}
+
+\item{ss_data}{data.table containing timestamp and speed of sound for the entire period to by synchronised. Must contain columns 'ts' (POSIXct timestamp) and 'ss' speed of sound in m/s (typical values range 1400 - 1550).}
+
+\item{silent_check}{Logical whether to get output from checkInpSync(). Default is FALSE}
 }
 \description{
 Get object inp for synchronization

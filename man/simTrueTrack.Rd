@@ -4,9 +4,17 @@
 \alias{simTrueTrack}
 \title{Simulate a known movement track for subsequent estimation using YAPS}
 \usage{
-simTrueTrack(model = "rw", n, deltaTime = 1, D = NULL,
-  shape = NULL, scale = NULL, addDielPattern = TRUE, ss = "rw",
-  start_pos = NULL)
+simTrueTrack(
+  model = "rw",
+  n,
+  deltaTime = 1,
+  D = NULL,
+  shape = NULL,
+  scale = NULL,
+  addDielPattern = TRUE,
+  ss = "rw",
+  start_pos = NULL
+)
 }
 \arguments{
 \item{model}{Movement model: 'rw': Two-dimension random walk  (X,Y)}

@@ -8,3 +8,6 @@
 ^index\.Rmd$
 ^index\.md$
 ^vignettes$
+^LICENSE\.md$
+^LICENSE$
+^\.github$

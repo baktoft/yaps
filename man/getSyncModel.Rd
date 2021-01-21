@@ -4,15 +4,14 @@
 \alias{getSyncModel}
 \title{Get sync model from inp_sync object obtained by getInpSync()}
 \usage{
-getSyncModel(inp_sync, silent = TRUE, fine_tune = TRUE,
-  max_iter = 100)
+getSyncModel(inp_sync, silent = TRUE, fine_tune = FALSE, max_iter = 100)
 }
 \arguments{
 \item{inp_sync}{Input data prepared for the sync model using `getInpSync()`}
 
 \item{silent}{Keep TMB quiet}
 
-\item{fine_tune}{Logical. Wheter to re-run the sync model excluding residual outliers}
+\item{fine_tune}{Logical. Whether to re-run the sync model excluding residual outliers. Consider to use fineTuneSyncModel() instead.}
 
 \item{max_iter}{Max number of iterations to run TMB. Default=100 seems to work in most cases.}
 }

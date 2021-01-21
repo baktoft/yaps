@@ -9,7 +9,7 @@ plotSyncModelResids(sync_model, by = "overall")
 \arguments{
 \item{sync_model}{Synchronization model obtained using `getSyncModel()`}
 
-\item{by}{What to facet/group the plot by? Currently supports one of 'overall', 'sync_tag', 'hydro', 'quantiles'}
+\item{by}{What to facet/group the plot by? Currently supports one of 'overall', 'sync_tag', 'hydro', 'quantiles', 'temporal', 'temporal_hydro', 'temporal_sync_tag'}
 }
 \description{
 Plot residuals of sync_model to enable check of model

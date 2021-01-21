@@ -1,7 +1,7 @@
 #' Plot residuals of sync_model to enable check of model
 #' 
 #' @param sync_model Synchronization model obtained using `getSyncModel()`
-#' @param by What to facet/group the plot by? Currently supports one of 'overall', 'sync_tag', 'hydro', 'quantiles'
+#' @param by What to facet/group the plot by? Currently supports one of 'overall', 'sync_tag', 'hydro', 'quantiles', 'temporal', 'temporal_hydro', 'temporal_sync_tag'
 #' @export
 plotSyncModelResids <- function(sync_model, by='overall'){
 	eps_long <- sync_model$eps_long
@@ -30,17 +30,52 @@ plotSyncModelResids <- function(sync_model, by='overall'){
 		out_quants <- quants[ abs(q10) > thres | abs(q90) > thres]
 		p <- ggplot2::ggplot(data=out_quants) + geom_point(aes(x=hydro_idx, y=factor(sync_tag_idx), col=abs(q50), size=N))
 		p <- p + viridis::scale_color_viridis(option="magma") + labs(y = "sync tag idx")
-	
+	} else if(by %in% c('temporal', 'temporal_hydro', 'temporal_sync_tag')){
+		T0 <- sync_model$inp_synced$inp_params$T0
+		offset_idx <- sync_model$inp_synced$dat_tmb_sync$offset_idx
+		offset_levels <- sync_model$inp_synced$inp_params$offset_levels
+		# tops <- sync_model$pl$TOP + sync_model$inp_synced$inp_params$T0
+		tops <- as.POSIXct(sync_model$pl$TOP + offset_levels[offset_idx, 1], origin="1970-01-01", tz="UTC")
+		eps_long[, top := tops[ping]]
+		if(by == 'temporal_hydro'){
+			p <- ggplot2::ggplot(data=eps_long) + ggtitle("by hydro") + geom_point(aes(x=top, y=E_m), pch=".") + geom_hline(data=eps_long[, .(mean_E_m=mean(E_m)), by=hydro_idx], aes(yintercept=mean_E_m), col="red") + facet_wrap(~hydro_idx)
+		} else if(by == 'temporal_sync_tag'){
+			p <- ggplot2::ggplot(data=eps_long) + ggtitle("by sync tag") + geom_point(aes(x=top, y=E_m), pch=".") + geom_hline(data=eps_long[, .(mean_E_m=mean(E_m)), by=sync_tag_idx], aes(yintercept=mean_E_m), col="red") + facet_wrap(~sync_tag_idx)
+		} else if(by == 'temporal'){
+			p <- ggplot2::ggplot(data=eps_long) + ggtitle("by hydro (col) X sync tag (row)") + geom_point(aes(x=top, y=E_m), pch=".") + geom_hline(data=eps_long[, .(mean_E_m=mean(E_m)), by=c('hydro_idx', 'sync_tag_idx')], aes(yintercept=mean_E_m), col="red") + facet_grid(sync_tag_idx~hydro_idx)
+		}
 	}
 	
 	suppressWarnings(print(p))
 }
 
-checkSyncModelResidQuantiles <- function(sync_model){
-	eps_long <- sync_model$eps_long
+#' Plot hydrophone positions. Especially useful if some hydro re-positioned as part of the sync model.
+#' @param sync_model Synchronization model obtained using `getSyncModel()`
+#' @export
+plotSyncModelHydros <- function(sync_model){
+	z_synced <- NULL
+	h_pos <- data.table::data.table(sync_model$inp_synced$dat_tmb_sync$H)
+	colnames(h_pos) <- c('x','y','z')
+	h_pos[, idx := 1:.N]
+	h_pos[, x := x + sync_model$inp_synced$inp_params$Hx0]
+	h_pos[, y := y + sync_model$inp_synced$inp_params$Hy0]
 	
+	h_pos[, x_synced := sync_model$pl$TRUE_H[,1]]
+	h_pos[, y_synced := sync_model$pl$TRUE_H[,2]]
+	h_pos[, z_synced := sync_model$pl$TRUE_H[,3]]
 	
+	cols <- ifelse(sync_model$inp_synced$dat_tmb_sync$fixed_hydros_vec == 1, "steelblue", "tomato")
+	
+	p1 <- ggplot2::ggplot(h_pos) + geom_point(aes(x=x,y=y), size=3) + geom_point(aes(x=x_synced, y=y_synced), col=cols) + ggrepel::geom_text_repel(aes(x=x_synced, y=y_synced, label=idx)) + coord_fixed(ratio=1)
+	p2 <- ggplot2::ggplot(h_pos) + geom_point(aes(x=idx, y=x-x), size=3) + geom_point(aes(x=idx, y=x-x_synced), col=cols) + ylab("x-x_synced")
+	p3 <- ggplot2::ggplot(h_pos) + geom_point(aes(x=idx, y=y-y), size=3) + geom_point(aes(x=idx, y=y-y_synced), col=cols) + ylab("y-y_synced") 
+	
+	return(cowplot::plot_grid(p1, p2, p3, ncol=1, rel_heights=c(5,1,1)))
+
 }
+
+
+
 
 #' Plot to check how well the sync model is working
 #' 

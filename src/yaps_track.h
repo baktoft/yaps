@@ -14,6 +14,7 @@
 	DATA_SCALAR(approxBI);
 	DATA_VECTOR(Edist);
 	DATA_VECTOR(biTable);
+	DATA_VECTOR(bbox);
 
 	DATA_STRING(how_3d);
 	DATA_VECTOR(z_vec);
@@ -33,27 +34,29 @@
 	vector<Type> ss_i(np);
 
 	Type nll = 0.0;
-
+	
 	if(ss_data_what != "est"){
 		#include "nll_ss_data.h"
 	} else {
 		#include "nll_ss_est.h"
 	}
 	
-
-	for(int i=0; i<np; ++i) //iterate pings
-	{
-		for(int h=0; h<nh; ++h){ //iterate hydros
-			if(!isNA(toa(h,i))){ //ignore NA's...
-				if(how_3d == "none"){
-					dist(h,i) = sqrt((H(h,0)-X(i))*(H(h,0)-X(i)) + (H(h,1)-Y(i))*(H(h,1)-Y(i)));
-				} else if(how_3d == "data"){
-					dist(h,i) = sqrt((H(h,0)-X(i))*(H(h,0)-X(i)) + (H(h,1)-Y(i))*(H(h,1)-Y(i)) + (H(h,2)-z_vec(i))*(H(h,2)-z_vec(i)));
+	if(how_3d != "est"){
+		for(int i=0; i<np; ++i){ //iterate pings
+			for(int h=0; h<nh; ++h){ //iterate hydros
+				if(!isNA(toa(h,i))){ //ignore NA's...
+					if(how_3d == "none"){
+						dist(h,i) = sqrt((H(h,0)-X(i))*(H(h,0)-X(i)) + (H(h,1)-Y(i))*(H(h,1)-Y(i)));
+					} else if(how_3d == "data"){
+						dist(h,i) = sqrt((H(h,0)-X(i))*(H(h,0)-X(i)) + (H(h,1)-Y(i))*(H(h,1)-Y(i)) + (H(h,2)-z_vec(i))*(H(h,2)-z_vec(i)));
+					}
+					mu_toa(h,i) = top(i) +  dist(h,i)/ss_i(i);
+					eps(h,i) = toa(h,i) - mu_toa(h,i);
 				}
-				mu_toa(h,i) = top(i) +  dist(h,i)/ss_i(i);
-				eps(h,i) = toa(h,i) - mu_toa(h,i);
 			}
 		}
+	} else {
+		#include "dist_mat_3d_est.h"
 	}
 	
 	// error distribution...
@@ -71,6 +74,11 @@
 	for(int i=1; i<np; ++i)	{
 		nll -= dnorm(X(i), X(i-1),sqrt(2*D_xy*(top(i) - top(i-1))),true);	
 		nll -= dnorm(Y(i), Y(i-1),sqrt(2*D_xy*(top(i) - top(i-1))),true);
+	}
+	
+	// spatial constraints
+	if(!isNA(bbox(0))){
+	    #include "nll_bbox.h"
 	}
 
 	//burst interval component

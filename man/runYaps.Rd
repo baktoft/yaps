@@ -5,13 +5,27 @@
 \alias{runTmb}
 \title{Function to run TMB to estimate track}
 \usage{
-runYaps(inp, maxIter = 1000, getPlsd = TRUE, getRep = TRUE,
-  silent = TRUE, opt_fun = "nlminb", opt_controls = list(),
-  bounds = list())
+runYaps(
+  inp,
+  maxIter = 1000,
+  getPlsd = TRUE,
+  getRep = TRUE,
+  silent = TRUE,
+  opt_fun = "nlminb",
+  opt_controls = list(),
+  bounds = list()
+)
 
-runTmb(inp, maxIter = 1000, getPlsd = TRUE, getRep = TRUE,
-  silent = TRUE, opt_fun = "nlminb", opt_controls = list(),
-  bounds = list())
+runTmb(
+  inp,
+  maxIter = 1000,
+  getPlsd = TRUE,
+  getRep = TRUE,
+  silent = TRUE,
+  opt_fun = "nlminb",
+  opt_controls = list(),
+  bounds = list()
+)
 }
 \arguments{
 \item{inp}{inp-object obtained from getInp()}

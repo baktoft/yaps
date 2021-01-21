@@ -4,8 +4,21 @@
 \alias{getDatTmb}
 \title{Get data for input to TMB}
 \usage{
-getDatTmb(hydros, toa, E_dist, n_ss, pingType, rbi_min, rbi_max,
-  ss_data_what, ss_data, biTable, inp_params, z_vec)
+getDatTmb(
+  hydros,
+  toa,
+  E_dist,
+  n_ss,
+  pingType,
+  rbi_min,
+  rbi_max,
+  ss_data_what,
+  ss_data,
+  biTable,
+  inp_params,
+  z_vec,
+  bbox
+)
 }
 \arguments{
 \item{hydros}{Dataframe from simHydros() or Dataframe with columns hx and hy containing positions of the receivers. Translate the coordinates to get the grid centre close to (0;0).}
@@ -30,7 +43,9 @@ getDatTmb(hydros, toa, E_dist, n_ss, pingType, rbi_min, rbi_max,
 
 \item{inp_params}{Selection of parameters used to setup and run YAPS.}
 
-\item{z_vec}{Vector of known depth values (positive real). Default=NULL is which case no 3D is assumed. Estimation of depth from detections is currently not supported.}
+\item{z_vec}{Vector of known depth values (positive real). Default=NULL is which case no 3D is assumed. If z_vec = "est" depth will be estimated.}
+
+\item{bbox}{Spatial constraints in the form of a bounding box. See ?getBbox for details.}
 }
 \value{
 List for use in TMB.

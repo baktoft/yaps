@@ -8,16 +8,15 @@ Authors@R: c(	person("Henrik", "Baktoft", email = "hba@aqua.dtu.dk", role = c("c
 			)
 Description: Estimate track from acoustic data using YAPS (doi:10.1038/s41598-017-14278-z).
 Depends: R (>= 3.5.0)
-License: GPL-3 + file LICENSE
+License: GPL-3
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.1.1
 LinkingTo: Rcpp, TMB, RcppEigen
-Imports: circular, cowplot, data.table, ggplot2, ggrepel, Matrix, nloptr, plyr, Rcpp, reshape2, splusTimeSeries, stats, tictoc, TMB, viridis, zoo
+Imports: circular, cowplot, data.table, ggplot2, ggrepel, nloptr, plyr, Rcpp, reshape2, splusTimeSeries, stats, tictoc, TMB, viridis, zoo
 Suggests: 
     testthat (>= 2.1.0),
     knitr,
     rmarkdown
 URL: https://github.com/baktoft/yaps
 BugReports: https://github.com/baktoft/yaps/issues
-VignetteBuilder: knitr

@@ -37,9 +37,9 @@ testYaps <- function(silent=TRUE, pingType='sbi', est_ss=TRUE, opt_fun='nlminb',
 		ss_data_what <- 'data'
 		ss_data <- teleTrack$ss
 	}
-	inp <- getInp(hydros, toa, E_dist="t", n_ss=2, pingType=pingType, sdInits=0, ss_data_what=ss_data_what, ss_data=ss_data, rbi_min=rbi_min, rbi_max=rbi_max, biTable=biTable)
+	inp <- getInp(hydros, toa, E_dist="Mixture", n_ss=2, pingType=pingType, sdInits=0, ss_data_what=ss_data_what, ss_data=ss_data, rbi_min=rbi_min, rbi_max=rbi_max, biTable=biTable)
 	# print(str(inp))
-	maxIter <- 100
+	maxIter <- 500
 	# suppressWarnings(outTmb <- runTmb(inp, maxIter=maxIter, getPlsd=TRUE, getRep=TRUE, x.tol=1E-3))
 	outTmb <- runTmb(inp, maxIter=maxIter, getPlsd=TRUE, getRep=TRUE, silent=silent, opt_fun=opt_fun, opt_controls, bounds)
 	# print(str(outTmb))

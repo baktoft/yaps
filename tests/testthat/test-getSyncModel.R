@@ -16,7 +16,7 @@ inp_sync <- getInpSync(sync_dat=ssu1, max_epo_diff, min_hydros, time_keeper_idx,
     fixed_hydros_idx, n_offset_day, n_ss_day, keep_rate=keep_rate, silent_check=TRUE)
 
 # fit the sync model
-sync_model <- getSyncModel(inp_sync, silent=TRUE)
+sync_model <- getSyncModel(inp_sync, silent=TRUE, max_iter=5000)
 
 # # # Only run to reset reference
 # setwd('tests/testthat')

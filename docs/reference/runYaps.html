@@ -45,6 +45,8 @@
 
 
 
+
+
 <!-- mathjax -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script>
@@ -72,19 +74,13 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">yaps</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.0.9110</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.2</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -132,11 +128,27 @@
     <p>Function to run TMB to estimate track</p>
     </div>
 
-    <pre class="usage"><span class='fu'>runYaps</span>(<span class='no'>inp</span>, <span class='kw'>maxIter</span> <span class='kw'>=</span> <span class='fl'>1000</span>, <span class='kw'>getPlsd</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>getRep</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>silent</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)
+    <pre class="usage"><span class='fu'>runYaps</span><span class='op'>(</span>
+  <span class='va'>inp</span>,
+  maxIter <span class='op'>=</span> <span class='fl'>1000</span>,
+  getPlsd <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  getRep <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  silent <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  opt_fun <span class='op'>=</span> <span class='st'>"nlminb"</span>,
+  opt_controls <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='op'>)</span>,
+  bounds <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='op'>)</span>
+<span class='op'>)</span>
 
-<span class='fu'>runTmb</span>(<span class='no'>inp</span>, <span class='kw'>maxIter</span> <span class='kw'>=</span> <span class='fl'>1000</span>, <span class='kw'>getPlsd</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>, <span class='kw'>getRep</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>,
-  <span class='kw'>silent</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
+<span class='fu'>runTmb</span><span class='op'>(</span>
+  <span class='va'>inp</span>,
+  maxIter <span class='op'>=</span> <span class='fl'>1000</span>,
+  getPlsd <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  getRep <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  silent <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  opt_fun <span class='op'>=</span> <span class='st'>"nlminb"</span>,
+  opt_controls <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='op'>)</span>,
+  bounds <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='op'>)</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -157,6 +169,18 @@
       <th>silent</th>
       <td><p>Logical whether to keep the optimization quiet.</p></td>
     </tr>
+    <tr>
+      <th>opt_fun</th>
+      <td><p>Which optimization function to use. Default is 'nlminb' - alternative is 'nloptr' (experimental!). If using 'nloptr', `opt_controls` must be specified.</p></td>
+    </tr>
+    <tr>
+      <th>opt_controls</th>
+      <td><p>List of controls passed to optimization function. For instances, tolerances such as x.tol=1E-8. If opt_fun = 'nloptr', `opt_controls` must be a list formatted appropriately. For instance: opt_controls &lt;- list(algorithm="NLOPT_LD_AUGLAG", xtol_abs=1e-12, maxeval=2E+4, print_level = 1, local_opts= list(algorithm="NLOPT_LD_AUGLAG_EQ", xtol_rel=1e-4) ). See `?nloptr` and the NLopt site https://nlopt.readthedocs.io/en/latest/ for more info. Some algorithms in `nloptr` require bounded parameters - see `bounds`.</p></td>
+    </tr>
+    <tr>
+      <th>bounds</th>
+      <td><p>List of two vectors specifying lower and upper bounds of fixed parameters. Length of each vector must be equal to number of fixed parameters. For instance, bounds = list(lb = c(-3, -1, -2), ub = c(2,0,1) ).</p></td>
+    </tr>
     </table>
 
 
@@ -175,7 +199,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>

@@ -45,6 +45,8 @@
 
 
 
+
+
 <!-- mathjax -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script>
@@ -72,19 +74,13 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">yaps</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.0.9110</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.2</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -132,9 +128,21 @@
     <p>Get object inp for synchronization</p>
     </div>
 
-    <pre class="usage"><span class='fu'>getInpSync</span>(<span class='no'>sync_dat</span>, <span class='no'>max_epo_diff</span>, <span class='no'>min_hydros</span>, <span class='no'>time_keeper_idx</span>,
-  <span class='no'>fixed_hydros_idx</span>, <span class='no'>n_offset_day</span>, <span class='no'>n_ss_day</span>, <span class='kw'>keep_rate</span> <span class='kw'>=</span> <span class='fl'>1</span>,
-  <span class='kw'>excl_self_detect</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
+    <pre class="usage"><span class='fu'>getInpSync</span><span class='op'>(</span>
+  <span class='va'>sync_dat</span>,
+  <span class='va'>max_epo_diff</span>,
+  <span class='va'>min_hydros</span>,
+  <span class='va'>time_keeper_idx</span>,
+  <span class='va'>fixed_hydros_idx</span>,
+  <span class='va'>n_offset_day</span>,
+  <span class='va'>n_ss_day</span>,
+  keep_rate <span class='op'>=</span> <span class='fl'>1</span>,
+  excl_self_detect <span class='op'>=</span> <span class='cn'>TRUE</span>,
+  lin_corr_coeffs <span class='op'>=</span> <span class='cn'>NA</span>,
+  ss_data_what <span class='op'>=</span> <span class='st'>"est"</span>,
+  ss_data <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/c.html'>c</a></span><span class='op'>(</span><span class='fl'>0</span><span class='op'>)</span>,
+  silent_check <span class='op'>=</span> <span class='cn'>FALSE</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -165,15 +173,34 @@
     </tr>
     <tr>
       <th>n_ss_day</th>
-      <td><p>Specifies number of speed of sound to estimate per day. Future versions will enable use of logged water temperature instead. However, estimating SS gives an extra option for sanity-checking the final sync-model.</p></td>
+      <td><p>Specifies number of speed of sound to estimate per day if no ss data is supplied. It is recommended to use logged water temperature instead. However, estimating SS gives an extra option for sanity-checking the final sync-model.</p></td>
     </tr>
     <tr>
       <th>keep_rate</th>
-      <td><p>Syncing large data sets can take a long time. However, there is typically an excess number of sync tag detections and a sub-sample is typically enough for good synchronization. This parameter specifies the proportion (0-1) of data to keep when sub-sampling.</p></td>
+      <td><p>Syncing large data sets can take a really long time. However, there is typically an excess number of sync tag detections 
+and a sub-sample is typically enough for good synchronization. 
+This parameter EITHER specifies a proportion (0-1) of data to keep when sub-sampling 
+OR (if keep_rate &gt; 10) number of pings (approximate) to keep in each hydro X offset_idx combination if enough exists.</p></td>
     </tr>
     <tr>
       <th>excl_self_detect</th>
       <td><p>Logical whether to excluded detections of sync tags on the hydros they are co-located with. Sometimes self detections can introduce excessive residuals in the sync model in which case they should be excluded.</p></td>
+    </tr>
+    <tr>
+      <th>lin_corr_coeffs</th>
+      <td><p>Matrix of coefficients used for pre-sync linear correction. dim(lin_corr_coeffs)=(#hydros, 2).</p></td>
+    </tr>
+    <tr>
+      <th>ss_data_what</th>
+      <td><p>Indicates whether to estimate ("est") speed of sound or to use data based on logged water temperature ("data").</p></td>
+    </tr>
+    <tr>
+      <th>ss_data</th>
+      <td><p>data.table containing timestamp and speed of sound for the entire period to by synchronised. Must contain columns 'ts' (POSIXct timestamp) and 'ss' speed of sound in m/s (typical values range 1400 - 1550).</p></td>
+    </tr>
+    <tr>
+      <th>silent_check</th>
+      <td><p>Logical whether to get output from checkInpSync(). Default is FALSE</p></td>
     </tr>
     </table>
 
@@ -193,7 +220,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>

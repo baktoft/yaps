@@ -1,5 +1,10 @@
 
 <!-- README_sync.md is generated from README_sync.Rmd. Please edit that file -->
+<!-- badges: start -->
+
+[![Travis build
+status](https://travis-ci.com/baktoft/yaps.svg?branch=master)](https://travis-ci.com/baktoft/yaps)
+<!-- badges: end -->
 
 # YAPS - (Yet Another Positioning Solver)<img src="vignettes/yaps_logo.png" align="right" width="120" />
 
@@ -211,23 +216,30 @@ points(hy~hx, data=hydros, col="green", pch=20, cex=3)
 lines(pl$Y~pl$X, col="red")
 ```
 
-# Papers using YAPS
+# Papers using or relating to YAPS
+
+## 2020
+
+-   Vergeynst, J., Vanwyck, T., Baeyens, R. et al. (2020). Acoustic
+    positioning in a reflective environment: going beyond point-by-point
+    algorithms. Anim Biotelemetry 8, 16.
+    <https://doi.org/10.1186/s40317-020-00203-1>
 
 ## 2019
 
-  - Baktoft, H., Gjelland, K.Ø., Økland, F., Rehage, J.S., Rodemann,
+-   Baktoft, H., Gjelland, K.Ø., Økland, F., Rehage, J.S., Rodemann,
     J.R., Corujo, R.S., Viadero, N., Thygesen, U.H. (2019). Opening the
     black box of fish tracking using acoustic telemetry bioRxiv
     2019.12.16.877688; doi: <https://doi.org/10.1101/2019.12.16.877688>
 
-  - Silva, A.T., Bærum, K.M., Hedger, R.D., Baktoft, H., Fjeldstad, H.,
+-   Silva, A.T., Bærum, K.M., Hedger, R.D., Baktoft, H., Fjeldstad, H.,
     Gjelland, K.Ø., Økland, F. Forseth, T. (2019). Science of the Total
     Environment The effects of hydrodynamics on the three-dimensional
     downstream migratory movement of Atlantic salmon. Science of the
     Total Environment, 135773.
     <https://doi.org/10.1016/j.scitotenv.2019.135773>
 
-  - Szabo-Meszaros, M., Forseth, T., Baktoft, H., Fjeldstad, H.-P.,
+-   Szabo-Meszaros, M., Forseth, T., Baktoft, H., Fjeldstad, H.-P.,
     Silva, A.T., Gjelland, K.Ø., Økland, F., Uglem, I., Alfredsen, K.
     (2019). Modelling mitigation measures for smolt migration at dammed
     river sections. Ecohydrology, e2131.

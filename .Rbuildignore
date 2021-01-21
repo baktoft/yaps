@@ -10,3 +10,4 @@
 ^vignettes$
 ^LICENSE\.md$
 ^LICENSE$
+^\.travis\.yml$

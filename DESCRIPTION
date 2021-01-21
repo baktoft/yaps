@@ -17,6 +17,7 @@ Imports: circular, cowplot, data.table, ggplot2, ggrepel, nloptr, plyr, Rcpp, re
 Suggests: 
     testthat (>= 2.1.0),
     knitr,
-    rmarkdown
+    rmarkdown,
+    covr
 URL: https://github.com/baktoft/yaps
 BugReports: https://github.com/baktoft/yaps/issues

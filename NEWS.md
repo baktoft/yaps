@@ -1,4 +1,4 @@
-# yaps v1.2.1.9000
+# yaps v1.2.2
 
 ## New stuff
 * New site added to github pages intended to collect yaps-related resources, how-tos etc. (https://baktoft.github.io/yaps/)
@@ -13,7 +13,7 @@
 * Add function to plot hydros from sync_model - usefull if hydros were re-positioned during getSyncModel().
 * Add option to estimate Z-dimension (depth) of tracks.
 * Add function to calucate speed of sound from water temperature, salinity and depth - tempToSs(temp, sal, depth).
-
+* Add github actions to hopefully ensure nothing breaks from now on...
 
 ## Bug fixes
 * Fix nasty bug in likelihood contribution of ToP-estimation when using random burst interval (ping_type = 'rbi')

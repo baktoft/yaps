@@ -14,8 +14,6 @@ jobs:
       fail-fast: false
       matrix:
         config:
-          - {os: windows-latest, r: '3.6'}
-          - {os: windows-latest, r: '4.0'}
           - {os: windows-latest, r: 'release'}
           - {os: windows-latest, r: 'devel'}
           - {os: macOS-latest, r: 'release'}
@@ -54,13 +52,13 @@ jobs:
 
       - name: Install system dependencies
         if: runner.os == 'Linux'
-        env:
-          RHUB_PLATFORM: linux-x86_64-ubuntu-gcc
+        # env:
+          # RHUB_PLATFORM: linux-x86_64-ubuntu-gcc
         run: |
-          # # # custom hack to ensure correct version of Matrix for TMB
-          sudo apt-get install -y --allow-downgrades r-cran-matrix=1.2-18-1focal0
-          R -e "install.packages('TMB', type = 'source')"
-          # # # custom hack end
+          # # # # custom hack to ensure correct version of Matrix for TMB
+          # sudo apt-get install -y --allow-downgrades r-cran-matrix=1.2-18-1focal0
+          # R -e "install.packages('TMB', type = 'source')"
+          # # # # custom hack end
           
           while read -r cmd
           do

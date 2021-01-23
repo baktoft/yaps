@@ -75,7 +75,7 @@ getSyncModel <- function(inp_sync, silent=TRUE, fine_tune=FALSE, max_iter=100, t
 	
 	pl$TRUE_H[,1] <- pl$TRUE_H[,1] + inp_params$Hx0
 	pl$TRUE_H[,2] <- pl$TRUE_H[,2] + inp_params$Hy0
-	eps_long <- yaps:::getEpsLong(report, pl, inp_sync)
+	eps_long <- getEpsLong(report, pl, inp_sync)
 	
 	offset_nas <- which(pl$OFFSET == 0)
 	pl$OFFSET[offset_nas] <- NA

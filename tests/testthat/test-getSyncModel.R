@@ -16,7 +16,8 @@ inp_sync <- getInpSync(sync_dat=ssu1, max_epo_diff, min_hydros, time_keeper_idx,
     fixed_hydros_idx, n_offset_day, n_ss_day, keep_rate=keep_rate, silent_check=TRUE)
 
 # fit the sync model
-sync_model <- getSyncModel(inp_sync, silent=TRUE, max_iter=5000)
+sync_model 					<- getSyncModel(inp_sync, silent=TRUE, max_iter=5000, tmb_smartsearch = TRUE)
+sync_model_no_smartsearch 	<- getSyncModel(inp_sync, silent=TRUE, max_iter=5000, tmb_smartsearch = FALSE)
 
 # # # Only run to reset reference
 # setwd('tests/testthat')
@@ -26,9 +27,18 @@ sync_model <- getSyncModel(inp_sync, silent=TRUE, max_iter=5000)
 
 test_that("sync_model is as expected", {
 	load("sync_model_ref.RData")
-	expect_equal(sync_model$pl, sync_model_ref$pl, tolerance=1E-3)
-	expect_equal(sync_model$report, sync_model_ref$report, tolerance=1E-3)
-	expect_equal(sync_model$obj_val, sync_model_ref$obj_val, tolerance=1E-3)
-	expect_equal(sync_model$eps_long, sync_model_ref$eps_long, tolerance=1E-3)
-	expect_equal(sync_model$inp_synced, sync_model_ref$inp_synced, tolerance=1E-3)
+	testthat::expect_equal(sync_model$pl, 							sync_model_ref$pl, tolerance=1E-3)
+	testthat::expect_equal(sync_model$report, 						sync_model_ref$report, tolerance=1E-3)
+	testthat::expect_equal(sync_model$obj_val, 						sync_model_ref$obj_val, tolerance=1E-3)
+	testthat::expect_equal(sync_model$eps_long, 					sync_model_ref$eps_long, tolerance=1E-3)
+	testthat::expect_equal(sync_model$inp_synced, 					sync_model_ref$inp_synced, tolerance=1E-3)
+})
+
+test_that("sync_model_no_smartsearch is as expected", {
+	load("sync_model_ref.RData")
+	testthat::expect_equal(sync_model_no_smartsearch$pl, 			sync_model_ref$pl, tolerance=1E-3)
+	testthat::expect_equal(sync_model_no_smartsearch$report, 		sync_model_ref$report, tolerance=1E-3)
+	testthat::expect_equal(sync_model_no_smartsearch$obj_val, 		sync_model_ref$obj_val, tolerance=1E-3)
+	testthat::expect_equal(sync_model_no_smartsearch$eps_long, 		sync_model_ref$eps_long, tolerance=1E-3)
+	testthat::expect_equal(sync_model_no_smartsearch$inp_synced, 	sync_model_ref$inp_synced, tolerance=1E-3)
 })

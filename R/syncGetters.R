@@ -5,6 +5,8 @@
 #' @param max_iter Max number of iterations to run TMB. Default=100 seems to work in most cases.
 #' @export
 getSyncModel <- function(inp_sync, silent=TRUE, fine_tune=FALSE, max_iter=100, tmb_smartsearch=TRUE){
+	inp_sync$inp_params$tmb_smartsearch <- tmb_smartsearch
+	
 	dat_tmb <- inp_sync$dat_tmb_sync
 	params <- inp_sync$params_tmb_sync
 	random <- inp_sync$random_tmb_sync

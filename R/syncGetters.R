@@ -3,6 +3,8 @@
 #' @param silent Keep TMB quiet
 #' @param fine_tune Logical. Whether to re-run the sync model excluding residual outliers. Consider to use fineTuneSyncModel() instead.
 #' @param max_iter Max number of iterations to run TMB. Default=100 seems to work in most cases.
+#' @param tmb_smartsearch Logical whether to use the TMB smartsearch in the inner optimizer (see ?TMB::MakeADFun for info). Default and original implementation is TRUE. However, there seems to be an issue with Matrix v1.3.2 that requires tmb_smartsearch=FALSE. 
+
 #' @export
 getSyncModel <- function(inp_sync, silent=TRUE, fine_tune=FALSE, max_iter=100, tmb_smartsearch=TRUE){
 	inp_sync$inp_params$tmb_smartsearch <- tmb_smartsearch

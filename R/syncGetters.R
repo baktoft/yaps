@@ -4,7 +4,7 @@
 #' @param fine_tune Logical. Whether to re-run the sync model excluding residual outliers. Consider to use fineTuneSyncModel() instead.
 #' @param max_iter Max number of iterations to run TMB. Default=100 seems to work in most cases.
 #' @export
-getSyncModel <- function(inp_sync, silent=TRUE, fine_tune=FALSE, max_iter=100){
+getSyncModel <- function(inp_sync, silent=TRUE, fine_tune=FALSE, max_iter=100, tmb_smartsearch=TRUE){
 	dat_tmb <- inp_sync$dat_tmb_sync
 	params <- inp_sync$params_tmb_sync
 	random <- inp_sync$random_tmb_sync
@@ -31,6 +31,12 @@ getSyncModel <- function(inp_sync, silent=TRUE, fine_tune=FALSE, max_iter=100){
 	# ## Reduce memory peak of a parallel model by creating tapes in serial
 	# config(tape.parallel=0, DLL="yaps_sync")
 	obj <- TMB::MakeADFun(data = dat_tmb, parameters = params, random = random, DLL = "yaps", inner.control = list(maxit = max_iter), silent=silent)
+	obj$fn(obj$par) 
+	
+	if(!tmb_smartsearch){
+		TMB::newtonOption(obj, smartsearch=FALSE)
+	}
+
 	
 	if(silent){
 		opt <- suppressWarnings(stats::nlminb(inits,obj$fn,obj$gr))
@@ -38,7 +44,6 @@ getSyncModel <- function(inp_sync, silent=TRUE, fine_tune=FALSE, max_iter=100){
 		opt <- stats::nlminb(inits,obj$fn,obj$gr)
 	}
 
-	obj$fn()
 	pl <- obj$env$parList()   # List of estimates
 	obj_val <- opt$objective
 	cat(paste0(".. ", Sys.time()), " \n")
@@ -65,7 +70,7 @@ getSyncModel <- function(inp_sync, silent=TRUE, fine_tune=FALSE, max_iter=100){
 	
 	pl$TRUE_H[,1] <- pl$TRUE_H[,1] + inp_params$Hx0
 	pl$TRUE_H[,2] <- pl$TRUE_H[,2] + inp_params$Hy0
-	eps_long <- getEpsLong(report, pl, inp_sync)
+	eps_long <- yaps:::getEpsLong(report, pl, inp_sync)
 	
 	offset_nas <- which(pl$OFFSET == 0)
 	pl$OFFSET[offset_nas] <- NA

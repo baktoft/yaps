@@ -46,7 +46,7 @@ fineTuneSyncModel <- function(sync_model, eps_threshold, silent=TRUE){
 	# inp_sync$params_tmb_sync$LOG_SIGMA_TOA			<- sync_model$pl$LOG_SIGMA_TOA
 
 	# run getSyncModel() using the tuned inp_sync
-	sync_model_tuned <- getSyncModel(inp_sync, silent=silent, tmb_smartsearch=inp_sync$inp_params$tmb_smartsearch)
+	sync_model_tuned <- getSyncModel(inp_sync, silent=silent, tmb_smartsearch=inp_sync$inp_params$tmb_smartsearch, max_iter=inp_sync$inp_params$max_iter)
 	
 	return(sync_model_tuned)
 }

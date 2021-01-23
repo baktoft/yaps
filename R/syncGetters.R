@@ -6,6 +6,7 @@
 #' @export
 getSyncModel <- function(inp_sync, silent=TRUE, fine_tune=FALSE, max_iter=100, tmb_smartsearch=TRUE){
 	inp_sync$inp_params$tmb_smartsearch <- tmb_smartsearch
+	inp_sync$inp_params$max_iter <- max_iter
 	
 	dat_tmb <- inp_sync$dat_tmb_sync
 	params <- inp_sync$params_tmb_sync
@@ -81,7 +82,7 @@ getSyncModel <- function(inp_sync, silent=TRUE, fine_tune=FALSE, max_iter=100, t
 	
 	cat("Sync model done \n")
 	cat("Consider saving the sync model for later use - e.g. save(sync_model, file='path_to_sync_save'). \n")
-	tictoc::toc()
+
 	return(list(pl=pl, plsd=plsd, report=report, obj_val=obj_val, eps_long=eps_long, inp_synced=inp_sync))
 }
 

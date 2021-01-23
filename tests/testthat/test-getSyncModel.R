@@ -9,7 +9,7 @@ time_keeper_idx <- 5
 fixed_hydros_idx <- c(2:3, 6, 8, 11, 13:17)
 n_offset_day <- 2
 n_ss_day <- 2
-keep_rate <- 10
+keep_rate <- 15
 
 # get input data ready for getSyncModel()
 inp_sync <- getInpSync(sync_dat=ssu1, max_epo_diff, min_hydros, time_keeper_idx, 

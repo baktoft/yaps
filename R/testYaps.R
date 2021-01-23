@@ -4,10 +4,11 @@
 #' Output should be a random simulated (black) and estimated (red) track.
 #' @param silent Logical whether to print output to the console
 #' @param est_ss Logical whether to test using ss_data_what = 'est' (est_ss = TRUE) or ss_data_what = 'data' (est_ss = FALSE)
+#' @param return_yaps Logical whether to return the fitted yaps model. Default=FALSE.
 #' @inheritParams getInp
 #' @inheritParams runYaps
 #' @export
-testYaps <- function(silent=TRUE, pingType='sbi', est_ss=TRUE, opt_fun='nlminb', opt_controls=list(), bounds=list(), tmb_smartsearch=TRUE){
+testYaps <- function(silent=TRUE, pingType='sbi', est_ss=TRUE, opt_fun='nlminb', opt_controls=list(), bounds=list(), return_yaps=FALSE, tmb_smartsearch=TRUE){
 	set.seed(42)
 	trueTrack <- simTrueTrack(model='crw', n = 2000, deltaTime=1, shape=1, scale=0.5, addDielPattern=TRUE, ss='rw')
 	# pingType <- 'sbi'
@@ -52,4 +53,6 @@ testYaps <- function(silent=TRUE, pingType='sbi', est_ss=TRUE, opt_fun='nlminb',
 	lines(Y~X, data=yaps_out, col="red")
 
 	if(!silent) {cat("You should now see a plot of a simulted track - if so YAPS core functions are working \n")}
+	
+	if(return_yaps) {return(outTmb)}
 }

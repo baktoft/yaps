@@ -2,6 +2,7 @@
 #' 
 #' @param sync_model Synchronization model obtained using `getSyncModel()`
 #' @param by What to facet/group the plot by? Currently supports one of 'overall', 'sync_tag', 'hydro', 'quantiles', 'temporal', 'temporal_hydro', 'temporal_sync_tag'
+#' @example man/examples/example-yaps_ssu1.R
 #' @export
 plotSyncModelResids <- function(sync_model, by='overall'){
 	eps_long <- sync_model$eps_long

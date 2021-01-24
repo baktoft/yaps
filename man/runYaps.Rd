@@ -84,6 +84,15 @@ sync_model_f1 <- fineTuneSyncModel(sync_model, eps_threshold=1.5, silent=TRUE)
 # sync_model_no_smartsearch_f1 <- fineTuneSyncModel(sync_model_no_smartsearch, eps_threshold=1.5, 
 #	silent=TRUE)
 
+# # # Visualize the resulting sync model
+plotSyncModelResids(sync_model, by = "overall")
+plotSyncModelResids(sync_model, by = "quantiles")
+plotSyncModelResids(sync_model, by = "sync_tag")
+plotSyncModelResids(sync_model, by = "hydro")
+plotSyncModelResids(sync_model, by = "temporal_hydro")
+plotSyncModelResids(sync_model, by = "temporal_sync_tag")
+
+
 # # # Apply the sync_model to detections data.
 detections_synced <- applySync(toa=ssu1$detections, hydros=ssu1$hydros, sync_model_f1)
 

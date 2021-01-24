@@ -111,6 +111,7 @@ simTelemetryTrack <- function(trueTrack, pingType, sbi_mean=NULL, sbi_sd=NULL, r
 #' @inheritParams getInp
 #' @inheritParams simTelemetryTrack
 #' @return Vector of simulated time of pings. Length = number of steps in simulated track.
+#' @noRd
 simTOP <- function(trueTrack, pingType, sbi_mean=NULL, sbi_sd=NULL, rbi_min=NULL, rbi_max=NULL){
 	maxTime <- max(trueTrack$time)
 	top0 <- stats::runif(1,0,0.5)

@@ -3,6 +3,7 @@
 #' @param sync_model sync_model obtained using getSyncModel()
 #' @param eps_threshold Maximum value of residual measured in meter assuming speed of sound = 1450 m/s
 #' @param silent logical whether to make getSyncModel() silent
+#' @example man/examples/example-yaps_ssu1.R
 #' @export
 fineTuneSyncModel <- function(sync_model, eps_threshold, silent=TRUE){
 	# original inp_sync

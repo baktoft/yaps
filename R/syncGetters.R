@@ -4,6 +4,7 @@
 #' @param fine_tune Logical. Whether to re-run the sync model excluding residual outliers. Consider to use fineTuneSyncModel() instead.
 #' @param max_iter Max number of iterations to run TMB. Default=100 seems to work in most cases.
 #' @param tmb_smartsearch Logical whether to use the TMB smartsearch in the inner optimizer (see ?TMB::MakeADFun for info). Default and original implementation is TRUE. However, there seems to be an issue with Matrix v1.3.2 that requires tmb_smartsearch=FALSE. 
+#' @example man/examples/example-yaps_ssu1.R
 
 #' @export
 getSyncModel <- function(inp_sync, silent=TRUE, fine_tune=FALSE, max_iter=100, tmb_smartsearch=TRUE){
@@ -108,6 +109,7 @@ getSyncModel <- function(inp_sync, silent=TRUE, fine_tune=FALSE, max_iter=100, t
 #' @param excl_self_detect Logical whether to excluded detections of sync tags on the hydros they are co-located with. Sometimes self detections can introduce excessive residuals in the sync model in which case they should be excluded.
 #' @param lin_corr_coeffs Matrix of coefficients used for pre-sync linear correction. dim(lin_corr_coeffs)=(#hydros, 2). 
 #' @param silent_check Logical whether to get output from checkInpSync(). Default is FALSE
+#' @example man/examples/example-yaps.R
 #' @export
 getInpSync <- function(sync_dat, max_epo_diff, min_hydros, time_keeper_idx, fixed_hydros_idx, n_offset_day, n_ss_day, keep_rate=1, excl_self_detect=TRUE, lin_corr_coeffs=NA, ss_data_what="est", ss_data=c(0), silent_check=FALSE){
 	if(length(unique(sync_dat$hydros$serial)) != nrow(sync_dat$hydros)){

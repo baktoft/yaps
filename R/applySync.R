@@ -2,6 +2,8 @@
 #' @param toa Object containing data to be synchronized. Typically a `data.table` as e.g. `ssu1$detections`, but can also be a matrix dim=(n_ping, n_hydo).
 #' @param hydros data.table formatted as `ssu1$hydros`
 #' @param sync_model Synchronization model obtained using `getSyncModel()`
+#' @example man/examples/example-yaps_ssu1.R
+
 #' @export
 applySync <- function(toa, hydros="", sync_model){
 	if(is.matrix(toa)) {type <- "toa_matrix"

@@ -16,3 +16,56 @@ applySync(toa, hydros = "", sync_model)
 \description{
 Apply sync model to toa matrix to obtain synced data
 }
+\examples{
+\dontrun{
+set.seed(42)
+
+# # # Set parameters to use in the sync model - these will differ per study
+max_epo_diff <- 120
+min_hydros <- 2
+time_keeper_idx <- 5
+fixed_hydros_idx <- c(2:3, 6, 8, 11, 13:17)
+n_offset_day <- 2
+n_ss_day <- 2
+keep_rate <- 15
+
+# # # Get input data ready for getSyncModel()
+inp_sync <- getInpSync(sync_dat=ssu1, max_epo_diff, min_hydros, time_keeper_idx, 
+    fixed_hydros_idx, n_offset_day, n_ss_day, keep_rate=keep_rate, silent_check=TRUE)
+
+
+# # # Fit the sync model
+sync_model <- getSyncModel(inp_sync, silent=TRUE, max_iter=5000, tmb_smartsearch = TRUE)
+
+# # # On some systems it might work better, if we disbale the smartsearch feature in TMB
+# sync_model_no_smartsearch <- getSyncModel(inp_sync, silent=TRUE, max_iter=5000, 
+#	tmb_smartsearch = FALSE)
+
+# # # Fine tune the model to exclude outliers. This should typically be done gradually as e.g.
+# sync_model_f1 <- fineTuneSyncModel(sync_model, eps_threshold=1E4, silent=TRUE)
+# sync_model_f1 <- fineTuneSyncModel(sync_model, eps_threshold=1E3, silent=TRUE)
+# sync_model_f1 <- fineTuneSyncModel(sync_model, eps_threshold=1E2, silent=TRUE)
+# sync_model_f1 <- fineTuneSyncModel(sync_model, eps_threshold=1E1, silent=TRUE)
+
+sync_model_f1 <- fineTuneSyncModel(sync_model, eps_threshold=1.5, silent=TRUE)
+# sync_model_no_smartsearch_f1 <- fineTuneSyncModel(sync_model_no_smartsearch, eps_threshold=1.5, 
+#	silent=TRUE)
+
+# # # Apply the sync_model to detections data.
+detections_synced <- applySync(toa=ssu1$detections, hydros=ssu1$hydros, sync_model_f1)
+
+# # # Prepare data for running yaps
+hydros_yaps <- data.table::data.table(sync_model_f1$pl$TRUE_H)
+colnames(hydros_yaps) <- c('hx','hy','hz')
+focal_tag <- 15266
+rbi_min <- 20
+rbi_max <- 40
+synced_dat <- detections_synced[tag == focal_tag]
+toa <- getToaYaps(synced_dat, hydros_yaps, rbi_min, rbi_max)
+inp <- getInp(hydros_yaps, toa, E_dist="Mixture", n_ss=5, pingType="rbi", 
+	sdInits=1, rbi_min=rbi_min, rbi_max=rbi_max, ss_data_what="est", ss_data=0)
+
+# # # Run yaps on the prepared data to estimate track
+yaps_out <- runYaps(inp, silent=TRUE, tmb_smartsearch=TRUE, maxIter=5000) 
+}
+}

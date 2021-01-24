@@ -6,7 +6,7 @@ Authors@R: c(	person("Henrik", "Baktoft", email = "hba@aqua.dtu.dk", role = c("c
 				person("Uffe H.", "Thygesen", role=c("aut")),
 				person("Finn", "Økland", role=c("aut"))
 			)
-Description: Estimate track from acoustic data using YAPS.
+Description: Estimate tracks of animals tagged with acoustic transmitters. R package 'yaps' was introduced in 2017 as a transparent open-source tool to estimate positions of fish (and other aquatic animals) tagged with acoustic transmitters. Based on detections of acoustic transmitters on a fixed array of hydrophones, 'yaps' facilitates users to both synchronize the internal clocks of the hydrophones/receivers and subsequently to estimate tracks of the tagged animals. The paper introducing 'yaps' is available in open access at  <https://www.nature.com/articles/s41598-017-14278-z> as is a cookbook with a completely worked through example at <https://www.biorxiv.org/content/10.1101/2019.12.16.877688v1>. 
 Depends: R (>= 3.5.0)
 License: GPL-3
 Encoding: UTF-8
@@ -19,5 +19,5 @@ Suggests:
     knitr,
     rmarkdown,
     covr
-URL: https://github.com/baktoft/yaps
+URL: https://github.com/baktoft/yaps, https://baktoft.github.io/yaps/, https://www.nature.com/articles/s41598-017-14278-z, https://www.biorxiv.org/content/10.1101/2019.12.16.877688v1
 BugReports: https://github.com/baktoft/yaps/issues

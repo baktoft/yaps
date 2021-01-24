@@ -8,6 +8,18 @@
 #' @inheritParams getInp
 #' @inheritParams runYaps
 #' @export
+#' @examples
+#' # To test  basic functionality of yaps using simulated data
+#' testYaps()
+#' \dontrun{
+#' # # # Three pingTypes are availabe: 
+#' # # #	fixed ('sbi'), 
+#' # # # 	random ('rbi'), 
+#' # # # 	random with known burst interval sequence ('pbi')
+#' testYaps(pingType='sbi')
+#' testYaps(pingType='rbi')
+#' testYaps(pingType='pbi')
+#' }
 testYaps <- function(silent=TRUE, pingType='sbi', est_ss=TRUE, opt_fun='nlminb', opt_controls=list(), bounds=list(), return_yaps=FALSE, tmb_smartsearch=TRUE){
 	set.seed(42)
 	trueTrack <- simTrueTrack(model='crw', n = 2000, deltaTime=1, shape=1, scale=0.5, addDielPattern=TRUE, ss='rw')

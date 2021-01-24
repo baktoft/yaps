@@ -16,11 +16,11 @@ inp_sync <- getInpSync(sync_dat=ssu1, max_epo_diff, min_hydros, time_keeper_idx,
 
 
 # # # Fit the sync model
-sync_model <- getSyncModel(inp_sync, silent=TRUE, max_iter=5000, tmb_smartsearch = TRUE)
+sync_model <- getSyncModel(inp_sync, silent=TRUE, max_iter=200, tmb_smartsearch = TRUE)
 
 # # # On some systems it might work better, if we disbale the smartsearch feature in TMB
 # sync_model_no_smartsearch <- getSyncModel(inp_sync, silent=TRUE, max_iter=5000, 
-#	tmb_smartsearch = FALSE)
+	# tmb_smartsearch = FALSE)
 
 # # # Fine tune the model to exclude outliers. This should typically be done gradually as e.g.
 # sync_model_f1 <- fineTuneSyncModel(sync_model, eps_threshold=1E4, silent=TRUE)
@@ -56,5 +56,5 @@ inp <- getInp(hydros_yaps, toa, E_dist="Mixture", n_ss=5, pingType="rbi",
 	sdInits=1, rbi_min=rbi_min, rbi_max=rbi_max, ss_data_what="est", ss_data=0)
 
 # # # Run yaps on the prepared data to estimate track
-yaps_out <- runYaps(inp, silent=TRUE, tmb_smartsearch=TRUE, maxIter=5000) 
+yaps_out <- runYaps(inp, silent=TRUE, tmb_smartsearch=TRUE, maxIter=500) 
 }

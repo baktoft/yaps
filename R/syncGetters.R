@@ -45,9 +45,11 @@ getSyncModel <- function(inp_sync, silent=TRUE, fine_tune=FALSE, max_iter=100, t
 
 	
 	if(silent){
-		opt <- suppressWarnings(stats::nlminb(inits,obj$fn,obj$gr))
+		# opt <- suppressWarnings(stats::nlminb(inits,obj$fn,obj$gr))
+		opt <- suppressWarnings(stats::nlminb(inits,obj$fn,obj$gr, lower=c(-10), upper=c(-2)))
 	} else {
-		opt <- stats::nlminb(inits,obj$fn,obj$gr)
+		opt <- stats::nlminb(inits,obj$fn,obj$gr, lower=c(-10), upper=c(-2))
+		# opt <- stats::nlminb(inits,obj$fn,obj$gr)
 	}
 
 	pl <- obj$env$parList()   # List of estimates
@@ -153,7 +155,7 @@ getInpSync <- function(sync_dat, max_epo_diff, min_hydros, time_keeper_idx, fixe
 		random_tmb_sync <- c("TOP", "OFFSET", "SLOPE1", "SLOPE2", "TRUE_H")
 	}
 	# inits_tmb_sync <- c(3, rep(-3,dat_tmb_sync$nh))
-	inits_tmb_sync <- c(3)
+	inits_tmb_sync <- c(-3)
 	inp_params <- list(toa=inp_toa_list$toa, T0=T0, Hx0=inp_H_info$Hx0, Hy0=inp_H_info$Hy0, offset_levels=offset_vals$offset_levels, 
 		ss_levels=ss_vals$ss_levels, max_epo_diff=max_epo_diff, hydros=sync_dat$hydros,
 		lin_corr_coeffs=lin_corr_coeffs, min_hydros=min_hydros, ss_data=ss_data

@@ -32,8 +32,8 @@ runYaps <- function(inp, maxIter=1000, getPlsd=TRUE, getRep=TRUE, silent=TRUE, o
 			inner.control = list(maxit = maxIter), 
 			silent=silent
 		)
-	obj$fn(obj$par) 
 	if(!tmb_smartsearch){
+		obj$fn(obj$par) 
 		TMB::newtonOption(obj, smartsearch=FALSE)
 	}
 	
@@ -49,7 +49,14 @@ runYaps <- function(inp, maxIter=1000, getPlsd=TRUE, getRep=TRUE, silent=TRUE, o
 		control_list <- opt_controls
 		
 		if(!silent){
+			# tictoc::tic()
 			opt <- stats::nlminb(inp$inits,obj$fn,obj$gr, control = control_list)
+			# tictoc::toc()
+
+			# tictoc::tic()
+			# opt <- stats::nlminb(inp$inits,obj$fn,obj$gr, control = control_list, lower=c(-10,-10, -10, -10, -10), upper=c(2, 2, 2, 2, -2))
+			# opt <- stats::nlminb(inp$inits,obj$fn,obj$gr, control = control_list, lower=c(-10,-10, -10, -10, -10), upper=c(2, 2, 2, 2, -2))
+			# tictoc::toc()
 		} else {
 			suppressWarnings(opt <- stats::nlminb(inp$inits,obj$fn,obj$gr, control = control_list))
 		}

@@ -52,7 +52,7 @@ testYaps <- function(silent=TRUE, pingType='sbi', est_ss=TRUE, opt_fun='nlminb',
 	}
 	inp <- getInp(hydros, toa, E_dist="Mixture", n_ss=5, pingType=pingType, sdInits=0, ss_data_what=ss_data_what, ss_data=ss_data, rbi_min=rbi_min, rbi_max=rbi_max, biTable=biTable)
 	# print(str(inp))
-	maxIter <- 1000
+	maxIter <- 500
 	# suppressWarnings(outTmb <- runTmb(inp, maxIter=maxIter, getPlsd=TRUE, getRep=TRUE, x.tol=1E-3))
 	outTmb <- runTmb(inp, maxIter=maxIter, getPlsd=TRUE, getRep=TRUE, silent=silent, opt_fun=opt_fun, opt_controls, bounds, tmb_smartsearch)
 	# print(str(outTmb))

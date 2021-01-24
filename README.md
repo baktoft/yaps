@@ -5,6 +5,8 @@
 [![R-CMD-check](https://github.com/baktoft/yaps/workflows/R-CMD-check/badge.svg)](https://github.com/baktoft/yaps/actions)
 [![Codecov test
 coverage](https://codecov.io/gh/baktoft/yaps/branch/master/graph/badge.svg)](https://codecov.io/gh/baktoft/yaps?branch=master)
+[![Travis build
+status](https://travis-ci.com/baktoft/yaps.svg?branch=master)](https://travis-ci.com/baktoft/yaps)
 <!-- badges: end -->
 
 # YAPS - (Yet Another Positioning Solver)<img src="vignettes/yaps_logo.png" align="right" width="120" />

@@ -12,3 +12,4 @@
 ^LICENSE$
 ^\.github$
 ^codecov\.yml$
+^\.travis\.yml$

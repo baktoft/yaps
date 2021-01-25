@@ -100,7 +100,29 @@ runYaps <- function(inp, maxIter=1000, getPlsd=TRUE, getRep=TRUE, silent=TRUE, o
 			print(paste0("...yaps converged (obj: ",obj_out,") with message: ",conv_message,""))
 		}
 	}
-	return(list(pl=pl, plsd=plsd, rep=rep, obj=obj_out, inp=inp, conv_status=conv_status, conv_message=conv_message))
+	
+	# extract track in user friendly format
+	track <- data.table::data.table(
+		top=as.POSIXct(pl$top + inp$inp_params$T0, origin="1970-01-01", tz="UTC"), top_sd=plsd$top,
+		x=pl$X+inp$inp_params$Hx0, y=pl$Y+inp$inp_params$Hy0, 
+		x_sd=plsd$X, y_sd=plsd$Y)
+	if(inp$datTmb$how_3d == 'est'){
+		track[, z := pl$Z]
+		track[, z_sd := plsd$Z]
+	} else if(inp$datTmb$how_3d == 'data'){
+		track[, z := inp$datTmb$z_vec]
+		track[, z_sd := NA]
+	} else {
+		track[, z:=NA]
+		track[, z_sd:=NA]
+	}
+	
+	
+	track[, nobs := apply(inp$datTmb$toa, 2, function(k) sum(!is.na(k)))]
+	
+	track <- track[, c('top', 'x', 'y', 'z', 'top_sd', 'x_sd', 'y_sd', 'z_sd', 'nobs')]
+	
+	return(list(pl=pl, plsd=plsd, rep=rep, obj=obj_out, inp=inp, conv_status=conv_status, conv_message=conv_message, track=track))
 }
 
 

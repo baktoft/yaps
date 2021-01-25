@@ -57,7 +57,7 @@ yaps_out <- runYaps(inp, silent=TRUE, tmb_smartsearch=TRUE, maxIter=500)
 
 # # # Plot the results and compare to "the truth" obtained using gps
 par(mfrow=c(2,2))
-plot(yaps_out$inp$datTmb$H[,1] + yaps_out$inp$inp_params$Hx0, yaps_out$inp$datTmb$H[,2] + yaps_out$inp$inp_params$Hy0, asp=1, xlab="UTM X", ylab="UTM Y", pch=20, col="green")
+plot(hy~hx, data=hydros_yaps, asp=1, xlab="UTM X", ylab="UTM Y", pch=20, col="green")
 lines(utm_y~utm_x, data=ssu1$gps, col="blue", lwd=2)
 lines(y~x, data=yaps_out$track, col="red")
 

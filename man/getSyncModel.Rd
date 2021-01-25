@@ -31,7 +31,7 @@ Get sync model from inp_sync object obtained by getInpSync()
 library(yaps)
 set.seed(42)
 
-# # # Example using the ssu1 data included in package.
+# # # Example using the ssu1 data included in package. See ?ssu1 for info.
 # # # Set parameters to use in the sync model - these will differ per study
 max_epo_diff <- 120
 min_hydros <- 2
@@ -86,7 +86,7 @@ yaps_out <- runYaps(inp, silent=TRUE, tmb_smartsearch=TRUE, maxIter=500)
 
 # # # Plot the results and compare to "the truth" obtained using gps
 par(mfrow=c(2,2))
-plot(yaps_out$inp$datTmb$H[,1] + yaps_out$inp$inp_params$Hx0, yaps_out$inp$datTmb$H[,2] + yaps_out$inp$inp_params$Hy0, asp=1, xlab="UTM X", ylab="UTM Y", pch=20, col="green")
+plot(hy~hx, data=hydros_yaps, asp=1, xlab="UTM X", ylab="UTM Y", pch=20, col="green")
 lines(utm_y~utm_x, data=ssu1$gps, col="blue", lwd=2)
 lines(y~x, data=yaps_out$track, col="red")
 
@@ -102,7 +102,7 @@ lines(y~top, data=yaps_out$track, col="red")
 lines(y-2*y_sd~top, data=yaps_out$track, col="red", lty=2)
 lines(y+2*y_sd~top, data=yaps_out$track, col="red", lty=2)
 
-plot(nobs~top, data=yaps_out$track, type="p")
+plot(nobs~top, data=yaps_out$track, type="p", main="#detecting hydros per ping")
 lines(caTools::runmean(nobs, k=10)~top, data=yaps_out$track, col="orange", lwd=2)
 
 }

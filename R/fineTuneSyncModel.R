@@ -5,6 +5,7 @@
 #' @param silent logical whether to make getSyncModel() silent
 #' @example man/examples/example-yaps_ssu1.R
 #' @export
+#' @example man/examples/example-yaps_ssu1.R
 fineTuneSyncModel <- function(sync_model, eps_threshold, silent=TRUE){
 	# original inp_sync
 	inp_sync <- sync_model$inp_synced

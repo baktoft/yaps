@@ -1,7 +1,10 @@
-#' Prepare detections data.table from raw data - csv-files exported from vendor software
+#' Experimental! Prepare detections data.table from raw data - csv-files exported from vendor software
 #' @param raw_dat Data file from vendor supplied software
 #' @param type Type of the vendor file. Currently only 'vemco_vue' is supported.
 #' @export
+#' @examples \dontrun{
+#' prepped_detections <- prepDetection("path-to-raw-data-file", type="vemco_vue")
+#' }
 prepDetections <- function(raw_dat, type){
 	detections <- data.table::data.table()
 	if (type == "vemco_vue"){

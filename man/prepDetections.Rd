@@ -2,7 +2,7 @@
 % Please edit documentation in R/prepFiles.R
 \name{prepDetections}
 \alias{prepDetections}
-\title{Prepare detections data.table from raw data - csv-files exported from vendor software}
+\title{Experimental! Prepare detections data.table from raw data - csv-files exported from vendor software}
 \usage{
 prepDetections(raw_dat, type)
 }
@@ -12,5 +12,10 @@ prepDetections(raw_dat, type)
 \item{type}{Type of the vendor file. Currently only 'vemco_vue' is supported.}
 }
 \description{
-Prepare detections data.table from raw data - csv-files exported from vendor software
+Experimental! Prepare detections data.table from raw data - csv-files exported from vendor software
+}
+\examples{
+\dontrun{
+prepped_detections <- prepDetection("path-to-raw-data-file", type="vemco_vue")
+}
 }

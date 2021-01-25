@@ -41,9 +41,9 @@ Output should be a random simulated (black) and estimated (red) track.
 testYaps()
 \dontrun{
 # # # Three pingTypes are availabe: 
-# # #	fixed ('sbi'), 
-# # # 	random ('rbi'), 
-# # # 	random with known burst interval sequence ('pbi')
+# # #	fixed burst interval ('sbi'), 
+# # # 	random burst interval with UNKNOWN burst interval sequence('rbi'), 
+# # # 	random burst interval with KNOWN burst interval sequence ('pbi')
 testYaps(pingType='sbi')
 testYaps(pingType='rbi')
 testYaps(pingType='pbi')

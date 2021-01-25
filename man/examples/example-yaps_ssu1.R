@@ -1,6 +1,8 @@
 \dontrun{
+library(yaps)
 set.seed(42)
 
+# # # Example using the ssu1 data included in package.
 # # # Set parameters to use in the sync model - these will differ per study
 max_epo_diff <- 120
 min_hydros <- 2
@@ -22,16 +24,6 @@ sync_model <- getSyncModel(inp_sync, silent=TRUE, max_iter=200, tmb_smartsearch 
 # sync_model_no_smartsearch <- getSyncModel(inp_sync, silent=TRUE, max_iter=5000, 
 	# tmb_smartsearch = FALSE)
 
-# # # Fine tune the model to exclude outliers. This should typically be done gradually as e.g.
-# sync_model_f1 <- fineTuneSyncModel(sync_model, eps_threshold=1E4, silent=TRUE)
-# sync_model_f1 <- fineTuneSyncModel(sync_model, eps_threshold=1E3, silent=TRUE)
-# sync_model_f1 <- fineTuneSyncModel(sync_model, eps_threshold=1E2, silent=TRUE)
-# sync_model_f1 <- fineTuneSyncModel(sync_model, eps_threshold=1E1, silent=TRUE)
-
-sync_model_f1 <- fineTuneSyncModel(sync_model, eps_threshold=1.5, silent=TRUE)
-# sync_model_no_smartsearch_f1 <- fineTuneSyncModel(sync_model_no_smartsearch, eps_threshold=1.5, 
-#	silent=TRUE)
-
 # # # Visualize the resulting sync model
 plotSyncModelResids(sync_model, by = "overall")
 plotSyncModelResids(sync_model, by = "quantiles")
@@ -40,12 +32,17 @@ plotSyncModelResids(sync_model, by = "hydro")
 plotSyncModelResids(sync_model, by = "temporal_hydro")
 plotSyncModelResids(sync_model, by = "temporal_sync_tag")
 
+# # # If the above plots show outlier, sync_model can be fine tuned by excluding these.
+# # # This should typically be done gradually as e.g.
+# sync_model_f1 <- fineTuneSyncModel(sync_model, eps_threshold=1E4, silent=TRUE)
+# sync_model_f2 <- fineTuneSyncModel(sync_model, eps_threshold=1E3, silent=TRUE)
+# sync_model_f3 <- fineTuneSyncModel(sync_model, eps_threshold=1E2, silent=TRUE)
 
 # # # Apply the sync_model to detections data.
-detections_synced <- applySync(toa=ssu1$detections, hydros=ssu1$hydros, sync_model_f1)
+detections_synced <- applySync(toa=ssu1$detections, hydros=ssu1$hydros, sync_model)
 
 # # # Prepare data for running yaps
-hydros_yaps <- data.table::data.table(sync_model_f1$pl$TRUE_H)
+hydros_yaps <- data.table::data.table(sync_model$pl$TRUE_H)
 colnames(hydros_yaps) <- c('hx','hy','hz')
 focal_tag <- 15266
 rbi_min <- 20
@@ -57,4 +54,26 @@ inp <- getInp(hydros_yaps, toa, E_dist="Mixture", n_ss=5, pingType="rbi",
 
 # # # Run yaps on the prepared data to estimate track
 yaps_out <- runYaps(inp, silent=TRUE, tmb_smartsearch=TRUE, maxIter=500) 
+
+# # # Plot the results and compare to "the truth" obtained using gps
+par(mfrow=c(2,2))
+plot(yaps_out$inp$datTmb$H[,1] + yaps_out$inp$inp_params$Hx0, yaps_out$inp$datTmb$H[,2] + yaps_out$inp$inp_params$Hy0, asp=1, xlab="UTM X", ylab="UTM Y", pch=20, col="green")
+lines(utm_y~utm_x, data=ssu1$gps, col="blue", lwd=2)
+lines(y~x, data=yaps_out$track, col="red")
+
+plot(utm_x~ts, data=ssu1$gps, col="blue", type="l", lwd=2)
+points(x~top, data=yaps_out$track, col="red")
+lines(x~top, data=yaps_out$track, col="red")
+lines(x-2*x_sd~top, data=yaps_out$track, col="red", lty=2)
+lines(x+2*x_sd~top, data=yaps_out$track, col="red", lty=2)
+
+plot(utm_y~ts, data=ssu1$gps, col="blue", type="l", lwd=2)
+points(y~top, data=yaps_out$track, col="red")
+lines(y~top, data=yaps_out$track, col="red")
+lines(y-2*y_sd~top, data=yaps_out$track, col="red", lty=2)
+lines(y+2*y_sd~top, data=yaps_out$track, col="red", lty=2)
+
+plot(nobs~top, data=yaps_out$track, type="p")
+lines(caTools::runmean(nobs, k=10)~top, data=yaps_out$track, col="orange", lwd=2)
+
 }

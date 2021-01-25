@@ -111,7 +111,7 @@ getSyncModel <- function(inp_sync, silent=TRUE, fine_tune=FALSE, max_iter=100, t
 #' @param excl_self_detect Logical whether to excluded detections of sync tags on the hydros they are co-located with. Sometimes self detections can introduce excessive residuals in the sync model in which case they should be excluded.
 #' @param lin_corr_coeffs Matrix of coefficients used for pre-sync linear correction. dim(lin_corr_coeffs)=(#hydros, 2). 
 #' @param silent_check Logical whether to get output from checkInpSync(). Default is FALSE
-#' @example man/examples/example-yaps.R
+#' @example man/examples/example-yaps_ssu1.R
 #' @export
 getInpSync <- function(sync_dat, max_epo_diff, min_hydros, time_keeper_idx, fixed_hydros_idx, n_offset_day, n_ss_day, keep_rate=1, excl_self_detect=TRUE, lin_corr_coeffs=NA, ss_data_what="est", ss_data=c(0), silent_check=FALSE){
 	if(length(unique(sync_dat$hydros$serial)) != nrow(sync_dat$hydros)){

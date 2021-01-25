@@ -9,7 +9,7 @@ coverage](https://codecov.io/gh/baktoft/yaps/branch/master/graph/badge.svg)](htt
 status](https://travis-ci.com/baktoft/yaps.svg?branch=master)](https://travis-ci.com/baktoft/yaps)
 <!-- badges: end -->
 
-# YAPS - (Yet Another Positioning Solver)<img src="vignettes/yaps_logo.png" align="right" width="120" />
+# YAPS - (Yet Another Positioning Solver)<img src="man/logo/yaps_logo.png" align="right" width="120" />
 
 Welcome to the `yaps` repository. The `yaps` package is based on the
 original YAPS presented in Baktoft, Gjelland, Økland & Thygesen (2017):

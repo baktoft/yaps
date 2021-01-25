@@ -16,6 +16,11 @@ keep_rate <- 15
 inp_sync <- getInpSync(sync_dat=ssu1, max_epo_diff, min_hydros, time_keeper_idx, 
     fixed_hydros_idx, n_offset_day, n_ss_day, keep_rate=keep_rate, silent_check=TRUE)
 
+# # # Check that inp_sync is ok
+checkInpSync(inp_sync, silent_check=FALSE)
+
+# # # Also take a look at coverage of the sync data
+getSyncCoverage(inp_sync, plot=TRUE)
 
 # # # Fit the sync model
 sync_model <- getSyncModel(inp_sync, silent=TRUE, max_iter=200, tmb_smartsearch = TRUE)
@@ -51,6 +56,9 @@ synced_dat <- detections_synced[tag == focal_tag]
 toa <- getToaYaps(synced_dat, hydros_yaps, rbi_min, rbi_max)
 inp <- getInp(hydros_yaps, toa, E_dist="Mixture", n_ss=5, pingType="rbi", 
 	sdInits=1, rbi_min=rbi_min, rbi_max=rbi_max, ss_data_what="est", ss_data=0)
+
+# # # Check that inp is ok
+checkInp(inp)
 
 # # # Run yaps on the prepared data to estimate track
 yaps_out <- runYaps(inp, silent=TRUE, tmb_smartsearch=TRUE, maxIter=500) 

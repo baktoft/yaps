@@ -7,6 +7,7 @@
 #' @param pen Specifies the penalty multiplier.
 #' @inheritParams getInp
 #' @export
+#' @example man/examples/example-bbox.R
 getBbox <- function(hydros, buffer=5, eps=1E-3, pen=1){
 	x_min <- hydros[which.min(hydros$hx), hx] - buffer
 	x_max <- hydros[which.max(hydros$hx), hx] + buffer

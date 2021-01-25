@@ -3,6 +3,7 @@
 #' @param synced_dat `data.table` containing synchronized data formatted as output from/or obtained using `applySync()`
 #' @inheritParams getInp
 #' @export
+#' @example man/examples/example-yaps_ssu1.R
 getToaYaps <- function(synced_dat, hydros, rbi_min, rbi_max){
 
 	# remove NAs in eposync

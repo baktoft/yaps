@@ -2,7 +2,7 @@
 library(yaps)
 set.seed(42)
 
-# # # Example using the ssu1 data included in package.
+# # # Example using the ssu1 data included in package. See ?ssu1 for info.
 # # # Set parameters to use in the sync model - these will differ per study
 max_epo_diff <- 120
 min_hydros <- 2
@@ -73,7 +73,7 @@ lines(y~top, data=yaps_out$track, col="red")
 lines(y-2*y_sd~top, data=yaps_out$track, col="red", lty=2)
 lines(y+2*y_sd~top, data=yaps_out$track, col="red", lty=2)
 
-plot(nobs~top, data=yaps_out$track, type="p")
+plot(nobs~top, data=yaps_out$track, type="p", main="#detecting hydros per ping")
 lines(caTools::runmean(nobs, k=10)~top, data=yaps_out$track, col="orange", lwd=2)
 
 }

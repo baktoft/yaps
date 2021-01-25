@@ -9,9 +9,9 @@
 #' @inheritParams runYaps
 #' @export
 #' @examples
+#' \dontrun{
 #' # To test  basic functionality of yaps using simulated data
 #' testYaps()
-#' \dontrun{
 #' # # # Three pingTypes are availabe: 
 #' # # #	fixed burst interval ('sbi'), 
 #' # # # 	random burst interval with UNKNOWN burst interval sequence('rbi'), 

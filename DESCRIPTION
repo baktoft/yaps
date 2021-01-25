@@ -1,23 +1,24 @@
 Package: yaps
 Title: Track Estimation using YAPS (Yet Another Positioning Solver)
-Version: 1.2.2.9000
+Version: 1.2.2.9001
 Authors@R: c(	person("Henrik", "Baktoft", email = "hba@aqua.dtu.dk", role = c("cre", "aut"), comment=c(ORCID = "0000-0002-3644-4960")),
 				person("Karl", "Gjelland", role=c("aut")),
 				person("Uffe H.", "Thygesen", role=c("aut")),
 				person("Finn", "Økland", role=c("aut"))
 			)
-Description: Estimate tracks of animals tagged with acoustic transmitters. 'yaps' was introduced in 2017 as a transparent open-source tool to estimate positions of fish (and other aquatic animals) tagged with acoustic transmitters. Based on detections of acoustic transmitters on a fixed array of hydrophones, 'yaps' enables users to synchronize the collected data (i.e. correcting for drift in the internal clocks of the hydrophones/receivers) and subsequently to estimate tracks of the tagged animals. The paper introducing 'yaps' is available in open access at Baktoft, Gjelland, Økland & Thygesen (2017) <doi:10.1038/s41598-017-14278-z>. Also check out our cookbook with a completely worked through example at Baktoft, Gjelland, Økland, Rehage, Rodemann, Corujo, Viadero & Thygesen (2019) <DOI:10.1101/2019.12.16.877688>. Additional tutorials will eventually make their way onto the project website at <https://baktoft.github.io/yaps/>.
+Description: Estimate tracks of animals tagged with acoustic transmitters. 'yaps' was introduced in 2017 as a transparent open-source tool to estimate positions of fish (and other aquatic animals) tagged with acoustic transmitters. Based on registrations of acoustic transmitters on hydrophones positioned in a fixed array, 'yaps' enables users to synchronize the collected data (i.e. correcting for drift in the internal clocks of the hydrophones/receivers) and subsequently to estimate tracks of the tagged animals. The paper introducing 'yaps' is available in open access at Baktoft, Gjelland, Økland & Thygesen (2017) <doi:10.1038/s41598-017-14278-z>. Also check out our cookbook with a completely worked through example at Baktoft, Gjelland, Økland, Rehage, Rodemann, Corujo, Viadero & Thygesen (2019) <DOI:10.1101/2019.12.16.877688>. Additional tutorials will eventually make their way onto the project website at <https://baktoft.github.io/yaps/>.
 Depends: R (>= 3.5.0)
 License: GPL-3
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.1.1
 LinkingTo: Rcpp, TMB, RcppEigen
-Imports: circular, cowplot, data.table, ggplot2, ggrepel, nloptr, plyr, Rcpp, reshape2, splusTimeSeries, stats, tictoc, TMB, vdiffr, viridis, zoo
+Imports: circular, cowplot, data.table, ggplot2, ggrepel, nloptr, plyr, Rcpp, reshape2, splusTimeSeries, stats, tictoc, TMB, viridis, zoo
 Suggests: 
     testthat (>= 2.1.0),
     knitr,
     rmarkdown,
-    covr
+    covr,
+    vdiffr
 URL: https://github.com/baktoft/yaps, https://baktoft.github.io/yaps/
 BugReports: https://github.com/baktoft/yaps/issues

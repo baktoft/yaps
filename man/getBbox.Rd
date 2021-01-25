@@ -20,8 +20,10 @@ Standard is a rectangle based on coordinates of outer hydros +- the buffer in me
 Returns a vector of lenght 6: c(x_min, x_max, y_min, y_max, eps, pen). Limits are given in UTM coordinates.
 }
 \examples{
+\dontrun{
 hydros <- ssu1$hydros
 colnames(hydros) <- c('serial','hx','hy','hz','sync_tag','idx')
 bbox <- getBbox(hydros)
 plotBbox(hydros, bbox)
+}
 }

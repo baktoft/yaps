@@ -6,7 +6,7 @@
 [![Codecov test
 coverage](https://codecov.io/gh/baktoft/yaps/branch/master/graph/badge.svg)](https://codecov.io/gh/baktoft/yaps?branch=master)
 [![Travis build
-status](https://travis-ci.com/baktoft/yaps.svg?branch=master)](https://travis-ci.com/baktoft/yaps)
+status](https://travis-ci.org/baktoft/yaps.svg?branch=master)](https://travis-ci.org/baktoft/yaps)
 <!-- badges: end -->
 
 # YAPS - (Yet Another Positioning Solver)<img src="man/logo/yaps_logo.png" align="right" width="120" />
@@ -40,8 +40,8 @@ computer generated from manually downloaded data.
 ## Dependencies
 
 The `yaps` package requires
-[devtools](https://cran.r-project.org/web/packages/devtools/index.html)
-and [TMB](https://github.com/kaskr/adcomp). Please see
+[devtools](https://CRAN.R-project.org/package=devtools) and
+[TMB](https://github.com/kaskr/adcomp). Please see
 [instructions](https://github.com/kaskr/adcomp/wiki/Download) on TMB
 installation. If working on Windows, you might also need to install
 [Rtools](https://cran.r-project.org/bin/windows/Rtools/) as specified in

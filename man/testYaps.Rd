@@ -37,9 +37,9 @@ Run `testYaps()` to check that the core functions of YAPS is working correctly.
 Output should be a random simulated (black) and estimated (red) track.
 }
 \examples{
+\dontrun{
 # To test  basic functionality of yaps using simulated data
 testYaps()
-\dontrun{
 # # # Three pingTypes are availabe: 
 # # #	fixed burst interval ('sbi'), 
 # # # 	random burst interval with UNKNOWN burst interval sequence('rbi'), 

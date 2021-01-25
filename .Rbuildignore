@@ -13,3 +13,4 @@
 ^\.github$
 ^codecov\.yml$
 ^\.travis\.yml$
+^cran-comments\.md$

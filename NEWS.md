@@ -1,7 +1,7 @@
-# yaps v1.2.2.9000
+# yaps v1.2.2.9001
 
 ## New stuff
-
+* Lots of examples and tests added
 
 ## Bug fixes
 

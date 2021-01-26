@@ -32,12 +32,6 @@ Welcome to the `yaps` repository. The `yaps` package is based on the original YA
 To use `yaps` on own data, you need to compile a TOA-matrix based on synchronized hydrophone data and replace the hydros dataframe with actual hydrophone positions. A complete step-by-step guide on how to do this, can be found in our pre-print paper [Opening the black box of fish tracking using acoustic telemetry](https://www.biorxiv.org/content/10.1101/2019.12.16.877688v1). The example in this guide is based on data collected using a 69 kHz PPM-based system (Vemco VR2). We are working towards adding examples based on data collected using other manufacturers.  
 
 
-## See YAPS in action
-We are working towards true live tracking for aquatic animals. Check out our prototype of [yaps-live](https://baktoft.shinyapps.io/yapslive/) (or click the screenshot below). The track estimation is done on-the-fly using `yaps`, but the live-stream of detection data is at the moment computer generated from manually downloaded data.   
-
-[<img src="vignettes/yaps_live.png" alt="yaps-live" />](https://baktoft.shinyapps.io/yapslive/)
-
-
 ## Dependencies
 The `yaps` package requires [devtools](https://CRAN.R-project.org/package=devtools) and [TMB](https://github.com/kaskr/adcomp). Please see [instructions](https://github.com/kaskr/adcomp/wiki/Download) on TMB installation. If working on Windows, you might also need to install [Rtools](https://cran.r-project.org/bin/windows/Rtools/) as specified in the TMB documentation.  
 

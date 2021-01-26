@@ -20,5 +20,5 @@ Based on H. Medwin (1975) Speed of sound in water: A simple equation for realist
 }
 \examples{
 water_temp <- rnorm(100, 20, 2)
-tempToSs(temp=water_temp, sal=0, depth=5)
+ss <- tempToSs(temp=water_temp, sal=0, depth=5)
 }

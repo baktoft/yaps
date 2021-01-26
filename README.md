@@ -27,16 +27,6 @@ The example in this guide is based on data collected using a 69 kHz
 PPM-based system (Vemco VR2). We are working towards adding examples
 based on data collected using other manufacturers.
 
-## See YAPS in action
-
-We are working towards true live tracking for aquatic animals. Check out
-our prototype of [yaps-live](https://baktoft.shinyapps.io/yapslive/) (or
-click the screenshot below). The track estimation is done on-the-fly
-using `yaps`, but the live-stream of detection data is at the moment
-computer generated from manually downloaded data.
-
-[<img src="vignettes/yaps_live.png" alt="yaps-live" />](https://baktoft.shinyapps.io/yapslive/)
-
 ## Dependencies
 
 The `yaps` package requires

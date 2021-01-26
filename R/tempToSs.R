@@ -6,7 +6,7 @@
 #' @export
 #' @examples
 #' water_temp <- rnorm(100, 20, 2)
-#' tempToSs(temp=water_temp, sal=0, depth=5)
+#' ss <- tempToSs(temp=water_temp, sal=0, depth=5)
 tempToSs <- function (temp, sal, depth=5) 
 {
     ss <- 1449.2 + 4.6 * temp - 0.055 * temp^2 + 0.00029 * temp^3 + (1.34 - 0.01 * temp) * (sal - 35) + 0.016 * depth

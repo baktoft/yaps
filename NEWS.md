@@ -1,11 +1,8 @@
-# yaps v1.2.2.9009
+# yaps v1.2.3
 
 ## New stuff
-* Moved example data `hald`to an external package with yaps example data `yapsdata`. Available from github using devtools::install_github('baktoft/yapsdata')
+* Moved example data `hald` to an external package with yaps example data `yapsdata`. Available from github using devtools::install_github('baktoft/yapsdata')
 * Lots of examples and tests added
-
-
-## Bug fixes
 
 
 # yaps v1.2.2

@@ -136,22 +136,31 @@ inp_ssu1 <- getInp(hydros_yaps, toa_ssu1, E_dist="Mixture", n_ss=2, pingType="rb
 # Run yaps to obtain estimated track
 yaps_out_ssu1 <- runYaps(inp_ssu1, silent=TRUE) 
 
-# plot the estimated track
-plotYaps(inp=inp_ssu1, yaps_out=yaps_out_ssu1, type="map")
-# Add gps track for direct comparison
-lines(utm_y~utm_x, data=ssu1$gps, lty=2)
+# plot the estimated track and the "true" gps track
+par(mfrow=c(2,2))
+plot(hy~hx, data=hydros_yaps, asp=1, xlab="UTM X", ylab="UTM Y", pch=20, col="green")
+lines(utm_y~utm_x, data=ssu1$gps, col="blue", lwd=2)
+lines(y~x, data=yaps_out_ssu1$track, col="red")
 
-par(mfrow=c(2,1))
-plotYaps(inp=inp_ssu1, yaps_out=yaps_out_ssu1, type="coord_X")
-lines(utm_x~ts, data=ssu1$gps, lty=2)
-plotYaps(inp=inp_ssu1, yaps_out=yaps_out_ssu1, type="coord_Y")
-lines(utm_y~ts, data=ssu1$gps, lty=2)
+plot(utm_x~ts, data=ssu1$gps, col="blue", type="l", lwd=2)
+points(x~top, data=yaps_out_ssu1$track, col="red")
+lines(x~top, data=yaps_out_ssu1$track, col="red")
+lines(x-2*x_sd~top, data=yaps_out_ssu1$track, col="red", lty=2)
+lines(x+2*x_sd~top, data=yaps_out_ssu1$track, col="red", lty=2)
+
+plot(utm_y~ts, data=ssu1$gps, col="blue", type="l", lwd=2)
+points(y~top, data=yaps_out_ssu1$track, col="red")
+lines(y~top, data=yaps_out_ssu1$track, col="red")
+lines(y-2*y_sd~top, data=yaps_out_ssu1$track, col="red", lty=2)
+lines(y+2*y_sd~top, data=yaps_out_ssu1$track, col="red", lty=2)
+
+plot(nobs~top, data=yaps_out_ssu1$track, type="p", main="#detecting hydros per ping")
+lines(caTools::runmean(nobs, k=10)~top, data=yaps_out_ssu1$track, col="orange", lwd=2)
 ```
 
 ### Example using YAPS on simulated data
 
 ``` r
-devtools::install_github("baktoft/yaps")
 rm(list=ls())   
 library(yaps)
 
@@ -187,26 +196,41 @@ if(pingType == 'sbi'){
 } 
 str(inp)
 
-pl <- c()
+yaps_out <- c()
 maxIter <- ifelse(pingType=="sbi", 500, 5000)
-outTmb <- runTmb(inp, maxIter=maxIter, getPlsd=TRUE, getRep=TRUE)
-str(outTmb)
+yaps_out <- runTmb(inp, maxIter=maxIter, getPlsd=TRUE, getRep=TRUE)
+str(yaps_out)
 
 # Estimates in pl
-pl <- outTmb$pl
+pl <- yaps_out$pl
 # Correcting for hydrophone centering
-pl$X <- outTmb$pl$X + inp$inp_params$Hx0
-pl$Y <- outTmb$pl$Y + inp$inp_params$Hy0
+pl$X <- yaps_out$pl$X + inp$inp_params$Hx0
+pl$Y <- yaps_out$pl$Y + inp$inp_params$Hy0
 
 
 # Error estimates in plsd
-plsd <- outTmb$plsd
+plsd <- yaps_out$plsd
 
-# plot the resulting estimated track
-plot(y~x, data=trueTrack, type="l", xlim=range(hydros$hx), ylim=range(hydros$hy), asp=1)
-lines(y~x, data=teleTrack)
-points(hy~hx, data=hydros, col="green", pch=20, cex=3)
-lines(pl$Y~pl$X, col="red")
+# plot the resulting estimated track and the true simulated track
+par(mfrow=c(2,2))
+plot(hy~hx, data=hydros, asp=1, xlab="UTM X", ylab="UTM Y", pch=20, col="green")
+lines(y~x, data=trueTrack, col="blue", lwd=2)
+lines(y~x, data=yaps_out$track, col="red")
+
+plot(x~time, data=trueTrack, col="blue", type="l", lwd=2)
+points(x~top, data=yaps_out$track, col="red")
+lines(x~top, data=yaps_out$track, col="red")
+lines(x-2*x_sd~top, data=yaps_out$track, col="red", lty=2)
+lines(x+2*x_sd~top, data=yaps_out$track, col="red", lty=2)
+
+plot(y~time, data=trueTrack, col="blue", type="l", lwd=2)
+points(y~top, data=yaps_out$track, col="red")
+lines(y~top, data=yaps_out$track, col="red")
+lines(y-2*y_sd~top, data=yaps_out$track, col="red", lty=2)
+lines(y+2*y_sd~top, data=yaps_out$track, col="red", lty=2)
+
+plot(nobs~top, data=yaps_out$track, type="p", main="#detecting hydros per ping")
+lines(caTools::runmean(nobs, k=10)~top, data=yaps_out$track, col="orange", lwd=2)
 ```
 
 # Papers using or relating to YAPS

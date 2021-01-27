@@ -41,3 +41,5 @@ rsconnect/
 .Rproj.user
 inst/doc
 debug.log
+
+README.html

@@ -1,4 +1,4 @@
-context("runYaps")
+context("testYaps")
 library(yaps)
 
 # setwd('tests/testthat')

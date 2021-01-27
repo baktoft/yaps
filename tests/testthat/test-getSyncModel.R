@@ -1,4 +1,4 @@
-context("Sync model")
+context("getSyncModel")
 library(yaps)
 
 set.seed(42)

@@ -1,6 +1,6 @@
 Package: yaps
 Title: Track Estimation using YAPS (Yet Another Positioning Solver)
-Version: 1.2.2.9006
+Version: 1.2.2.9009
 Authors@R: c(	person("Henrik", "Baktoft", email = "hba@aqua.dtu.dk", role = c("cre", "aut"), comment=c(ORCID = "0000-0002-3644-4960")),
 				person("Karl", "Gjelland", role=c("aut")),
 				person("Uffe H.", "Thygesen", role=c("aut")),
@@ -15,10 +15,10 @@ RoxygenNote: 7.1.1
 LinkingTo: Rcpp, TMB, RcppEigen
 Imports: circular, cowplot, data.table, ggplot2, ggrepel, nloptr, plyr, Rcpp, reshape2, splusTimeSeries, stats, tictoc, TMB, viridis, zoo
 Suggests: 
-    testthat (>= 2.1.0),
+    covr,
     knitr,
     rmarkdown,
-    covr,
+    testthat (>= 2.1.0),
     vdiffr
 URL: https://github.com/baktoft/yaps, https://baktoft.github.io/yaps/
 BugReports: https://github.com/baktoft/yaps/issues

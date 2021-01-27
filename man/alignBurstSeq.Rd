@@ -31,18 +31,15 @@ Add extra columns to data.table containing ping index of the burst sequence (seq
 Only to be used for 'random' burst interval data when you know the burst sequence.
 }
 \examples{
-# Align data from a tag with known random burst interval to the burst interval sequence
-# using the included hald data (see ?hald for info).
 \dontrun{
-detect_1315 <- hald$detections[tag==1315]
-sync_model <- hald$sync_model
-seq_1315 <- hald$burst_seqs$seq1315
-rbi_min <- hald$fish[tag==1315, rbi_min]
-rbi_max <- hald$fish[tag==1315, rbi_max]
-hydros <- hald$hydros
-
-synced_data_1315 <- applySync(toa=detect_1315, sync_model=sync_model, hydros=hydros)
-alignBurstSeq(synced_dat=synced_data_1315, burst_seq=seq_1315, rbi_min=rbi_min, rbi_max=rbi_max)
+# Align data from a tag with known random burst interval to the burst interval sequence
+# using the hald data included in `yapsdata` (see ?yapsdata::hald for info).
+synced_dat_1315 <- dat_align$synced_dat_1315
+seq_1315 <- dat_align$seq_1315
+rbi_min <- 60
+rbi_max <- 120
+aligned_dat <- alignBurstSeq(synced_dat=synced_dat_1315, burst_seq=seq_1315, 
+	rbi_min=rbi_min, rbi_max=rbi_max, plot_diag=TRUE)
 
 }
 }

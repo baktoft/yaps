@@ -18,3 +18,7 @@ tempToSs(temp, sal, depth = 5)
 Calculate speed of sound from water temperature, salinity and depth
 Based on H. Medwin (1975) Speed of sound in water: A simple equation for realistic parameters. (https://doi.org/10.1121/1.380790)
 }
+\examples{
+water_temp <- rnorm(100, 20, 2)
+ss <- tempToSs(temp=water_temp, sal=0, depth=5)
+}

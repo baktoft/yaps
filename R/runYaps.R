@@ -7,9 +7,11 @@
 #' @param opt_fun Which optimization function to use. Default is 'nlminb' - alternative is 'nloptr' (experimental!). If using 'nloptr', `opt_controls` must be specified. 
 #' @param opt_controls List of controls passed to optimization function. For instances, tolerances such as x.tol=1E-8. If opt_fun = 'nloptr', `opt_controls` must be a list formatted appropriately. For instance: opt_controls <- list(algorithm="NLOPT_LD_AUGLAG", xtol_abs=1e-12, maxeval=2E+4, print_level = 1, local_opts= list(algorithm="NLOPT_LD_AUGLAG_EQ", xtol_rel=1e-4) ). See `?nloptr` and the NLopt site https://nlopt.readthedocs.io/en/latest/ for more info. Some algorithms in `nloptr` require bounded parameters - see `bounds`.
 #' @param bounds List of two vectors specifying lower and upper bounds of fixed parameters. Length of each vector must be equal to number of fixed parameters. For instance, bounds = list(lb = c(-3, -1, -2), ub = c(2,0,1) ).
-
+#' @param tmb_smartsearch Logical whether to use the TMB smartsearch in the inner optimizer (see ?TMB::MakeADFun for info). Default and original implementation is TRUE. However, there seems to be an issue with Matrix v1.3.2 that requires tmb_smartsearch=FALSE. 
+#' @example man/examples/example-yaps_ssu1.R
 #' @export
-runYaps <- function(inp, maxIter=1000, getPlsd=TRUE, getRep=TRUE, silent=TRUE, opt_fun='nlminb', opt_controls=list(), bounds=list()){
+runYaps <- function(inp, maxIter=1000, getPlsd=TRUE, getRep=TRUE, silent=TRUE, opt_fun='nlminb', opt_controls=list(), bounds=list(), tmb_smartsearch=TRUE){
+	nobs <- z <- z_sd <- NULL
 	print("Running yaps...")
 	random <- c("X", "Y", "top")
 	if(inp$datTmb$how_3d == "est"){
@@ -31,7 +33,10 @@ runYaps <- function(inp, maxIter=1000, getPlsd=TRUE, getRep=TRUE, silent=TRUE, o
 			inner.control = list(maxit = maxIter), 
 			silent=silent
 		)
-
+	if(!tmb_smartsearch){
+		obj$fn(obj$par) 
+		TMB::newtonOption(obj, smartsearch=FALSE)
+	}
 	
 	if(opt_fun == 'nloptr'){
 		opts <- opt_controls
@@ -45,7 +50,14 @@ runYaps <- function(inp, maxIter=1000, getPlsd=TRUE, getRep=TRUE, silent=TRUE, o
 		control_list <- opt_controls
 		
 		if(!silent){
+			# tictoc::tic()
 			opt <- stats::nlminb(inp$inits,obj$fn,obj$gr, control = control_list)
+			# tictoc::toc()
+
+			# tictoc::tic()
+			# opt <- stats::nlminb(inp$inits,obj$fn,obj$gr, control = control_list, lower=c(-10,-10, -10, -10, -10), upper=c(2, 2, 2, 2, -2))
+			# opt <- stats::nlminb(inp$inits,obj$fn,obj$gr, control = control_list, lower=c(-10,-10, -10, -10, -10), upper=c(2, 2, 2, 2, -2))
+			# tictoc::toc()
 		} else {
 			suppressWarnings(opt <- stats::nlminb(inp$inits,obj$fn,obj$gr, control = control_list))
 		}
@@ -89,7 +101,29 @@ runYaps <- function(inp, maxIter=1000, getPlsd=TRUE, getRep=TRUE, silent=TRUE, o
 			print(paste0("...yaps converged (obj: ",obj_out,") with message: ",conv_message,""))
 		}
 	}
-	return(list(pl=pl, plsd=plsd, rep=rep, obj=obj_out, inp=inp, conv_status=conv_status, conv_message=conv_message))
+	
+	# extract track in user friendly format
+	track <- data.table::data.table(
+		top=as.POSIXct(pl$top + inp$inp_params$T0, origin="1970-01-01", tz="UTC"), top_sd=plsd$top,
+		x=pl$X+inp$inp_params$Hx0, y=pl$Y+inp$inp_params$Hy0, 
+		x_sd=plsd$X, y_sd=plsd$Y)
+	if(inp$datTmb$how_3d == 'est'){
+		track[, z := pl$Z]
+		track[, z_sd := plsd$Z]
+	} else if(inp$datTmb$how_3d == 'data'){
+		track[, z := inp$datTmb$z_vec]
+		track[, z_sd := NA]
+	} else {
+		track[, z:=NA]
+		track[, z_sd:=NA]
+	}
+	
+	
+	track[, nobs := apply(inp$datTmb$toa, 2, function(k) sum(!is.na(k)))]
+	
+	track <- track[, c('top', 'x', 'y', 'z', 'top_sd', 'x_sd', 'y_sd', 'z_sd', 'nobs')]
+	
+	return(list(pl=pl, plsd=plsd, rep=rep, obj=obj_out, inp=inp, conv_status=conv_status, conv_message=conv_message, track=track))
 }
 
 

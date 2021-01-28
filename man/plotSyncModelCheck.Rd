@@ -16,3 +16,27 @@ Delta values indicate absolute difference between true and estimated distances b
 For instance, a ping from sync_tag t colocated with hydro Ht is detected by hydros H1 and H2. The pairwise relative distance to sync tag is then
 delta = abs((true_dist(Ht, H1) - true_dist(Ht, H2)) - (est_dist(Ht, H1) - est_dist(Ht, H2)))
 }
+\examples{
+\dontrun{
+sync_model <- ssu1$sync_model
+
+plotSyncModelHydros(sync_model)
+
+plotSyncModelResids(sync_model, by = "overall")
+plotSyncModelResids(sync_model, by = "quantiles")
+plotSyncModelResids(sync_model, by = "sync_tag")
+plotSyncModelResids(sync_model, by = "hydro")
+plotSyncModelResids(sync_model, by = "temporal")
+plotSyncModelResids(sync_model, by = "temporal_hydro")
+plotSyncModelResids(sync_model, by = "temporal_sync_tag")
+
+plotSyncModelCheck(sync_model, by = "hydro")
+plotSyncModelCheck(sync_model, by = "sync_tag")
+plotSyncModelCheck(sync_model, by = "sync_bin_sync")
+plotSyncModelCheck(sync_model, by = "sync_bin_hydro")
+# # # if more sync periods are used, these two can be applied
+# plotSyncModelCheck(sync_model, by = "sync_bin_sync_smooth")
+# plotSyncModelCheck(sync_model, by = "sync_bin_hydro_smooth")
+
+}
+}

@@ -3,8 +3,14 @@
 #' @param silent Keep TMB quiet
 #' @param fine_tune Logical. Whether to re-run the sync model excluding residual outliers. Consider to use fineTuneSyncModel() instead.
 #' @param max_iter Max number of iterations to run TMB. Default=100 seems to work in most cases.
+#' @param tmb_smartsearch Logical whether to use the TMB smartsearch in the inner optimizer (see ?TMB::MakeADFun for info). Default and original implementation is TRUE. However, there seems to be an issue with Matrix v1.3.2 that requires tmb_smartsearch=FALSE. 
+#' @example man/examples/example-yaps_ssu1.R
+
 #' @export
-getSyncModel <- function(inp_sync, silent=TRUE, fine_tune=FALSE, max_iter=100){
+getSyncModel <- function(inp_sync, silent=TRUE, fine_tune=FALSE, max_iter=100, tmb_smartsearch=TRUE){
+	inp_sync$inp_params$tmb_smartsearch <- tmb_smartsearch
+	inp_sync$inp_params$max_iter <- max_iter
+	
 	dat_tmb <- inp_sync$dat_tmb_sync
 	params <- inp_sync$params_tmb_sync
 	random <- inp_sync$random_tmb_sync
@@ -31,14 +37,21 @@ getSyncModel <- function(inp_sync, silent=TRUE, fine_tune=FALSE, max_iter=100){
 	# ## Reduce memory peak of a parallel model by creating tapes in serial
 	# config(tape.parallel=0, DLL="yaps_sync")
 	obj <- TMB::MakeADFun(data = dat_tmb, parameters = params, random = random, DLL = "yaps", inner.control = list(maxit = max_iter), silent=silent)
+	obj$fn(obj$par) 
 	
-	if(silent){
-		opt <- suppressWarnings(stats::nlminb(inits,obj$fn,obj$gr))
-	} else {
-		opt <- stats::nlminb(inits,obj$fn,obj$gr)
+	if(!tmb_smartsearch){
+		TMB::newtonOption(obj, smartsearch=FALSE)
 	}
 
-	obj$fn()
+	
+	if(silent){
+		# opt <- suppressWarnings(stats::nlminb(inits,obj$fn,obj$gr))
+		opt <- suppressWarnings(stats::nlminb(inits,obj$fn,obj$gr, lower=c(-10), upper=c(-2)))
+	} else {
+		opt <- stats::nlminb(inits,obj$fn,obj$gr, lower=c(-10), upper=c(-2))
+		# opt <- stats::nlminb(inits,obj$fn,obj$gr)
+	}
+
 	pl <- obj$env$parList()   # List of estimates
 	obj_val <- opt$objective
 	cat(paste0(".. ", Sys.time()), " \n")
@@ -74,7 +87,7 @@ getSyncModel <- function(inp_sync, silent=TRUE, fine_tune=FALSE, max_iter=100){
 	
 	cat("Sync model done \n")
 	cat("Consider saving the sync model for later use - e.g. save(sync_model, file='path_to_sync_save'). \n")
-	tictoc::toc()
+
 	return(list(pl=pl, plsd=plsd, report=report, obj_val=obj_val, eps_long=eps_long, inp_synced=inp_sync))
 }
 
@@ -98,6 +111,7 @@ getSyncModel <- function(inp_sync, silent=TRUE, fine_tune=FALSE, max_iter=100){
 #' @param excl_self_detect Logical whether to excluded detections of sync tags on the hydros they are co-located with. Sometimes self detections can introduce excessive residuals in the sync model in which case they should be excluded.
 #' @param lin_corr_coeffs Matrix of coefficients used for pre-sync linear correction. dim(lin_corr_coeffs)=(#hydros, 2). 
 #' @param silent_check Logical whether to get output from checkInpSync(). Default is FALSE
+#' @example man/examples/example-yaps_ssu1.R
 #' @export
 getInpSync <- function(sync_dat, max_epo_diff, min_hydros, time_keeper_idx, fixed_hydros_idx, n_offset_day, n_ss_day, keep_rate=1, excl_self_detect=TRUE, lin_corr_coeffs=NA, ss_data_what="est", ss_data=c(0), silent_check=FALSE){
 	if(length(unique(sync_dat$hydros$serial)) != nrow(sync_dat$hydros)){
@@ -141,7 +155,7 @@ getInpSync <- function(sync_dat, max_epo_diff, min_hydros, time_keeper_idx, fixe
 		random_tmb_sync <- c("TOP", "OFFSET", "SLOPE1", "SLOPE2", "TRUE_H")
 	}
 	# inits_tmb_sync <- c(3, rep(-3,dat_tmb_sync$nh))
-	inits_tmb_sync <- c(3)
+	inits_tmb_sync <- c(-3)
 	inp_params <- list(toa=inp_toa_list$toa, T0=T0, Hx0=inp_H_info$Hx0, Hy0=inp_H_info$Hy0, offset_levels=offset_vals$offset_levels, 
 		ss_levels=ss_vals$ss_levels, max_epo_diff=max_epo_diff, hydros=sync_dat$hydros,
 		lin_corr_coeffs=lin_corr_coeffs, min_hydros=min_hydros, ss_data=ss_data

@@ -1,3 +1,10 @@
+# yaps v1.2.3
+
+## New stuff
+* Moved example data `hald` to an external package with yaps example data `yapsdata`. Available from github using devtools::install_github('baktoft/yapsdata')
+* Lots of examples and tests added
+
+
 # yaps v1.2.2
 
 ## New stuff
@@ -31,7 +38,7 @@
 * Add option to use alternative optimization function (EXPERIMENTAL). Try nloptr() instead of default nlminb(), if you have issues with e.g. false convergence.
 * Add option to use linear correction information when running the sync model (EXPERIMENTAL).
 * Add option to specify all three ping types in testYaps(). PingType can be 'sbi' (default), 'rbi' or 'pbi'
-* Not related to package development, but check out [yaps-live](https://baktoft.shinyapps.io/yapslive/) to see `yaps` in action.
+* Not related to package development, but check out yaps-live https://baktoft.shinyapps.io/yapslive/ to see `yaps` in action.
 
 
 ## Minor new stuff

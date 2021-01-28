@@ -1,6 +1,7 @@
 #' Graphical representation of spatial constraints
 #' @inheritParams getInp
 #' @export
+#' @example man/examples/example-bbox.R
 plotBbox <- function(hydros, bbox){
 	Var1 <- Var2 <- NULL
 	softplus <- function(x, eps){return (0.5*(x+sqrt(x*x+eps*eps)))	}

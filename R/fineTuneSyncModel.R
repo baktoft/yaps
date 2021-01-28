@@ -3,7 +3,9 @@
 #' @param sync_model sync_model obtained using getSyncModel()
 #' @param eps_threshold Maximum value of residual measured in meter assuming speed of sound = 1450 m/s
 #' @param silent logical whether to make getSyncModel() silent
+#' @example man/examples/example-yaps_ssu1.R
 #' @export
+#' @example man/examples/example-yaps_ssu1.R
 fineTuneSyncModel <- function(sync_model, eps_threshold, silent=TRUE){
 	# original inp_sync
 	inp_sync <- sync_model$inp_synced
@@ -42,11 +44,11 @@ fineTuneSyncModel <- function(sync_model, eps_threshold, silent=TRUE){
 	# inp_sync$params_tmb_sync$SLOPE2 				<- sync_model$pl$SLOPE2
 	# inp_sync$params_tmb_sync$SS 					<- sync_model$pl$SS  # Disabled because option to use ss_data is implemented...
 	# inp_sync$params_tmb_sync$LOG_SIGMA_HYDROS_XY	<- sync_model$pl$LOG_SIGMA_HYDROS_XY
-	inp_sync$params_tmb_sync$TRUE_H					<- sync_model$pl$TRUE_H 
-	inp_sync$params_tmb_sync$LOG_SIGMA_TOA			<- sync_model$pl$LOG_SIGMA_TOA
+	# inp_sync$params_tmb_sync$TRUE_H					<- sync_model$pl$TRUE_H 
+	# inp_sync$params_tmb_sync$LOG_SIGMA_TOA			<- sync_model$pl$LOG_SIGMA_TOA
 
 	# run getSyncModel() using the tuned inp_sync
-	sync_model_tuned <- getSyncModel(inp_sync, silent=silent)
+	sync_model_tuned <- getSyncModel(inp_sync, silent=silent, tmb_smartsearch=inp_sync$inp_params$tmb_smartsearch, max_iter=inp_sync$inp_params$max_iter)
 	
 	return(sync_model_tuned)
 }

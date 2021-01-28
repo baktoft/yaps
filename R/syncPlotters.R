@@ -2,6 +2,7 @@
 #' 
 #' @param sync_model Synchronization model obtained using `getSyncModel()`
 #' @param by What to facet/group the plot by? Currently supports one of 'overall', 'sync_tag', 'hydro', 'quantiles', 'temporal', 'temporal_hydro', 'temporal_sync_tag'
+#' @example man/examples/example-syncModelPlots.R
 #' @export
 plotSyncModelResids <- function(sync_model, by='overall'){
 	eps_long <- sync_model$eps_long
@@ -14,10 +15,12 @@ plotSyncModelResids <- function(sync_model, by='overall'){
 		p <- ggplot2::ggplot(data=eps_long) 
 		p <- p + geom_violin(aes(x=factor(hydro_idx), y=E_m), scale="count", draw_quantiles=c(.25,.5, .75)) 
 		p <- p + geom_vline(xintercept=seq(0, length(unique(eps_long$hydro_idx)), by=5), lty=3, col="red")
-		p <- p + geom_hline(yintercept=0, col="red") + facet_wrap(.~sync_tag_idx) 
+		p <- p + geom_hline(yintercept=0, col="red") 
+		p <- p + facet_wrap(~sync_tag_idx)
 		# p <- p + labs(title="Sync model residuals - facet by sync_tag_idx") + xlab("hydro_idx")
 		p <- p + ylab("Residual (m)")
-		p <- p + xlab("hydro_idx") + ggplot2::scale_x_discrete(breaks = pretty(unique(eps_long$hydro_idx)))
+		p <- p + xlab("hydro_idx")
+		p <- p + ggplot2::scale_x_discrete(breaks = pretty(unique(eps_long$hydro_idx)))
 	} else if(by == 'hydro'){
 		p <- ggplot2::ggplot(data=eps_long) + geom_violin(aes(x=factor(sync_tag_idx), y=E_m), scale="count", draw_quantiles=c(.25,.5, .75)) 
 		p <- p + geom_hline(yintercept=0, col="red") + facet_wrap(~hydro_idx) 
@@ -52,6 +55,7 @@ plotSyncModelResids <- function(sync_model, by='overall'){
 #' Plot hydrophone positions. Especially useful if some hydro re-positioned as part of the sync model.
 #' @param sync_model Synchronization model obtained using `getSyncModel()`
 #' @export
+#' @example man/examples/example-syncModelPlots.R
 plotSyncModelHydros <- function(sync_model){
 	z_synced <- NULL
 	h_pos <- data.table::data.table(sync_model$inp_synced$dat_tmb_sync$H)
@@ -86,6 +90,7 @@ plotSyncModelHydros <- function(sync_model){
 #' @param sync_model Synchronization model obtained using `getSyncModel()`
 #' @param by What to facet/group the plot by? Currently supports one of 'sync_bin_sync', 'sync_bin_hydro', 'sync_bin_sync_smooth', 'sync_bin_hydro_smooth', 'hydro', 'sync_tag'
 #' @export
+#' @example man/examples/example-syncModelPlots.R
 plotSyncModelCheck <- function(sync_model, by=""){
 	sync_check_dat <- getSyncCheckDat(sync_model)
 	
@@ -123,6 +128,6 @@ plotSyncModelCheck <- function(sync_model, by=""){
 	p <- p + geom_hline(yintercept=c(1,10,100), lty=3, col="red")
 	p <- p + scale_y_log10()
 	p <- p + ylab("log(delta) (log(m))")
-	print(p)
+	suppressWarnings(print(p))
 }
 

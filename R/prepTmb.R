@@ -31,14 +31,14 @@ getInp <- function(hydros, toa, E_dist, n_ss, pingType, sdInits=1, rbi_min=0, rb
 }
 
 
-#' Get data for input to TMB
+#' Internal function - get data for input to TMB
 #'
 #' Compile data for input to TMB.
 #' @param inp_params Selection of parameters used to setup and run YAPS.
 #' @inheritParams getInp
 #'
 #' @return List for use in TMB.
-#' @export
+#' @noRd
 getDatTmb <- function(hydros, toa, E_dist, n_ss, pingType, rbi_min, rbi_max, ss_data_what, ss_data, biTable, inp_params, z_vec, bbox){
 	T0 <- inp_params$T0
 	Hx0 <- inp_params$Hx0
@@ -115,12 +115,12 @@ getDatTmb <- function(hydros, toa, E_dist, n_ss, pingType, rbi_min, rbi_max, ss_
 	return(datTmb)
 }
 
-#' Get params-list for use in TMB
+#' Internal function - get params-list for use in TMB
 #'
 #' Compile a list of parameters for use in TMB.
 #' @param datTmb Object obtained using getDatTmb()
 #' @return List of params for use in TMB
-#' @export
+#' @noRd
 getParams <- function(datTmb){
 	params_XY <- getParamsXYFromCOA(datTmb)
 	out <- list(
@@ -173,7 +173,7 @@ getParams <- function(datTmb){
 	return(out)
 }
 
-#' Get initial values for X and Y based on Center Of Activity - i.e. hydrophones positions
+#' Internal function - get initial values for X and Y based on Center Of Activity - i.e. hydrophones positions
 #'
 #' Attempts to give meaningful initial values for X and Y based on which hydros detected each ping
 #' @inheritParams getInp
@@ -199,7 +199,7 @@ getParamsXYFromCOA <- function(datTmb){
 #' @param datTmb Object obtained using getDatTmb()
 #' @inheritParams getInp
 #' @return Vector of initial values to use in TMB
-#' @export
+#' @noRd
 getInits <- function(datTmb, sdInits=1) {
 	init_logD_xy <- -1
 
@@ -248,6 +248,7 @@ getInits <- function(datTmb, sdInits=1) {
 #'
 #' Compile a list of relevant parameters (e.g. T0) to use later on
 #' @inheritParams getInp
+#' @noRd
 getInpParams <- function(hydros, toa, pingType){
 	T0 <- min(toa, na.rm=TRUE)
 		

@@ -15,6 +15,7 @@
 #'
 #' @return Dataframe containing a simulated track
 #' @export
+#' @example man/examples/example-yaps_sim.R
 simTrueTrack <- function(model='rw', n, deltaTime=1, D=NULL, shape=NULL, scale=NULL, addDielPattern=TRUE, ss='rw', start_pos=NULL){
 	try(if(model=='rw'  & is.null(D)) stop("When model == 'rw', D needs to be specified"))
 	try(if(model=='crw' & (is.null(shape) | is.null(scale))) stop("When model == 'crw', shape and scale needs to be specified"))
@@ -79,6 +80,7 @@ simTrueTrack <- function(model='rw', n, deltaTime=1, D=NULL, shape=NULL, scale=N
 #'
 #' @return Data frame containing time of ping and true positions
 #' @export
+#' @example man/examples/example-yaps_sim.R
 simTelemetryTrack <- function(trueTrack, pingType, sbi_mean=NULL, sbi_sd=NULL, rbi_min=NULL, rbi_max=NULL){
 	if(pingType == 'sbi'){
 		top <- simTOP(trueTrack, pingType='sbi', sbi_mean=sbi_mean, sbi_sd=sbi_sd)
@@ -103,6 +105,73 @@ simTelemetryTrack <- function(trueTrack, pingType, sbi_mean=NULL, sbi_sd=NULL, r
 	}
 }
 
+
+#' Sim hydrophone array configuration
+#'
+#' @param auto If TRUE, attempts to find a decent array configuration to cover the simulated true track.
+#' @param trueTrack Track obtained from simTrueTrack().
+#' @return Dataframe containing X and Y for hydros
+#' @export
+#' @example man/examples/example-yaps_sim.R
+simHydros <- function(auto=TRUE, trueTrack=NULL){
+	try(if(auto == TRUE & is.null(trueTrack)) stop("When auto is TRUE, trueTrack needs to be supplied"))
+	hx.min <- min(trueTrack$x) - 25
+	hx.max <- max(trueTrack$x) + 25
+	hy.min <- min(trueTrack$y) - 25
+	hy.max <- max(trueTrack$y) + 25
+
+	hx <- c(hx.min,hx.min,hx.max,hx.max, 0, 500,  500, -500, -500)
+	hy <- c(hy.min,hy.max,hy.max,hy.min, 0, 500, -500, -500, 500)
+
+	hydros <- data.table::data.table(hx=hx, hy=hy, hz=1)
+
+	return(hydros)
+}
+
+#' Sim TOA matrix for the supplied telemetryTrack
+#'
+#' Provides the TOA matrix for the specified telemetryTrack. Probability of NA (pNA) and observation noise (sigmaToa) can be specified.
+#' @param telemetryTrack Dataframe obtained from simTelemetryTrack
+#' @param hydros Dataframe obtained from getHydros
+#' @param sigmaToa Detection uncertainty
+#' @param pNA Probability of missing detection 0-1
+#' @param pMP Probability of multipath propagated signal 0-1
+#' @param tempRes Temporal resolution of the hydrophone. PPM systems are typially 1/1000 sec. Other systems are as high as 1/19200 sec.
+#' @inheritParams getInp
+#' @return List containing TOA matrix (toa) and matrix indicating, which obs are multipath (mp_mat)
+#' @export
+#' @example man/examples/example-yaps_sim.R
+simToa <- function(telemetryTrack, hydros, pingType, sigmaToa, pNA, pMP, tempRes=NA){
+	#correct toa
+	toa <- apply(telemetryTrack, 1, function(k) k['top'] + sqrt((hydros$hx - k['x'])^2 + (hydros$hy - k['y'])^2 ) / k['ss'])
+	
+	#add random errors
+	toa <- toa + stats::rnorm(length(toa), 0, sigmaToa)
+	
+	#make temporal resolution pingType specific
+	#sbi 1/19200    rbi 1/1000
+	if(pingType == 'sbi' & is.na(tempRes)) {	
+		tempRes <- 19200
+	} else if(pingType == 'rbi' | pingType == 'pbi' & is.na(tempRes)) {
+		tempRes <- 1000
+	}
+	toa <- floor(toa) + cut(toa-floor(toa), breaks=1:tempRes/tempRes, labels=FALSE)/tempRes
+	#add random measurement variation in steps of tempRes
+	toa <- toa + stats::rpois(length(toa), 1) * sample(c(-1,1), size=length(toa), replace=TRUE) * 1/tempRes
+	
+	#add NAs
+	toa <- toa * stats::rbinom(length(toa),1, (1-pNA))
+	toa[which(toa == 0)] <- NA
+	
+	#add MP
+	mp_mat <- matrix(stats::rbinom(length(toa),1, pMP), ncol=ncol(toa))
+	toa <- toa + mp_mat * stats::runif(length(toa), 50, 300) / telemetryTrack$ss
+	
+	return(list(toa=toa, mp_mat=mp_mat))
+}
+
+
+
 #' Simulate time of pings (Internal function)
 #'
 #' This function will produce simulated time of pings of the relevant type. For internal use only; should not be needed by users.
@@ -111,6 +180,7 @@ simTelemetryTrack <- function(trueTrack, pingType, sbi_mean=NULL, sbi_sd=NULL, r
 #' @inheritParams getInp
 #' @inheritParams simTelemetryTrack
 #' @return Vector of simulated time of pings. Length = number of steps in simulated track.
+#' @noRd
 simTOP <- function(trueTrack, pingType, sbi_mean=NULL, sbi_sd=NULL, rbi_min=NULL, rbi_max=NULL){
 	maxTime <- max(trueTrack$time)
 	top0 <- stats::runif(1,0,0.5)
@@ -156,69 +226,4 @@ simTOP <- function(trueTrack, pingType, sbi_mean=NULL, sbi_sd=NULL, rbi_min=NULL
 		return(top)
 	}
 }
-
-
-#' Sim hydrophone array configuration
-#'
-#' @param auto If TRUE, attempts to find a decent array configuration to cover the simulated true track.
-#' @param trueTrack Track obtained from simTrueTrack().
-#' @return Dataframe containing X and Y for hydros
-#' @export
-simHydros <- function(auto=TRUE, trueTrack=NULL){
-	try(if(auto == TRUE & is.null(trueTrack)) stop("When auto is TRUE, trueTrack needs to be supplied"))
-	hx.min <- min(trueTrack$x) - 25
-	hx.max <- max(trueTrack$x) + 25
-	hy.min <- min(trueTrack$y) - 25
-	hy.max <- max(trueTrack$y) + 25
-
-	hx <- c(hx.min,hx.min,hx.max,hx.max, 0, 500,  500, -500, -500)
-	hy <- c(hy.min,hy.max,hy.max,hy.min, 0, 500, -500, -500, 500)
-
-	hydros <- data.table::data.table(hx=hx, hy=hy, hz=1)
-
-	return(hydros)
-}
-
-#' Sim TOA matrix for the supplied telemetryTrack
-#'
-#' Provides the TOA matrix for the specified telemetryTrack. Probability of NA (pNA) and observation noise (sigmaToa) can be specified.
-#' @param telemetryTrack Dataframe obtained from simTelemetryTrack
-#' @param hydros Dataframe obtained from getHydros
-#' @param sigmaToa Detection uncertainty
-#' @param pNA Probability of missing detection 0-1
-#' @param pMP Probability of multipath propagated signal 0-1
-#' @param tempRes Temporal resolution of the hydrophone. PPM systems are typially 1/1000 sec. Other systems are as high as 1/19200 sec.
-#' @inheritParams getInp
-#' @return List containing TOA matrix (toa) and matrix indicating, which obs are multipath (mp_mat)
-#' @export
-simToa <- function(telemetryTrack, hydros, pingType, sigmaToa, pNA, pMP, tempRes=NA){
-	#correct toa
-	toa <- apply(telemetryTrack, 1, function(k) k['top'] + sqrt((hydros$hx - k['x'])^2 + (hydros$hy - k['y'])^2 ) / k['ss'])
-	
-	#add random errors
-	toa <- toa + stats::rnorm(length(toa), 0, sigmaToa)
-	
-	#make temporal resolution pingType specific
-	#sbi 1/19200    rbi 1/1000
-	if(pingType == 'sbi' & is.na(tempRes)) {	
-		tempRes <- 19200
-	} else if(pingType == 'rbi' | pingType == 'pbi' & is.na(tempRes)) {
-		tempRes <- 1000
-	}
-	toa <- floor(toa) + cut(toa-floor(toa), breaks=1:tempRes/tempRes, labels=FALSE)/tempRes
-	#add random measurement variation in steps of tempRes
-	toa <- toa + stats::rpois(length(toa), 1) * sample(c(-1,1), size=length(toa), replace=TRUE) * 1/tempRes
-	
-	#add NAs
-	toa <- toa * stats::rbinom(length(toa),1, (1-pNA))
-	toa[which(toa == 0)] <- NA
-	
-	#add MP
-	mp_mat <- matrix(stats::rbinom(length(toa),1, pMP), ncol=ncol(toa))
-	toa <- toa + mp_mat * stats::runif(length(toa), 50, 300) / telemetryTrack$ss
-	
-	return(list(toa=toa, mp_mat=mp_mat))
-}
-
-
 

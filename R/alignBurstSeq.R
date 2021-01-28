@@ -10,6 +10,7 @@
 #' @param plot_diag Logical indicating if visual diagnosis plots should be created.
 #' return data.table like input, but with extra columns seq_ping_idx and seq_epo
 #' @export
+#' @example man/examples/example-alignBurstSeq.R
 alignBurstSeq <- function(synced_dat, burst_seq, seq_lng_min=10, rbi_min, rbi_max, plot_diag=TRUE){
 	burst_seq_dt <- data.table::data.table(bi=burst_seq)
 	burst_seq_dt[, seq_ping_idx := 1:.N]
@@ -55,7 +56,7 @@ alignBurstSeq <- function(synced_dat, burst_seq, seq_lng_min=10, rbi_min, rbi_ma
 		plot(log(seq_diffs))
 		points(log(seq_diffs[seq_fix_idx]) ~ seq_fix_idx, col="red", pch=20, cex=2)
 
-		plot(synced_dat[, eposync - seq_epo] ~ synced_dat$ts, pch=".", main="NOTE: If the line suddenly shifts, \n tag time drift is too large!")
+		plot(synced_dat[, eposync - seq_epo] ~ synced_dat$ts, pch=".")
 		par(mfrow=c(1,1))
 	}
 	

@@ -7,6 +7,7 @@
 coverage](https://codecov.io/gh/baktoft/yaps/branch/master/graph/badge.svg)](https://codecov.io/gh/baktoft/yaps?branch=master)
 [![Travis build
 status](https://travis-ci.org/baktoft/yaps.svg?branch=master)](https://travis-ci.org/baktoft/yaps)
+
 <!-- badges: end -->
 
 # YAPS - (Yet Another Positioning Solver)<img src="man/logo/yaps_logo.png" align="right" width="120" />

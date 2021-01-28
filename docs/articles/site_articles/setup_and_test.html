@@ -31,18 +31,12 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../../index.html">yaps</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.0.9110</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.2</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
-<li>
-  <a href="../../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
 <li>
   <a href="../../reference/index.html">Reference</a>
 </li>
@@ -79,11 +73,11 @@
 
       
 
-      </header><script src="setup_and_test_files/htmlwidgets-1.5.1/htmlwidgets.js"></script><script src="setup_and_test_files/jquery-1.12.4/jquery.min.js"></script><link href="setup_and_test_files/leaflet-1.3.1/leaflet.css" rel="stylesheet">
+      </header><script src="setup_and_test_files/header-attrs-2.5/header-attrs.js"></script><script src="setup_and_test_files/htmlwidgets-1.5.2/htmlwidgets.js"></script><script src="setup_and_test_files/jquery-1.12.4/jquery.min.js"></script><link href="setup_and_test_files/leaflet-1.3.1/leaflet.css" rel="stylesheet">
 <script src="setup_and_test_files/leaflet-1.3.1/leaflet.js"></script><link href="setup_and_test_files/leafletfix-1.0.0/leafletfix.css" rel="stylesheet">
-<script src="setup_and_test_files/Proj4Leaflet-1.0.1/proj4-compressed.js"></script><script src="setup_and_test_files/Proj4Leaflet-1.0.1/proj4leaflet.js"></script><link href="setup_and_test_files/rstudio_leaflet-1.3.1/rstudio_leaflet.css" rel="stylesheet">
-<script src="setup_and_test_files/leaflet-binding-2.0.3/leaflet.js"></script><link href="setup_and_test_files/leaflet-measure-2.1.7/leaflet-measure.css" rel="stylesheet">
-<script src="setup_and_test_files/leaflet-measure-2.1.7/leaflet-measure.min.js"></script><script src="setup_and_test_files/leaflet-providers-1.9.0/leaflet-providers_1.9.0.js"></script><script src="setup_and_test_files/leaflet-providers-plugin-2.0.3/leaflet-providers-plugin.js"></script><div class="row">
+<script src="setup_and_test_files/proj4-2.6.2/proj4.min.js"></script><script src="setup_and_test_files/Proj4Leaflet-1.0.1/proj4leaflet.js"></script><link href="setup_and_test_files/rstudio_leaflet-1.3.1/rstudio_leaflet.css" rel="stylesheet">
+<script src="setup_and_test_files/leaflet-binding-2.0.4.1/leaflet.js"></script><link href="setup_and_test_files/leaflet-measure-2.1.7/leaflet-measure.css" rel="stylesheet">
+<script src="setup_and_test_files/leaflet-measure-2.1.7/leaflet-measure.min.js"></script><script src="setup_and_test_files/leaflet-providers-1.9.0/leaflet-providers_1.9.0.js"></script><script src="setup_and_test_files/leaflet-providers-plugin-2.0.4.1/leaflet-providers-plugin.js"></script><div class="row">
   <div class="col-md-9 contents">
     <div class="page-header toc-ignore">
       <h1 data-toc-skip>Tutorial 1 - installation, test and a quick example</h1>
@@ -101,22 +95,26 @@
 <h2 class="hasAnchor">
 <a href="#installation" class="anchor"></a>Installation</h2>
 <p><code>yaps</code> relies heavily on <code>TMB</code> (Template Model Builder). If not already installed, please install <code>TMB</code> and devtools. Then make sure you have the latest version of <code>yaps</code> installed. These steps are only needed once.</p>
-<div class="sourceCode" id="cb1"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">'devtools'</span>)
-<span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span>(<span class="st">"TMB"</span>, <span class="kw">type</span> <span class="kw">=</span> <span class="st">"source"</span>)
-<span class="kw pkg">devtools</span><span class="kw ns">::</span><span class="fu"><a href="https://rdrr.io/pkg/devtools/man/remote-reexports.html">install_github</a></span>(<span class="st">'baktoft/yaps'</span>, <span class="kw">ref</span><span class="kw">=</span><span class="st">'dev_ows'</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">'devtools'</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/utils/install.packages.html">install.packages</a></span><span class="op">(</span><span class="st">"TMB"</span>, type <span class="op">=</span> <span class="st">"source"</span><span class="op">)</span>
+<span class="fu">devtools</span><span class="fu">::</span><span class="fu"><a href="https://devtools.r-lib.org//reference/remote-reexports.html">install_github</a></span><span class="op">(</span><span class="st">'baktoft/yaps'</span>, ref<span class="op">=</span><span class="st">'dev_ows'</span><span class="op">)</span></code></pre></div>
 <p>Load libaries needed for this tutorial.</p>
-<div class="sourceCode" id="cb2"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">data.table</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">dplyr</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">sp</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">leaflet</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://r-datatable.com">data.table</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://dplyr.tidyverse.org">dplyr</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/edzer/sp/">sp</a></span><span class="op">)</span>
+<span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://rstudio.github.io/leaflet/">leaflet</a></span><span class="op">)</span></code></pre></div>
 <p>Load <code>yaps</code> and test that everything is working as expected. This should display a short simulated known track (in black) and the track estimated by <code>yaps</code> in red.</p>
-<div class="sourceCode" id="cb3"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/library.html">library</a></span>(<span class="no">yaps</span>)</pre></body></html></div>
-<pre><code>## Welcome to yaps (v1.2.0.9110)
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/baktoft/yaps">yaps</a></span><span class="op">)</span></code></pre></div>
+<pre><code>## Welcome to yaps (v1.2.2)
 ##  Please let us know if you experience any trouble using yaps. 
 ##  Run testYaps() to ensure basic functions (incl. TMB) is working.</code></pre>
-<div class="sourceCode" id="cb5"><html><body><pre class="r"><span class="fu"><a href="../../reference/testYaps.html">testYaps</a></span>(<span class="kw">silent</span><span class="kw">=</span><span class="fl">TRUE</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="../../reference/testYaps.html">testYaps</a></span><span class="op">(</span>silent<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
 <pre><code>## [1] "Running yaps..."
-## [1] "...yaps converged (obj: -1236.19174412608)"</code></pre>
+## [1] "...yaps converged (obj: -1217.71049257818) with message: relative convergence (4)"</code></pre>
 <p><img src="setup_and_test_files/figure-html/unnamed-chunk-3-1.png" width="700"></p>
 </div>
 <div id="getting-started---the-ssu1-example-data-set" class="section level2">
@@ -124,9 +122,11 @@
 <a href="#getting-started---the-ssu1-example-data-set" class="anchor"></a>Getting started - the <code>ssu1</code> example data set</h2>
 <p>This is a tiny data set collected as part of a feasibility study using YAPS on Vemco PPM style data to track fish in shallow parts of Florida Bay, USA. Data collected by J.S. Rehage, J.R. Rodemann, R.S. Corujo and N. Viadero. Included in <code>yaps</code> with permission from <a href="https://case.fiu.edu/about/directory/profiles/rehage-jennifer-schopf.html">J.S. Rehage</a>, FIU Florida International University.</p>
 <p>Have a look at the data - details can be found in <code><a href="../../reference/ssu1.html">?ssu1</a></code></p>
-<div class="sourceCode" id="cb7"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span>(<span class="no">ssu1</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">ssu1</span><span class="op">)</span></code></pre></div>
 <pre><code>## [1] "hydros"     "detections" "gps"</code></pre>
-<div class="sourceCode" id="cb9"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="no">ssu1</span>$<span class="no">hydros</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">ssu1</span><span class="op">$</span><span class="va">hydros</span><span class="op">)</span></code></pre></div>
 <pre><code>##    serial      x       y   z sync_tag idx
 ## 1: 128344 525973 2771312 1.8       NA   1
 ## 2: 128355 526136 2771277 1.5       NA   2
@@ -135,10 +135,12 @@
 ## 5: 128367 526010 2771265 1.5    59336   5
 ## 6: 128368 526087 2771114 0.7       NA   6</code></pre>
 <p>Pretty self explanatory. Coordinates are in UTM - YAPS will (most probably) not work well with lat/lon data. Column <code>sync_tag</code> indicate serial number of special transmitters co-located with the hydrophones; data from these are used in the synchronization process. Column <code>idx</code> is an index running from <code>1:nrow(hydros)</code>.</p>
-<div class="sourceCode" id="cb11"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.html">plot</a></span>(<span class="no">y</span>~<span class="no">x</span>, <span class="kw">data</span> <span class="kw">=</span> <span class="no">ssu1</span>$<span class="no">hydros</span>, <span class="kw">asp</span><span class="kw">=</span><span class="fl">1</span>)
-<span class="fu"><a href="https://rdrr.io/r/graphics/points.html">points</a></span>(<span class="no">y</span>~<span class="no">x</span>, <span class="kw">data</span><span class="kw">=</span><span class="no">ssu1</span>$<span class="no">hydros</span>[!<span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span>(<span class="no">sync_tag</span>)], <span class="kw">col</span><span class="kw">=</span><span class="st">"red"</span>, <span class="kw">pch</span><span class="kw">=</span><span class="fl">20</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">y</span><span class="op">~</span><span class="va">x</span>, data <span class="op">=</span> <span class="va">ssu1</span><span class="op">$</span><span class="va">hydros</span>, asp<span class="op">=</span><span class="fl">1</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/graphics/points.html">points</a></span><span class="op">(</span><span class="va">y</span><span class="op">~</span><span class="va">x</span>, data<span class="op">=</span><span class="va">ssu1</span><span class="op">$</span><span class="va">hydros</span><span class="op">[</span><span class="op">!</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">sync_tag</span><span class="op">)</span><span class="op">]</span>, col<span class="op">=</span><span class="st">"red"</span>, pch<span class="op">=</span><span class="fl">20</span><span class="op">)</span></code></pre></div>
 <p><img src="setup_and_test_files/figure-html/unnamed-chunk-5-1.png" width="700"></p>
-<div class="sourceCode" id="cb12"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="no">ssu1</span>$<span class="no">detections</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">ssu1</span><span class="op">$</span><span class="va">detections</span><span class="op">)</span></code></pre></div>
 <pre><code>##                     ts   tag        epo  frac serial
 ## 1: 2019-09-09 16:07:46 59334 1568045266 0.644 128368
 ## 2: 2019-09-09 16:09:21 59337 1568045361 0.932 128368
@@ -147,7 +149,8 @@
 ## 5: 2019-09-09 16:19:17 59336 1568045957 0.474 128368
 ## 6: 2019-09-09 16:21:50 59334 1568046110 0.579 128368</code></pre>
 <p>Almost self explanatory. Each row is a detection of a transmitter (<code>tag</code>) on a hydrophone identified by <code>serial</code>. Column <code>ts</code> is the (non-synced) timestamp of the detection in timezone UTC. Column <code>epo</code> is <code>ts</code> converted to UNIX epoch using <code><a href="https://rdrr.io/r/base/numeric.html">as.numeric(ts)</a></code> and <code>frac</code> is fractions of second for the detection, i.e. the complete time of detection is given by <code>epofrac = epo + frac</code>.</p>
-<div class="sourceCode" id="cb14"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span>(<span class="no">ssu1</span>$<span class="no">gps</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/utils/head.html">head</a></span><span class="op">(</span><span class="va">ssu1</span><span class="op">$</span><span class="va">gps</span><span class="op">)</span></code></pre></div>
 <pre><code>##                     ts    utm_x   utm_y
 ## 1: 2019-09-09 18:02:18 526073.3 2771147
 ## 2: 2019-09-09 18:02:19 526073.3 2771147
@@ -156,81 +159,99 @@
 ## 5: 2019-09-09 18:02:39 526072.5 2771146
 ## 6: 2019-09-09 18:02:40 526072.6 2771146</code></pre>
 <p>Quick map to see where we are in the world (check out <a href="https://cran.r-project.org/web/packages/leaflet/index.html"><code>leaflet</code></a> - awesome for making quick slippy-maps) </p>
-<div id="htmlwidget-a7b4094b05db6306bc47" style="width:100%;height:700px;" class="leaflet html-widget"></div>
-<script type="application/json" data-for="htmlwidget-a7b4094b05db6306bc47">{"x":{"options":{"minZoom":0,"maxZoom":18,"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"calls":[{"method":"addTiles","args":["//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",null,"OSM",{"minZoom":0,"maxZoom":18,"tileSize":256,"subdomains":"abc","errorTileUrl":"","tms":false,"noWrap":false,"zoomOffset":0,"zoomReverse":false,"opacity":1,"zIndex":1,"detectRetina":false,"attribution":"&copy; <a href=\"http://openstreetmap.org\">OpenStreetMap<\/a> contributors, <a href=\"http://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA<\/a>"}]},{"method":"addCircles","args":[[25.0572526879275,25.056933794581,25.0564271447713,25.0565369177048,25.056827597675,25.0554625995271,25.0576768665456,25.056492764114,25.0571612943257,25.0557780947834,25.0557883169415,25.0568444183895,25.0571512455673,25.0561206993475,25.0565118936195,25.0568376087486,25.0561501056191,25.0574861147867,25.0580468077411],[-80.7424925941477,-80.7408772202422,-80.7403528268265,-80.7411556558772,-80.7421266515136,-80.7413661113922,-80.7423330770573,-80.7417307792939,-80.7418681794345,-80.7410283642852,-80.7417124271068,-80.7414127830839,-80.7412832523583,-80.7407004726954,-80.7423454272785,-80.7426917485257,-80.7420289262653,-80.7416989541803,-80.7421439289972],5,null,null,{"interactive":true,"className":"","stroke":true,"color":"#03F","weight":5,"opacity":0.5,"fill":true,"fillColor":"#03F","fillOpacity":0.2},null,null,["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19"],{"interactive":false,"permanent":true,"direction":"auto","opacity":1,"offset":[0,0],"textsize":"10px","textOnly":true,"className":"","sticky":true},null,null]},{"method":"addMeasure","args":[{"position":"topright","primaryLengthUnit":"meters","primaryAreaUnit":"acres","activeColor":"#ABE67E","completedColor":"#C8F2BE","popupOptions":{"className":"leaflet-measure-resultpopup","autoPanPadding":[10,10]},"captureZIndex":10000,"localization":"en","decPoint":".","thousandsSep":","}]},{"method":"addProviderTiles","args":["Esri.WorldImagery",null,"Esri.WorldImagery",{"errorTileUrl":"","noWrap":false,"detectRetina":false}]},{"method":"addLayersControl","args":[["OSM (default)","Esri.WorldImagery"],[],{"collapsed":false,"autoZIndex":true,"position":"topright"}]}],"limits":{"lat":[25.0554625995271,25.0580468077411],"lng":[-80.7426917485257,-80.7403528268265]}},"evals":[],"jsHooks":[]}</script>
+<div id="htmlwidget-d54ceab2b858080f95ad" style="width:100%;height:700px;" class="leaflet html-widget"></div>
+<script type="application/json" data-for="htmlwidget-d54ceab2b858080f95ad">{"x":{"options":{"minZoom":0,"maxZoom":18,"crs":{"crsClass":"L.CRS.EPSG3857","code":null,"proj4def":null,"projectedBounds":null,"options":{}}},"calls":[{"method":"addTiles","args":["//{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",null,"OSM",{"minZoom":0,"maxZoom":18,"tileSize":256,"subdomains":"abc","errorTileUrl":"","tms":false,"noWrap":false,"zoomOffset":0,"zoomReverse":false,"opacity":1,"zIndex":1,"detectRetina":false,"attribution":"&copy; <a href=\"http://openstreetmap.org\">OpenStreetMap<\/a> contributors, <a href=\"http://creativecommons.org/licenses/by-sa/2.0/\">CC-BY-SA<\/a>"}]},{"method":"addCircles","args":[[25.0572526879275,25.056933794581,25.0564271447713,25.0565369177048,25.056827597675,25.0554625995271,25.0576768665456,25.056492764114,25.0571612943257,25.0557780947834,25.0557883169415,25.0568444183895,25.0571512455673,25.0561206993475,25.0565118936195,25.0568376087486,25.0561501056191,25.0574861147867,25.0580468077411],[-80.7424925941477,-80.7408772202422,-80.7403528268265,-80.7411556558772,-80.7421266515136,-80.7413661113922,-80.7423330770573,-80.7417307792939,-80.7418681794345,-80.7410283642852,-80.7417124271068,-80.7414127830839,-80.7412832523583,-80.7407004726954,-80.7423454272785,-80.7426917485257,-80.7420289262653,-80.7416989541803,-80.7421439289972],5,null,null,{"interactive":true,"className":"","stroke":true,"color":"#03F","weight":5,"opacity":0.5,"fill":true,"fillColor":"#03F","fillOpacity":0.2},null,null,["1","2","3","4","5","6","7","8","9","10","11","12","13","14","15","16","17","18","19"],{"interactive":false,"permanent":true,"direction":"auto","opacity":1,"offset":[0,0],"textsize":"10px","textOnly":true,"className":"","sticky":true},null,null]},{"method":"addMeasure","args":[{"position":"topright","primaryLengthUnit":"meters","primaryAreaUnit":"acres","activeColor":"#ABE67E","completedColor":"#C8F2BE","popupOptions":{"className":"leaflet-measure-resultpopup","autoPanPadding":[10,10]},"captureZIndex":10000,"localization":"en","decPoint":".","thousandsSep":","}]},{"method":"addProviderTiles","args":["Esri.WorldImagery",null,"Esri.WorldImagery",{"errorTileUrl":"","noWrap":false,"detectRetina":false}]},{"method":"addLayersControl","args":[["OSM (default)","Esri.WorldImagery"],[],{"collapsed":false,"autoZIndex":true,"position":"topright"}]}],"limits":{"lat":[25.0554625995271,25.0580468077411],"lng":[-80.7426917485257,-80.7403528268265]}},"evals":[],"jsHooks":[]}</script>
 </div>
 <div id="synchronizing-the-array" class="section level2">
 <h2 class="hasAnchor">
 <a href="#synchronizing-the-array" class="anchor"></a>Synchronizing the array</h2>
 <p>The code below is identical to that presented in our pre-print <a href="https://www.researchgate.net/publication/338010182_Opening_the_black_box_of_high_resolution_fish_tracking_using_yaps">Opening the black box of high resolution fish tracking using yaps</a>, which also include detailed description of the parameters in <code><a href="../../reference/getInpSync.html">getInpSync()</a></code>.</p>
 <p>First, set the parameters to be used in the sync model and get input data prepared for use with <code><a href="../../reference/getSyncModel.html">getSyncModel()</a></code>.</p>
-<div class="sourceCode" id="cb16"><html><body><pre class="r"><span class="co"># set sync parameters </span>
-<span class="no">max_epo_diff</span> <span class="kw">&lt;-</span> <span class="fl">120</span>
-<span class="no">min_hydros</span> <span class="kw">&lt;-</span> <span class="fl">2</span>
-<span class="no">time_keeper_idx</span> <span class="kw">&lt;-</span> <span class="fl">5</span>
-<span class="no">fixed_hydros_idx</span> <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">2</span>:<span class="fl">3</span>, <span class="fl">6</span>, <span class="fl">8</span>, <span class="fl">11</span>, <span class="fl">13</span>:<span class="fl">17</span>)
-<span class="no">n_offset_day</span> <span class="kw">&lt;-</span> <span class="fl">2</span>
-<span class="no">n_ss_day</span> <span class="kw">&lt;-</span> <span class="fl">2</span>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="co"># set sync parameters </span>
+<span class="va">max_epo_diff</span> <span class="op">&lt;-</span> <span class="fl">120</span>
+<span class="va">min_hydros</span> <span class="op">&lt;-</span> <span class="fl">2</span>
+<span class="va">time_keeper_idx</span> <span class="op">&lt;-</span> <span class="fl">5</span>
+<span class="va">fixed_hydros_idx</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">2</span><span class="op">:</span><span class="fl">3</span>, <span class="fl">6</span>, <span class="fl">8</span>, <span class="fl">11</span>, <span class="fl">13</span><span class="op">:</span><span class="fl">17</span><span class="op">)</span>
+<span class="va">n_offset_day</span> <span class="op">&lt;-</span> <span class="fl">2</span>
+<span class="va">n_ss_day</span> <span class="op">&lt;-</span> <span class="fl">2</span>
 
-<span class="no">inp_sync</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../../reference/getInpSync.html">getInpSync</a></span>(<span class="kw">sync_dat</span><span class="kw">=</span><span class="no">ssu1</span>, <span class="no">max_epo_diff</span>, <span class="no">min_hydros</span>, <span class="no">time_keeper_idx</span>,
-    <span class="no">fixed_hydros_idx</span>, <span class="no">n_offset_day</span>, <span class="no">n_ss_day</span>, <span class="kw">keep_rate</span><span class="kw">=</span><span class="fl">0.25</span>)</pre></body></html></div>
+<span class="va">inp_sync</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/getInpSync.html">getInpSync</a></span><span class="op">(</span>sync_dat<span class="op">=</span><span class="va">ssu1</span>, <span class="va">max_epo_diff</span>, <span class="va">min_hydros</span>, <span class="va">time_keeper_idx</span>, 
+    <span class="va">fixed_hydros_idx</span>, <span class="va">n_offset_day</span>, <span class="va">n_ss_day</span>, keep_rate<span class="op">=</span><span class="fl">0.25</span><span class="op">)</span></code></pre></div>
+<pre><code>## WARNING: getSyncModel() will estimate speed of sound. It is strongly advised to use data instead!
+## NOTE: The designated time-keeper is not a fixed hydrophone - is this intentional?
+## NOTE: At least one hydro has less than 50 pings in an offset_idx - try getSyncCoverage(inp_sync, plot=TRUE) for visual
+##  and rerun getInpSync() with increased keep_rate</code></pre>
 <p>Then, obtain a synchronization model using <code><a href="../../reference/getSyncModel.html">getSyncModel()</a></code></p>
-<div class="sourceCode" id="cb17"><html><body><pre class="r"><span class="no">sync_model</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../../reference/getSyncModel.html">getSyncModel</a></span>(<span class="no">inp_sync</span>, <span class="kw">silent</span><span class="kw">=</span><span class="fl">TRUE</span>)</pre></body></html></div>
-<pre><code>## 2020-04-20 18:59:12 
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">sync_model</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/getSyncModel.html">getSyncModel</a></span><span class="op">(</span><span class="va">inp_sync</span>, silent<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
+<pre><code>## 2021-01-21 22:56:00 
 ## . Running optimization of the sync model. Please be patient - this can take a long time. 
-## .. 2020-04-20 18:59:20  
-## .... obj =  -9087.91  
-## ... iteration 1: 8.03 sec elapsed
+## .. 2021-01-21 22:56:04  
+## .... obj =  -8866.779  
+## Fitting sync model: : 3.39 sec elapsed
 ## Sync model done 
 ## Consider saving the sync model for later use - e.g. save(sync_model, file='path_to_sync_save'). 
-## Fitting sync model: : 8.04 sec elapsed</code></pre>
+## 3.58 sec elapsed</code></pre>
 <p>Use the diagnostic plots to ensure the obtained synchronization model is good. Basically, we want all number to be as close to zero as possible. Note, that a few outliers far away from zero is not serious, as the synchronization model follows a scaled t-distribution allowing long tails in the residuals.</p>
-<div class="sourceCode" id="cb19"><html><body><pre class="r"><span class="fu"><a href="../../reference/plotSyncModelResids.html">plotSyncModelResids</a></span>(<span class="no">sync_model</span>, <span class="kw">by</span><span class="kw">=</span><span class="st">'overall'</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="../../reference/plotSyncModelResids.html">plotSyncModelResids</a></span><span class="op">(</span><span class="va">sync_model</span>, by<span class="op">=</span><span class="st">'overall'</span><span class="op">)</span>    </code></pre></div>
 <p><img src="setup_and_test_files/figure-html/unnamed-chunk-11-1.png" width="700"></p>
-<div class="sourceCode" id="cb20"><html><body><pre class="r"><span class="fu"><a href="../../reference/plotSyncModelResids.html">plotSyncModelResids</a></span>(<span class="no">sync_model</span>, <span class="kw">by</span><span class="kw">=</span><span class="st">'quantiles'</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="../../reference/plotSyncModelResids.html">plotSyncModelResids</a></span><span class="op">(</span><span class="va">sync_model</span>, by<span class="op">=</span><span class="st">'quantiles'</span><span class="op">)</span></code></pre></div>
 <p><img src="setup_and_test_files/figure-html/unnamed-chunk-11-2.png" width="700"></p>
-<div class="sourceCode" id="cb21"><html><body><pre class="r"><span class="fu"><a href="../../reference/plotSyncModelResids.html">plotSyncModelResids</a></span>(<span class="no">sync_model</span>, <span class="kw">by</span><span class="kw">=</span><span class="st">'sync_tag'</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="../../reference/plotSyncModelResids.html">plotSyncModelResids</a></span><span class="op">(</span><span class="va">sync_model</span>, by<span class="op">=</span><span class="st">'sync_tag'</span><span class="op">)</span>      </code></pre></div>
 <p><img src="setup_and_test_files/figure-html/unnamed-chunk-11-3.png" width="700"></p>
-<div class="sourceCode" id="cb22"><html><body><pre class="r"><span class="fu"><a href="../../reference/plotSyncModelResids.html">plotSyncModelResids</a></span>(<span class="no">sync_model</span>, <span class="kw">by</span><span class="kw">=</span><span class="st">'hydro'</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="../../reference/plotSyncModelResids.html">plotSyncModelResids</a></span><span class="op">(</span><span class="va">sync_model</span>, by<span class="op">=</span><span class="st">'hydro'</span><span class="op">)</span>         </code></pre></div>
 <p><img src="setup_and_test_files/figure-html/unnamed-chunk-11-4.png" width="700"></p>
 <p>Next we apply the obtained synchronization model to the tracking data using <code><a href="../../reference/applySync.html">applySync()</a></code></p>
-<div class="sourceCode" id="cb23"><html><body><pre class="r"><span class="no">detections_synced</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../../reference/applySync.html">applySync</a></span>(<span class="kw">toa</span><span class="kw">=</span><span class="no">ssu1</span>$<span class="no">detections</span>, <span class="kw">hydros</span><span class="kw">=</span><span class="no">ssu1</span>$<span class="no">hydros</span>, <span class="no">sync_model</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">detections_synced</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/applySync.html">applySync</a></span><span class="op">(</span>toa<span class="op">=</span><span class="va">ssu1</span><span class="op">$</span><span class="va">detections</span>, hydros<span class="op">=</span><span class="va">ssu1</span><span class="op">$</span><span class="va">hydros</span>, <span class="va">sync_model</span><span class="op">)</span></code></pre></div>
 </div>
 <div id="running-yaps-to-estimate-the-track" class="section level2">
 <h2 class="hasAnchor">
 <a href="#running-yaps-to-estimate-the-track" class="anchor"></a>Running <code>yaps</code> to estimate the track</h2>
 <p>Now that we have the receivers synchronized, we can estimate the track using <code>yaps</code>. First, we need a data.table containing positions of the receivers in three dimension with colnum names ‘hx’, ‘hy’ and ‘hz’.</p>
-<div class="sourceCode" id="cb24"><html><body><pre class="r"><span class="no">hydros_yaps</span> <span class="kw">&lt;-</span> <span class="kw pkg">data.table</span><span class="kw ns">::</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/data.table.html">data.table</a></span>(<span class="no">sync_model</span>$<span class="no">pl</span>$<span class="no">TRUE_H</span>)
-<span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span>(<span class="no">hydros_yaps</span>) <span class="kw">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="st">'hx'</span>,<span class="st">'hy'</span>,<span class="st">'hz'</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">hydros_yaps</span> <span class="op">&lt;-</span> <span class="fu">data.table</span><span class="fu">::</span><span class="fu"><a href="https://Rdatatable.gitlab.io/data.table/reference/data.table.html">data.table</a></span><span class="op">(</span><span class="va">sync_model</span><span class="op">$</span><span class="va">pl</span><span class="op">$</span><span class="va">TRUE_H</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/base/colnames.html">colnames</a></span><span class="op">(</span><span class="va">hydros_yaps</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">'hx'</span>,<span class="st">'hy'</span>,<span class="st">'hz'</span><span class="op">)</span></code></pre></div>
 <p>We specify tag specific minimum and maximum burst intervals and extract the detetections pertaining to the focal tag from the synchronized data</p>
-<div class="sourceCode" id="cb25"><html><body><pre class="r"><span class="no">focal_tag</span> <span class="kw">&lt;-</span> <span class="fl">15266</span>
-<span class="no">rbi_min</span> <span class="kw">&lt;-</span> <span class="fl">20</span>
-<span class="no">rbi_max</span> <span class="kw">&lt;-</span> <span class="fl">40</span>
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">focal_tag</span> <span class="op">&lt;-</span> <span class="fl">15266</span>
+<span class="va">rbi_min</span> <span class="op">&lt;-</span> <span class="fl">20</span>
+<span class="va">rbi_max</span> <span class="op">&lt;-</span> <span class="fl">40</span>
 
-<span class="no">synced_dat_ssu1</span> <span class="kw">&lt;-</span> <span class="no">detections_synced</span>[<span class="no">tag</span> <span class="kw">==</span> <span class="no">focal_tag</span>]</pre></body></html></div>
+<span class="va">synced_dat_ssu1</span> <span class="op">&lt;-</span> <span class="va">detections_synced</span><span class="op">[</span><span class="va">tag</span> <span class="op">==</span> <span class="va">focal_tag</span><span class="op">]</span></code></pre></div>
 <p>The main input data to <code>yaps</code> is a Time-of-Arrival matrix of the detections. This can be obtained using <code><a href="../../reference/getToaYaps.html">getToaYaps()</a></code></p>
-<div class="sourceCode" id="cb26"><html><body><pre class="r"><span class="no">toa_ssu1</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../../reference/getToaYaps.html">getToaYaps</a></span>(<span class="no">synced_dat_ssu1</span>, <span class="no">hydros_yaps</span>, <span class="no">rbi_min</span>, <span class="no">rbi_max</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">toa_ssu1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/getToaYaps.html">getToaYaps</a></span><span class="op">(</span><span class="va">synced_dat_ssu1</span>, <span class="va">hydros_yaps</span>, <span class="va">rbi_min</span>, <span class="va">rbi_max</span><span class="op">)</span></code></pre></div>
 <p>Next, we use the function <code><a href="../../reference/getInp.html">getInp()</a></code> to compile input data for <code><a href="../../reference/runYaps.html">runYaps()</a></code>.</p>
-<div class="sourceCode" id="cb27"><html><body><pre class="r"><span class="no">inp_ssu1</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../../reference/getInp.html">getInp</a></span>(<span class="no">hydros_yaps</span>, <span class="no">toa_ssu1</span>, <span class="kw">E_dist</span><span class="kw">=</span><span class="st">"Mixture"</span>, <span class="kw">n_ss</span><span class="kw">=</span><span class="fl">2</span>, <span class="kw">pingType</span><span class="kw">=</span><span class="st">"rbi"</span>,
-    <span class="kw">sdInits</span><span class="kw">=</span><span class="fl">1</span>, <span class="kw">rbi_min</span><span class="kw">=</span><span class="no">rbi_min</span>, <span class="kw">rbi_max</span><span class="kw">=</span><span class="no">rbi_max</span>, <span class="kw">ss_data_what</span><span class="kw">=</span><span class="st">"est"</span>, <span class="kw">ss_data</span><span class="kw">=</span><span class="fl">0</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">inp_ssu1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/getInp.html">getInp</a></span><span class="op">(</span><span class="va">hydros_yaps</span>, <span class="va">toa_ssu1</span>, E_dist<span class="op">=</span><span class="st">"Mixture"</span>, n_ss<span class="op">=</span><span class="fl">2</span>, pingType<span class="op">=</span><span class="st">"rbi"</span>, 
+    sdInits<span class="op">=</span><span class="fl">1</span>, rbi_min<span class="op">=</span><span class="va">rbi_min</span>, rbi_max<span class="op">=</span><span class="va">rbi_max</span>, ss_data_what<span class="op">=</span><span class="st">"est"</span>, ss_data<span class="op">=</span><span class="fl">0</span><span class="op">)</span></code></pre></div>
 <p>Finally, we are ready to run <code>yaps</code> to obtain the track</p>
-<div class="sourceCode" id="cb28"><html><body><pre class="r"><span class="no">yaps_out_ssu1</span> <span class="kw">&lt;-</span> <span class="fu"><a href="../../reference/runYaps.html">runYaps</a></span>(<span class="no">inp_ssu1</span>, <span class="kw">silent</span><span class="kw">=</span><span class="fl">TRUE</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="va">yaps_out_ssu1</span> <span class="op">&lt;-</span> <span class="fu"><a href="../../reference/runYaps.html">runYaps</a></span><span class="op">(</span><span class="va">inp_ssu1</span>, silent<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span></code></pre></div>
 <pre><code>## [1] "Running yaps..."
-## [1] "...yaps converged (obj: -9258.37596710086)"</code></pre>
+## [1] "...yaps converged (obj: -9337.87489957211) with message: relative convergence (4)"</code></pre>
 </div>
 <div id="basic-plotting-of-estimated-track" class="section level2">
 <h2 class="hasAnchor">
 <a href="#basic-plotting-of-estimated-track" class="anchor"></a>Basic plotting of estimated track</h2>
 <p>To do some very basic visualization of the obtained track, we can use <code><a href="../../reference/plotYaps.html">plotYaps()</a></code> as below.</p>
-<div class="sourceCode" id="cb30"><html><body><pre class="r"><span class="fu"><a href="../../reference/plotYaps.html">plotYaps</a></span>(<span class="kw">inp</span><span class="kw">=</span><span class="no">inp_ssu1</span>, <span class="kw">yaps_out</span><span class="kw">=</span><span class="no">yaps_out_ssu1</span>, <span class="kw">type</span><span class="kw">=</span><span class="st">"map"</span>)
+<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="../../reference/plotYaps.html">plotYaps</a></span><span class="op">(</span>inp<span class="op">=</span><span class="va">inp_ssu1</span>, yaps_out<span class="op">=</span><span class="va">yaps_out_ssu1</span>, type<span class="op">=</span><span class="st">"map"</span><span class="op">)</span>
 <span class="co"># Add gps track for direct comparison</span>
-<span class="fu"><a href="https://rdrr.io/r/graphics/lines.html">lines</a></span>(<span class="no">utm_y</span>~<span class="no">utm_x</span>, <span class="kw">data</span><span class="kw">=</span><span class="no">ssu1</span>$<span class="no">gps</span>, <span class="kw">lty</span><span class="kw">=</span><span class="fl">2</span>)</pre></body></html></div>
+<span class="fu"><a href="https://rdrr.io/r/graphics/lines.html">lines</a></span><span class="op">(</span><span class="va">utm_y</span><span class="op">~</span><span class="va">utm_x</span>, data<span class="op">=</span><span class="va">ssu1</span><span class="op">$</span><span class="va">gps</span>, lty<span class="op">=</span><span class="fl">2</span><span class="op">)</span></code></pre></div>
 <p><img src="setup_and_test_files/figure-html/unnamed-chunk-18-1.png" width="700"></p>
-<div class="sourceCode" id="cb31"><html><body><pre class="r"><span class="fu"><a href="https://rdrr.io/r/graphics/par.html">par</a></span>(<span class="kw">mfrow</span><span class="kw">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span>(<span class="fl">2</span>,<span class="fl">1</span>))
-<span class="fu"><a href="../../reference/plotYaps.html">plotYaps</a></span>(<span class="kw">inp</span><span class="kw">=</span><span class="no">inp_ssu1</span>, <span class="kw">yaps_out</span><span class="kw">=</span><span class="no">yaps_out_ssu1</span>, <span class="kw">type</span><span class="kw">=</span><span class="st">"coord_X"</span>)
-<span class="fu"><a href="https://rdrr.io/r/graphics/lines.html">lines</a></span>(<span class="no">utm_x</span>~<span class="no">ts</span>, <span class="kw">data</span><span class="kw">=</span><span class="no">ssu1</span>$<span class="no">gps</span>, <span class="kw">lty</span><span class="kw">=</span><span class="fl">2</span>)
-<span class="fu"><a href="../../reference/plotYaps.html">plotYaps</a></span>(<span class="kw">inp</span><span class="kw">=</span><span class="no">inp_ssu1</span>, <span class="kw">yaps_out</span><span class="kw">=</span><span class="no">yaps_out_ssu1</span>, <span class="kw">type</span><span class="kw">=</span><span class="st">"coord_Y"</span>)
-<span class="fu"><a href="https://rdrr.io/r/graphics/lines.html">lines</a></span>(<span class="no">utm_y</span>~<span class="no">ts</span>, <span class="kw">data</span><span class="kw">=</span><span class="no">ssu1</span>$<span class="no">gps</span>, <span class="kw">lty</span><span class="kw">=</span><span class="fl">2</span>)</pre></body></html></div>
+<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span class="fu"><a href="https://rdrr.io/r/graphics/par.html">par</a></span><span class="op">(</span>mfrow<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">2</span>,<span class="fl">1</span><span class="op">)</span><span class="op">)</span>
+<span class="fu"><a href="../../reference/plotYaps.html">plotYaps</a></span><span class="op">(</span>inp<span class="op">=</span><span class="va">inp_ssu1</span>, yaps_out<span class="op">=</span><span class="va">yaps_out_ssu1</span>, type<span class="op">=</span><span class="st">"coord_X"</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/graphics/lines.html">lines</a></span><span class="op">(</span><span class="va">utm_x</span><span class="op">~</span><span class="va">ts</span>, data<span class="op">=</span><span class="va">ssu1</span><span class="op">$</span><span class="va">gps</span>, lty<span class="op">=</span><span class="fl">2</span><span class="op">)</span>
+<span class="fu"><a href="../../reference/plotYaps.html">plotYaps</a></span><span class="op">(</span>inp<span class="op">=</span><span class="va">inp_ssu1</span>, yaps_out<span class="op">=</span><span class="va">yaps_out_ssu1</span>, type<span class="op">=</span><span class="st">"coord_Y"</span><span class="op">)</span>
+<span class="fu"><a href="https://rdrr.io/r/graphics/lines.html">lines</a></span><span class="op">(</span><span class="va">utm_y</span><span class="op">~</span><span class="va">ts</span>, data<span class="op">=</span><span class="va">ssu1</span><span class="op">$</span><span class="va">gps</span>, lty<span class="op">=</span><span class="fl">2</span><span class="op">)</span></code></pre></div>
 <p><img src="setup_and_test_files/figure-html/unnamed-chunk-18-2.png" width="700"></p>
 <p>This concludes the first tutorial on using <code>yaps</code>.</p>
 </div>
@@ -251,7 +272,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>

@@ -6,7 +6,8 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Test YAPS core functionality — testYaps • yaps</title>
+<title>Calculate speed of sound from water temperature, salinity and depth
+Based on H. Medwin (1975) Speed of sound in water: A simple equation for realistic parameters. (https://doi.org/10.1121/1.380790) — tempToSs • yaps</title>
 
 
 <!-- jquery -->
@@ -39,9 +40,10 @@
 
 
 
-<meta property="og:title" content="Test YAPS core functionality — testYaps" />
-<meta property="og:description" content="Run `testYaps()` to check that the core functions of YAPS is working correctly.
-Output should be a random simulated (black) and estimated (red) track." />
+<meta property="og:title" content="Calculate speed of sound from water temperature, salinity and depth
+Based on H. Medwin (1975) Speed of sound in water: A simple equation for realistic parameters. (https://doi.org/10.1121/1.380790) — tempToSs" />
+<meta property="og:description" content="Calculate speed of sound from water temperature, salinity and depth
+Based on H. Medwin (1975) Speed of sound in water: A simple equation for realistic parameters. (https://doi.org/10.1121/1.380790)" />
 
 
 
@@ -120,51 +122,33 @@ Output should be a random simulated (black) and estimated (red) track." />
 <div class="row">
   <div class="col-md-9 contents">
     <div class="page-header">
-    <h1>Test YAPS core functionality</h1>
-    <small class="dont-index">Source: <a href='https://github.com/baktoft/yaps/blob/master/R/testYaps.R'><code>R/testYaps.R</code></a></small>
-    <div class="hidden name"><code>testYaps.Rd</code></div>
+    <h1>Calculate speed of sound from water temperature, salinity and depth
+Based on H. Medwin (1975) Speed of sound in water: A simple equation for realistic parameters. (https://doi.org/10.1121/1.380790)</h1>
+    <small class="dont-index">Source: <a href='https://github.com/baktoft/yaps/blob/master/R/tempToSs.R'><code>R/tempToSs.R</code></a></small>
+    <div class="hidden name"><code>tempToSs.Rd</code></div>
     </div>
 
     <div class="ref-description">
-    <p>Run `testYaps()` to check that the core functions of YAPS is working correctly.
-Output should be a random simulated (black) and estimated (red) track.</p>
+    <p>Calculate speed of sound from water temperature, salinity and depth
+Based on H. Medwin (1975) Speed of sound in water: A simple equation for realistic parameters. (https://doi.org/10.1121/1.380790)</p>
     </div>
 
-    <pre class="usage"><span class='fu'>testYaps</span><span class='op'>(</span>
-  silent <span class='op'>=</span> <span class='cn'>TRUE</span>,
-  pingType <span class='op'>=</span> <span class='st'>"sbi"</span>,
-  est_ss <span class='op'>=</span> <span class='cn'>TRUE</span>,
-  opt_fun <span class='op'>=</span> <span class='st'>"nlminb"</span>,
-  opt_controls <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='op'>)</span>,
-  bounds <span class='op'>=</span> <span class='fu'><a href='https://rdrr.io/r/base/list.html'>list</a></span><span class='op'>(</span><span class='op'>)</span>
-<span class='op'>)</span></pre>
+    <pre class="usage"><span class='fu'>tempToSs</span><span class='op'>(</span><span class='va'>temp</span>, <span class='va'>sal</span>, depth <span class='op'>=</span> <span class='fl'>5</span><span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
     <colgroup><col class="name" /><col class="desc" /></colgroup>
     <tr>
-      <th>silent</th>
-      <td><p>Logical whether to print output to the console</p></td>
+      <th>temp</th>
+      <td><p>Water temperature in degrees Celcius</p></td>
     </tr>
     <tr>
-      <th>pingType</th>
-      <td><p>Type of transmitter to simulate - either stable burst interval ('sbi'), random burst interval ('rbi') or random burst interval but where the random sequence is known a priori</p></td>
+      <th>sal</th>
+      <td><p>Water slinity in parts per thousand (promille)</p></td>
     </tr>
     <tr>
-      <th>est_ss</th>
-      <td><p>Logical whether to test using ss_data_what = 'est' (est_ss = TRUE) or ss_data_what = 'data' (est_ss = FALSE)</p></td>
-    </tr>
-    <tr>
-      <th>opt_fun</th>
-      <td><p>Which optimization function to use. Default is 'nlminb' - alternative is 'nloptr' (experimental!). If using 'nloptr', `opt_controls` must be specified.</p></td>
-    </tr>
-    <tr>
-      <th>opt_controls</th>
-      <td><p>List of controls passed to optimization function. For instances, tolerances such as x.tol=1E-8. If opt_fun = 'nloptr', `opt_controls` must be a list formatted appropriately. For instance: opt_controls &lt;- list(algorithm="NLOPT_LD_AUGLAG", xtol_abs=1e-12, maxeval=2E+4, print_level = 1, local_opts= list(algorithm="NLOPT_LD_AUGLAG_EQ", xtol_rel=1e-4) ). See `?nloptr` and the NLopt site https://nlopt.readthedocs.io/en/latest/ for more info. Some algorithms in `nloptr` require bounded parameters - see `bounds`.</p></td>
-    </tr>
-    <tr>
-      <th>bounds</th>
-      <td><p>List of two vectors specifying lower and upper bounds of fixed parameters. Length of each vector must be equal to number of fixed parameters. For instance, bounds = list(lb = c(-3, -1, -2), ub = c(2,0,1) ).</p></td>
+      <th>depth</th>
+      <td><p>Depth in meters - default = 5 m - can typically be ignored</p></td>
     </tr>
     </table>
 

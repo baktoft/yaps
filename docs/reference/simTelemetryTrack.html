@@ -46,6 +46,8 @@ Number of pings are determined automatically based on track length and transmitt
 
 
 
+
+
 <!-- mathjax -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script>
@@ -73,19 +75,13 @@ Number of pings are determined automatically based on track length and transmitt
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">yaps</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.0.9110</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.2</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -134,8 +130,14 @@ Number of pings are determined automatically based on track length and transmitt
 Number of pings are determined automatically based on track length and transmitter specifications.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>simTelemetryTrack</span>(<span class='no'>trueTrack</span>, <span class='no'>pingType</span>, <span class='kw'>sbi_mean</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>sbi_sd</span> <span class='kw'>=</span> <span class='kw'>NULL</span>,
-  <span class='kw'>rbi_min</span> <span class='kw'>=</span> <span class='kw'>NULL</span>, <span class='kw'>rbi_max</span> <span class='kw'>=</span> <span class='kw'>NULL</span>)</pre>
+    <pre class="usage"><span class='fu'>simTelemetryTrack</span><span class='op'>(</span>
+  <span class='va'>trueTrack</span>,
+  <span class='va'>pingType</span>,
+  sbi_mean <span class='op'>=</span> <span class='cn'>NULL</span>,
+  sbi_sd <span class='op'>=</span> <span class='cn'>NULL</span>,
+  rbi_min <span class='op'>=</span> <span class='cn'>NULL</span>,
+  rbi_max <span class='op'>=</span> <span class='cn'>NULL</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -181,7 +183,7 @@ Number of pings are determined automatically based on track length and transmitt
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>

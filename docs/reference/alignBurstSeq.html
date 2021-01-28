@@ -47,6 +47,8 @@ Only to be used for 'random' burst interval data when you know the burst sequenc
 
 
 
+
+
 <!-- mathjax -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script>
@@ -74,19 +76,13 @@ Only to be used for 'random' burst interval data when you know the burst sequenc
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">yaps</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.0.9110</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.3</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
-  <a href="../index.html">
-    <span class="fas fa fas fa-home fa-lg"></span>
-     
-  </a>
-</li>
-<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -136,8 +132,14 @@ Add extra columns to data.table containing ping index of the burst sequence (seq
 Only to be used for 'random' burst interval data when you know the burst sequence.</p>
     </div>
 
-    <pre class="usage"><span class='fu'>alignBurstSeq</span>(<span class='no'>synced_dat</span>, <span class='no'>burst_seq</span>, <span class='kw'>seq_lng_min</span> <span class='kw'>=</span> <span class='fl'>10</span>, <span class='no'>rbi_min</span>, <span class='no'>rbi_max</span>,
-  <span class='kw'>plot_diag</span> <span class='kw'>=</span> <span class='fl'>TRUE</span>)</pre>
+    <pre class="usage"><span class='fu'>alignBurstSeq</span><span class='op'>(</span>
+  <span class='va'>synced_dat</span>,
+  <span class='va'>burst_seq</span>,
+  seq_lng_min <span class='op'>=</span> <span class='fl'>10</span>,
+  <span class='va'>rbi_min</span>,
+  <span class='va'>rbi_max</span>,
+  plot_diag <span class='op'>=</span> <span class='cn'>TRUE</span>
+<span class='op'>)</span></pre>
 
     <h2 class="hasAnchor" id="arguments"><a class="anchor" href="#arguments"></a>Arguments</h2>
     <table class="ref-arguments">
@@ -166,6 +168,19 @@ return data.table like input, but with extra columns seq_ping_idx and seq_epo</p
     </table>
 
 
+    <h2 class="hasAnchor" id="examples"><a class="anchor" href="#examples"></a>Examples</h2>
+    <pre class="examples"><div class='input'><span class='kw'>if</span> <span class='op'>(</span><span class='cn'>FALSE</span><span class='op'>)</span> <span class='op'>{</span>
+<span class='co'># Align data from a tag with known random burst interval to the burst interval sequence</span>
+<span class='co'># using the hald data included in `yapsdata` (see ?yapsdata::hald for info).</span>
+<span class='va'>synced_dat_1315</span> <span class='op'>&lt;-</span> <span class='va'>dat_align</span><span class='op'>$</span><span class='va'>synced_dat_1315</span>
+<span class='va'>seq_1315</span> <span class='op'>&lt;-</span> <span class='va'>dat_align</span><span class='op'>$</span><span class='va'>seq_1315</span>
+<span class='va'>rbi_min</span> <span class='op'>&lt;-</span> <span class='fl'>60</span>
+<span class='va'>rbi_max</span> <span class='op'>&lt;-</span> <span class='fl'>120</span>
+<span class='va'>aligned_dat</span> <span class='op'>&lt;-</span> <span class='fu'>alignBurstSeq</span><span class='op'>(</span>synced_dat<span class='op'>=</span><span class='va'>synced_dat_1315</span>, burst_seq<span class='op'>=</span><span class='va'>seq_1315</span>, 
+  rbi_min<span class='op'>=</span><span class='va'>rbi_min</span>, rbi_max<span class='op'>=</span><span class='va'>rbi_max</span>, plot_diag<span class='op'>=</span><span class='cn'>TRUE</span><span class='op'>)</span>
+
+<span class='op'>}</span>
+</div></pre>
   </div>
   <div class="col-md-3 hidden-xs hidden-sm" id="pkgdown-sidebar">
     <nav id="toc" data-toggle="toc" class="sticky-top">
@@ -181,7 +196,7 @@ return data.table like input, but with extra columns seq_ping_idx and seq_epo</p
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
 </div>
 
       </footer>

@@ -142,14 +142,14 @@ yaps_out_ssu1 <- runYaps(inp_ssu1, silent=TRUE)
 ## Basic plotting of estimated track
 To do some very basic visualization of the obtained track, we can use `plotYaps()` as below.
 ```{r eval=TRUE}
-plotYaps(inp=inp_ssu1, yaps_out=yaps_out_ssu1, type="map")
+plotYaps(yaps_out=yaps_out_ssu1, type="map")
 # Add gps track for direct comparison
 lines(utm_y~utm_x, data=ssu1$gps, lty=2)
 
 par(mfrow=c(2,1))
-plotYaps(inp=inp_ssu1, yaps_out=yaps_out_ssu1, type="coord_X")
+plotYaps(yaps_out=yaps_out_ssu1, type="coord_X")
 lines(utm_x~ts, data=ssu1$gps, lty=2)
-plotYaps(inp=inp_ssu1, yaps_out=yaps_out_ssu1, type="coord_Y")
+plotYaps(yaps_out=yaps_out_ssu1, type="coord_Y")
 lines(utm_y~ts, data=ssu1$gps, lty=2)
 ```
 

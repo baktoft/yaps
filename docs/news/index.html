@@ -44,8 +44,6 @@
 
 
 
-
-
 <!-- mathjax -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/MathJax.js" integrity="sha256-nvJJv9wWKEm88qvoQl9ekL2J+k/RWIsaSScxxlsrv8k=" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.5/config/TeX-AMS-MML_HTMLorMML.js" integrity="sha256-84DKXVJXs0/F8OTMzX4UR909+jtl4G7SPypPavF+GfA=" crossorigin="anonymous"></script>
@@ -73,13 +71,19 @@
       </button>
       <span class="navbar-brand">
         <a class="navbar-link" href="../index.html">yaps</a>
-        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.3</span>
+        <span class="version label label-default" data-toggle="tooltip" data-placement="bottom" title="Released version">1.2.0.9110</span>
       </span>
     </div>
 
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
         <li>
+  <a href="../index.html">
+    <span class="fas fa fas fa-home fa-lg"></span>
+     
+  </a>
+</li>
+<li>
   <a href="../reference/index.html">Reference</a>
 </li>
 <li class="dropdown">
@@ -122,90 +126,12 @@
       <small>Source: <a href='https://github.com/baktoft/yaps/blob/master/NEWS.md'><code>NEWS.md</code></a></small>
     </div>
 
-    <div id="yaps-v123" class="section level1">
-<h1 class="page-header" data-toc-text="1.2.3">
-<a href="#yaps-v123" class="anchor"></a>yaps v1.2.3</h1>
-<div id="new-stuff" class="section level2">
-<h2 class="hasAnchor">
-<a href="#new-stuff" class="anchor"></a>New stuff</h2>
-<ul>
-<li>Moved example data <code>hald</code> to an external package with yaps example data <code>yapsdata</code>. Available from github using devtools::install_github(‘baktoft/yapsdata’)</li>
-<li>Lots of examples and tests added</li>
-</ul>
-</div>
-</div>
-    <div id="yaps-v122" class="section level1">
-<h1 class="page-header" data-toc-text="1.2.2">
-<a href="#yaps-v122" class="anchor"></a>yaps v1.2.2</h1>
-<div id="new-stuff-1" class="section level2">
-<h2 class="hasAnchor">
-<a href="#new-stuff-1" class="anchor"></a>New stuff</h2>
-<ul>
-<li>New site added to github pages intended to collect yaps-related resources, how-tos etc. (<a href="https://baktoft.github.io/yaps/" class="uri">https://baktoft.github.io/yaps/</a>)</li>
-<li>Add first step-by-step tutorial to yaps pages</li>
-<li>Add function to sequentially fine-tune sync model.</li>
-<li>Add option to use speed of sound based on logged temperatur in the synchronisation process.</li>
-<li>Add function to fine-tune sync_model based on residual threshold</li>
-<li>Add plot to check temporal stability of sync_models. Try plotSyncModelResids(sync_model, by=‘temporal’)</li>
-<li>Add option to impose spatial constraints (BBox only) and plot a visual of the constraint. Mainly used to constrain parameter space and increase speed and convergence.</li>
-<li>Add various checks in checkInpSync()</li>
-<li>Add option to use selective downsampling in getInpSync().</li>
-<li>Add function to plot hydros from sync_model - usefull if hydros were re-positioned during getSyncModel().</li>
-<li>Add option to estimate Z-dimension (depth) of tracks.</li>
-<li>Add function to calucate speed of sound from water temperature, salinity and depth - tempToSs(temp, sal, depth).</li>
-<li>Add github actions to hopefully ensure nothing breaks from now on…</li>
-</ul>
-</div>
-<div id="bug-fixes" class="section level2">
-<h2 class="hasAnchor">
-<a href="#bug-fixes" class="anchor"></a>Bug fixes</h2>
-<ul>
-<li>Fix nasty bug in likelihood contribution of ToP-estimation when using random burst interval (ping_type = ‘rbi’)</li>
-<li>Fix bug in getInpSync() - failed if sync_tag was only heard on own hydro</li>
-<li>Eliminate estimation of log_sigma_hydros_xy in sync_model</li>
-<li>Relax priors on SS in both track and sync model - consider to switch to softplus instead</li>
-<li>Return plsd object from getSyncModel</li>
-<li>Fix bug in getToaYaps() that allowed too short/too high BI to pass through when using ping_type=‘rbi’ and very fast transmitters</li>
-<li>Fix bug in getToaYaps() that added to many empty pings when ping_type=‘sbi’.</li>
-</ul>
-</div>
-</div>
-    <div id="yaps-v1209111" class="section level1">
-<h1 class="page-header" data-toc-text="1.2.0.9111">
-<a href="#yaps-v1209111" class="anchor"></a>yaps v1.2.0.9111</h1>
-<div id="new-stuff-2" class="section level2">
-<h2 class="hasAnchor">
-<a href="#new-stuff-2" class="anchor"></a>New stuff</h2>
-<ul>
-<li>Add option to use alternative optimization function (EXPERIMENTAL). Try nloptr() instead of default nlminb(), if you have issues with e.g. false convergence.</li>
-<li>Add option to use linear correction information when running the sync model (EXPERIMENTAL).</li>
-<li>Add option to specify all three ping types in testYaps(). PingType can be ‘sbi’ (default), ‘rbi’ or ‘pbi’</li>
-<li>Not related to package development, but check out yaps-live <a href="https://baktoft.shinyapps.io/yapslive/" class="uri">https://baktoft.shinyapps.io/yapslive/</a> to see <code>yaps</code> in action.</li>
-</ul>
-</div>
-<div id="minor-new-stuff" class="section level2">
-<h2 class="hasAnchor">
-<a href="#minor-new-stuff" class="anchor"></a>Minor new stuff</h2>
-<ul>
-<li>Split cpp file into pingType, Edist and ss specifics. Make code more readable and eliminates the need for ‘diffuse priors’ on parameters.</li>
-<li>Implement testthat functions to ensure future updates doesn’t break anything. Work in progress…</li>
-<li>Update readMe.md</li>
-</ul>
-</div>
-<div id="bug-fixes-1" class="section level2">
-<h2 class="hasAnchor">
-<a href="#bug-fixes-1" class="anchor"></a>Bug fixes</h2>
-<ul>
-<li>Fix bug in prepDetections(). Thanks to Hugh Pederson for reporting it.</li>
-</ul>
-</div>
-</div>
     <div id="yaps-v1209110" class="section level1">
 <h1 class="page-header" data-toc-text="1.2.0.9110">
 <a href="#yaps-v1209110" class="anchor"></a>yaps v1.2.0.9110</h1>
-<div id="new-stuff-3" class="section level2">
+<div id="new-stuff" class="section level2">
 <h2 class="hasAnchor">
-<a href="#new-stuff-3" class="anchor"></a>New stuff</h2>
+<a href="#new-stuff" class="anchor"></a>New stuff</h2>
 <ul>
 <li>Add support for using pressure sensor data as z-values in track estimation</li>
 <li>Add function alignBurstSeq() - aligns detection data with known burst sequence</li>
@@ -213,9 +139,9 @@
 <li>Add testYaps() - function to test that everything is running as expected</li>
 </ul>
 </div>
-<div id="minor-new-stuff-1" class="section level2">
+<div id="minor-new-stuff" class="section level2">
 <h2 class="hasAnchor">
-<a href="#minor-new-stuff-1" class="anchor"></a>Minor new stuff</h2>
+<a href="#minor-new-stuff" class="anchor"></a>Minor new stuff</h2>
 <ul>
 <li>Add sync_model and known burst sequences to example data hald</li>
 <li>Add extra plots to plotSyncModelCheck()</li>
@@ -225,9 +151,9 @@
 <li>Make console output from runYaps() more user friendly - work in progress</li>
 </ul>
 </div>
-<div id="bug-fixes-2" class="section level2">
+<div id="bug-fixes" class="section level2">
 <h2 class="hasAnchor">
-<a href="#bug-fixes-2" class="anchor"></a>Bug fixes</h2>
+<a href="#bug-fixes" class="anchor"></a>Bug fixes</h2>
 <ul>
 <li>Fixed bug in getToaYaps() when is.na(eposync) == TRUE</li>
 <li>Add option to ignore extreme values when plotting plotSyncModelCheck()</li>
@@ -254,7 +180,7 @@
 </div>
 
 <div class="pkgdown">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.6.1.9000.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/">pkgdown</a> 1.5.1.9000.</p>
 </div>
 
       </footer>

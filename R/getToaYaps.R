@@ -4,7 +4,7 @@
 #' @inheritParams getInp
 #' @export
 #' @example man/examples/example-yaps_ssu1.R
-getToaYaps <- function(synced_dat, hydros, rbi_min, rbi_max){
+getToaYaps <- function(synced_dat, hydros, ping_type, rbi_min, rbi_max){
 
 	# remove NAs in eposync
 	synced_dat <- synced_dat[!is.na(eposync)]
@@ -73,7 +73,7 @@ getToaYaps <- function(synced_dat, hydros, rbi_min, rbi_max){
 	} else {
 		pings[, next_ping_too_late := diff > rbi_max+.1]
 	}
-	if(rbi_max > 15){ 														 ### USE PING_TYPE INSTEAD!!!!
+	if(ping_type != 'sbi'){
 		pings[next_ping_too_late==TRUE, ping2next:=ping2next+round(diff/rbi_max)] 
 	} else {
 		pings[next_ping_too_late==TRUE, ping2next:=round(diff/rbi_max)] # the line above puts in an extra pang for pingType = "sbi"

@@ -11,6 +11,10 @@
 #' @example man/examples/example-yaps_ssu1.R
 #' @export
 runYaps <- function(inp, maxIter=1000, getPlsd=TRUE, getRep=TRUE, silent=TRUE, opt_fun='nlminb', opt_controls=list(), bounds=list(), tmb_smartsearch=TRUE){
+	
+	# making sure inp is correct...
+	checkInp(inp)
+	
 	nobs <- z <- z_sd <- NULL
 	print("Running yaps...")
 	random <- c("X", "Y", "top")

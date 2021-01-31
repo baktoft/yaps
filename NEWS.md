@@ -1,3 +1,10 @@
+# yaps v1.2.3.9000
+
+## New stuff
+
+## Bug fixes
+* Fix bug in getToaYaps() re number of empty pings
+
 # yaps v1.2.3
 
 ## New stuff

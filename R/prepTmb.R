@@ -72,7 +72,7 @@ getDatTmb <- function(hydros, toa, E_dist, n_ss, pingType, rbi_min, rbi_max, ss_
 	if(is.null(z_vec)){
 		how_3d <- 'none'
 		z_vec <- c(1)
-	} else if(z_vec == "est") {
+	} else if(z_vec[1] == "est") {
 		how_3d <- 'est'
 		z_vec <- c(1)
 	} else {

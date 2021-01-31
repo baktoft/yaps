@@ -4,7 +4,7 @@
 \alias{getToaYaps}
 \title{Build TOA matrix from synced data.table - also do some pre-filtering of severe MP, pruning loose ends etc}
 \usage{
-getToaYaps(synced_dat, hydros, rbi_min, rbi_max)
+getToaYaps(synced_dat, hydros, ping_type, rbi_min, rbi_max)
 }
 \arguments{
 \item{synced_dat}{`data.table` containing synchronized data formatted as output from/or obtained using `applySync()`}

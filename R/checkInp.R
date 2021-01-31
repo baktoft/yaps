@@ -4,16 +4,21 @@
 #' @export
 #' @example man/examples/example-yaps_ssu1.R
 checkInp <- function(inp){
+
+	# check that all BIs are in range of values in the model
+	stopifnot(inp$datTmb$rbi_min <= min(diff(inp$params$top)))
+	stopifnot(inp$datTmb$rbi_max >= max(diff(inp$params$top)))
 	
 	stopifnot(ncol(inp$datTmb$toa) == inp$datTmb$np)
 	stopifnot(nrow(inp$datTmb$toa) == inp$datTmb$nh)
 	
+	stopifnot(dim(inp$datTmb$H)[2] == 3)
+	
 	# if z_vec != NULL 
 	if(inp$datTmb$how_3d != 'none'){
-		stopifnot(dim(inp$datTmb$H)[2] == 3)
 		stopifnot(length(inp$datTmb$z_vec) == inp$datTmb$np)
 	}
 	
-	print("checkInp passed!")
+	print("Pre-flight checkInp() passed!")
 
 }

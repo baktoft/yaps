@@ -4,7 +4,7 @@
 \alias{getToaYaps}
 \title{Build TOA matrix from synced data.table - also do some pre-filtering of severe MP, pruning loose ends etc}
 \usage{
-getToaYaps(synced_dat, hydros, ping_type, rbi_min, rbi_max)
+getToaYaps(synced_dat, hydros, rbi_min, rbi_max, pingType = NULL)
 }
 \arguments{
 \item{synced_dat}{`data.table` containing synchronized data formatted as output from/or obtained using `applySync()`}
@@ -14,6 +14,8 @@ getToaYaps(synced_dat, hydros, ping_type, rbi_min, rbi_max)
 \item{rbi_min}{Minimum and maximum BI for random burst interval transmitters}
 
 \item{rbi_max}{Minimum and maximum BI for random burst interval transmitters}
+
+\item{pingType}{Type of transmitter to simulate - either stable burst interval ('sbi'), random burst interval ('rbi') or random burst interval but where the random sequence is known a priori}
 }
 \description{
 Build TOA matrix from synced data.table - also do some pre-filtering of severe MP, pruning loose ends etc

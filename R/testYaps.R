@@ -26,7 +26,8 @@ testYaps <- function(silent=TRUE, pingType='sbi', est_ss=TRUE, opt_fun='nlminb',
 	# pingType <- 'sbi'
 	if(pingType == 'sbi'){
 		sbi_mean <- 20; sbi_sd <- 1e-3;
-		rbi_min <- 0; rbi_max <- 0;
+		rbi_min <- sbi_mean; 
+		rbi_max <- sbi_mean;
 		teleTrack <- simTelemetryTrack(trueTrack, pingType=pingType, sbi_mean=sbi_mean, sbi_sd=sbi_sd)
 	} else {
 		rbi_min = 30

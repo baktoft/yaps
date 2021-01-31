@@ -41,6 +41,15 @@ runYaps <- function(inp, maxIter=1000, getPlsd=TRUE, getRep=TRUE, silent=TRUE, o
 		obj$fn(obj$par) 
 		TMB::newtonOption(obj, smartsearch=FALSE)
 	}
+
+	if(opt_controls[['use_bounds']]){
+		lower <- opt_controls[['lower']]
+		upper <- opt_controls[['upper']]
+		opt_controls <- list()
+	} else {
+		lower <- -Inf
+		upper <- Inf
+	}
 	
 	if(opt_fun == 'nloptr'){
 		opts <- opt_controls
@@ -52,18 +61,12 @@ runYaps <- function(inp, maxIter=1000, getPlsd=TRUE, getRep=TRUE, silent=TRUE, o
 		
 	} else if(opt_fun == 'nlminb'){
 		control_list <- opt_controls
-		
 		if(!silent){
-			# tictoc::tic()
-			opt <- stats::nlminb(inp$inits,obj$fn,obj$gr, control = control_list)
-			# tictoc::toc()
-
-			# tictoc::tic()
-			# opt <- stats::nlminb(inp$inits,obj$fn,obj$gr, control = control_list, lower=c(-10,-10, -10, -10, -10), upper=c(2, 2, 2, 2, -2))
-			# opt <- stats::nlminb(inp$inits,obj$fn,obj$gr, control = control_list, lower=c(-10,-10, -10, -10, -10), upper=c(2, 2, 2, 2, -2))
-			# tictoc::toc()
+				# opt <- stats::nlminb(inp$inits,obj$fn,obj$gr, control = control_list)
+				# opt <- stats::nlminb(inp$inits,obj$fn,obj$gr, control = control_list, lower=c(-50,-15, -100, -50, -20), upper= c(2, 2, 100, 2, -2))
+				opt <- stats::nlminb(inp$inits,obj$fn,obj$gr, control = control_list, lower=lower, upper=upper)
 		} else {
-			suppressWarnings(opt <- stats::nlminb(inp$inits,obj$fn,obj$gr, control = control_list))
+			suppressWarnings(opt <- stats::nlminb(inp$inits,obj$fn,obj$gr, control = control_list, lower=lower, upper=upper))
 		}
 	}
 	

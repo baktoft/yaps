@@ -6,8 +6,11 @@
 checkInp <- function(inp){
 
 	# check that all BIs are in range of values in the model
-	stopifnot(inp$datTmb$rbi_min <= min(diff(inp$params$top)))
-	stopifnot(inp$datTmb$rbi_max >= max(diff(inp$params$top)))
+	# only relevant for ping_types 'rbi' and 'pbi'?
+	if(inp$datTmb$pingType != 'sbi'){
+		stopifnot(inp$datTmb$rbi_min <= min(diff(inp$params$top)))
+		stopifnot(inp$datTmb$rbi_max >= max(diff(inp$params$top)))
+	}
 	
 	stopifnot(ncol(inp$datTmb$toa) == inp$datTmb$np)
 	stopifnot(nrow(inp$datTmb$toa) == inp$datTmb$nh)

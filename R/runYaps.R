@@ -42,7 +42,7 @@ runYaps <- function(inp, maxIter=1000, getPlsd=TRUE, getRep=TRUE, silent=TRUE, o
 		TMB::newtonOption(obj, smartsearch=FALSE)
 	}
 
-	if(opt_controls[['use_bounds']]){
+	if(	!is.null(opt_controls[['use_bounds']])){
 		lower <- opt_controls[['lower']]
 		upper <- opt_controls[['upper']]
 		opt_controls <- list()

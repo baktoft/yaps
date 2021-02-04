@@ -1,4 +1,4 @@
-\dontrun{
+\donttest{
 library(yaps)
 set.seed(42)
 # Simulate true track of animal movement of n seconds
@@ -38,7 +38,7 @@ if(pingType == 'sbi'){
 
 pl <- c()
 maxIter <- ifelse(pingType=="sbi", 500, 5000)
-outTmb <- runTmb(inp, maxIter=maxIter, getPlsd=TRUE, getRep=TRUE)
+outTmb <- runYaps(inp, maxIter=maxIter, getPlsd=TRUE, getRep=TRUE)
 
 # Estimates in pl
 pl <- outTmb$pl
@@ -55,5 +55,4 @@ plot(y~x, data=trueTrack, type="l", xlim=range(hydros$hx), ylim=range(hydros$hy)
 lines(y~x, data=teleTrack)
 points(hy~hx, data=hydros, col="green", pch=20, cex=3)
 lines(pl$Y~pl$X, col="red")
-
 }

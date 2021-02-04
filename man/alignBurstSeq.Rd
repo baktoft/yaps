@@ -22,16 +22,17 @@ alignBurstSeq(
 
 \item{rbi_min, rbi_max}{Minimum and maximum burst interval of the transmitter. Used to identify sequence of consecutive pings in the data}
 
-\item{plot_diag}{Logical indicating if visual diagnosis plots should be created.
-return data.table like input, but with extra columns seq_ping_idx and seq_epo}
+\item{plot_diag}{Logical indicating if visual diagnosis plots should be created.}
+}
+\value{
+\code{data.table} like the input \code{synced_dat}, but with extra columns seq_ping_idx and seq_epo
 }
 \description{
-Identifies where in the sequence of known burst intervals the detected data is from. 
+Identifies where in the sequence of known burst intervals the detected data is from.
 Add extra columns to data.table containing ping index of the burst sequence (seq_ping_idx) and expected time of ping (seq_epo).
 Only to be used for 'random' burst interval data when you know the burst sequence.
 }
 \examples{
-\dontrun{
 # Align data from a tag with known random burst interval to the burst interval sequence
 # using the hald data included in `yapsdata` (see ?yapsdata::hald for info).
 synced_dat_1315 <- dat_align$synced_dat_1315
@@ -40,6 +41,4 @@ rbi_min <- 60
 rbi_max <- 120
 aligned_dat <- alignBurstSeq(synced_dat=synced_dat_1315, burst_seq=seq_1315, 
 	rbi_min=rbi_min, rbi_max=rbi_max, plot_diag=TRUE)
-
-}
 }

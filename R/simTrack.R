@@ -13,7 +13,7 @@
 #' @param start_pos Specify the starting position of the track with c(x0, y0)
 #' @param ss Simulations model for Speed of Sound - defaults to 'rw' = RW-model.
 #'
-#' @return Dataframe containing a simulated track
+#' @return `data.frame` containing a simulated track
 #' @export
 #' @example man/examples/example-yaps_sim.R
 simTrueTrack <- function(model='rw', n, deltaTime=1, D=NULL, shape=NULL, scale=NULL, addDielPattern=TRUE, ss='rw', start_pos=NULL){
@@ -78,7 +78,7 @@ simTrueTrack <- function(model='rw', n, deltaTime=1, D=NULL, shape=NULL, scale=N
 #' @param sbi_mean,sbi_sd Mean and SD of burst interval when pingType = 'sbi'
 #' @inheritParams getInp
 #'
-#' @return Data frame containing time of ping and true positions
+#' @return `data.frame` containing time of ping and true positions
 #' @export
 #' @example man/examples/example-yaps_sim.R
 simTelemetryTrack <- function(trueTrack, pingType, sbi_mean=NULL, sbi_sd=NULL, rbi_min=NULL, rbi_max=NULL){
@@ -110,8 +110,9 @@ simTelemetryTrack <- function(trueTrack, pingType, sbi_mean=NULL, sbi_sd=NULL, r
 #'
 #' @param auto If TRUE, attempts to find a decent array configuration to cover the simulated true track.
 #' @param trueTrack Track obtained from simTrueTrack().
-#' @return Dataframe containing X and Y for hydros
+#'
 #' @export
+#' @return `data.frame` containing X and Y for hydros
 #' @example man/examples/example-yaps_sim.R
 simHydros <- function(auto=TRUE, trueTrack=NULL){
 	try(if(auto == TRUE & is.null(trueTrack)) stop("When auto is TRUE, trueTrack needs to be supplied"))
@@ -138,8 +139,9 @@ simHydros <- function(auto=TRUE, trueTrack=NULL){
 #' @param pMP Probability of multipath propagated signal 0-1
 #' @param tempRes Temporal resolution of the hydrophone. PPM systems are typially 1/1000 sec. Other systems are as high as 1/19200 sec.
 #' @inheritParams getInp
-#' @return List containing TOA matrix (toa) and matrix indicating, which obs are multipath (mp_mat)
+#'
 #' @export
+#' @return List containing TOA matrix (toa) and matrix indicating, which obs are multipath (mp_mat)
 #' @example man/examples/example-yaps_sim.R
 simToa <- function(telemetryTrack, hydros, pingType, sigmaToa, pNA, pMP, tempRes=NA){
 	#correct toa

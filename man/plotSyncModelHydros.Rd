@@ -7,13 +7,16 @@
 plotSyncModelHydros(sync_model)
 }
 \arguments{
-\item{sync_model}{Synchronization model obtained using `getSyncModel()`}
+\item{sync_model}{Synchronization model obtained using \code{getSyncModel()}}
+}
+\value{
+No return value, called to plot graphics.
 }
 \description{
 Plot hydrophone positions. Especially useful if some hydro re-positioned as part of the sync model.
 }
 \examples{
-\dontrun{
+\donttest{
 sync_model <- ssu1$sync_model
 
 plotSyncModelHydros(sync_model)
@@ -30,9 +33,5 @@ plotSyncModelCheck(sync_model, by = "hydro")
 plotSyncModelCheck(sync_model, by = "sync_tag")
 plotSyncModelCheck(sync_model, by = "sync_bin_sync")
 plotSyncModelCheck(sync_model, by = "sync_bin_hydro")
-# # # if more sync periods are used, these two can be applied
-# plotSyncModelCheck(sync_model, by = "sync_bin_sync_smooth")
-# plotSyncModelCheck(sync_model, by = "sync_bin_hydro_smooth")
-
 }
 }

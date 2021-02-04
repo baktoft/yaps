@@ -11,11 +11,14 @@ prepDetections(raw_dat, type)
 
 \item{type}{Type of the vendor file. Currently only 'vemco_vue' is supported.}
 }
+\value{
+\code{data.table} containing detections extracted from manufacturer data file.
+}
 \description{
 Experimental! Prepare detections data.table from raw data - csv-files exported from vendor software
 }
 \examples{
 \dontrun{
-prepped_detections <- prepDetection("path-to-raw-data-file", type="vemco_vue")
+prepped_detections <- prepDetections("path-to-raw-data-file", type="vemco_vue")
 }
 }

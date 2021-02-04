@@ -2,8 +2,9 @@
 #' 
 #' @param sync_model Synchronization model obtained using `getSyncModel()`
 #' @param by What to facet/group the plot by? Currently supports one of 'overall', 'sync_tag', 'hydro', 'quantiles', 'temporal', 'temporal_hydro', 'temporal_sync_tag'
-#' @example man/examples/example-syncModelPlots.R
 #' @export
+#' @return No return value, called to plot graphics.
+#' @example man/examples/example-syncModelPlots.R
 plotSyncModelResids <- function(sync_model, by='overall'){
 	eps_long <- sync_model$eps_long
 	if(by == 'overall'){
@@ -55,6 +56,7 @@ plotSyncModelResids <- function(sync_model, by='overall'){
 #' Plot hydrophone positions. Especially useful if some hydro re-positioned as part of the sync model.
 #' @param sync_model Synchronization model obtained using `getSyncModel()`
 #' @export
+#' @return No return value, called to plot graphics.
 #' @example man/examples/example-syncModelPlots.R
 plotSyncModelHydros <- function(sync_model){
 	z_synced <- NULL
@@ -90,6 +92,7 @@ plotSyncModelHydros <- function(sync_model){
 #' @param sync_model Synchronization model obtained using `getSyncModel()`
 #' @param by What to facet/group the plot by? Currently supports one of 'sync_bin_sync', 'sync_bin_hydro', 'sync_bin_sync_smooth', 'sync_bin_hydro_smooth', 'hydro', 'sync_tag'
 #' @export
+#' @return No return value, called to plot graphics.
 #' @example man/examples/example-syncModelPlots.R
 plotSyncModelCheck <- function(sync_model, by=""){
 	sync_check_dat <- getSyncCheckDat(sync_model)

@@ -7,15 +7,18 @@
 plotSyncModelResids(sync_model, by = "overall")
 }
 \arguments{
-\item{sync_model}{Synchronization model obtained using `getSyncModel()`}
+\item{sync_model}{Synchronization model obtained using \code{getSyncModel()}}
 
 \item{by}{What to facet/group the plot by? Currently supports one of 'overall', 'sync_tag', 'hydro', 'quantiles', 'temporal', 'temporal_hydro', 'temporal_sync_tag'}
+}
+\value{
+No return value, called to plot graphics.
 }
 \description{
 Plot residuals of sync_model to enable check of model
 }
 \examples{
-\dontrun{
+\donttest{
 sync_model <- ssu1$sync_model
 
 plotSyncModelHydros(sync_model)
@@ -32,9 +35,5 @@ plotSyncModelCheck(sync_model, by = "hydro")
 plotSyncModelCheck(sync_model, by = "sync_tag")
 plotSyncModelCheck(sync_model, by = "sync_bin_sync")
 plotSyncModelCheck(sync_model, by = "sync_bin_hydro")
-# # # if more sync periods are used, these two can be applied
-# plotSyncModelCheck(sync_model, by = "sync_bin_sync_smooth")
-# plotSyncModelCheck(sync_model, by = "sync_bin_hydro_smooth")
-
 }
 }

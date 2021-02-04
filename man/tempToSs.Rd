@@ -14,6 +14,9 @@ tempToSs(temp, sal, depth = 5)
 
 \item{depth}{Depth in meters - default = 5 m - can typically be ignored}
 }
+\value{
+Vector of estimated speed of sound in water.
+}
 \description{
 Calculate speed of sound from water temperature, salinity and depth
 Based on H. Medwin (1975) Speed of sound in water: A simple equation for realistic parameters. (https://doi.org/10.1121/1.380790)

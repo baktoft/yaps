@@ -8,22 +8,18 @@
 #' @inheritParams getInp
 #' @inheritParams runYaps
 #' @export
+#' @return If `return_yaps == TRUE`, the fitted `yaps` object. See `?runYaps` for further info.
+
 #' @examples
-#' \dontrun{
-#' # To test  basic functionality of yaps using simulated data
+#' #' # To test  basic functionality of yaps using simulated data
 #' testYaps()
 #' # # # Three pingTypes are availabe: 
-#' # # #	fixed burst interval ('sbi'), 
-#' # # # 	random burst interval with UNKNOWN burst interval sequence('rbi'), 
-#' # # # 	random burst interval with KNOWN burst interval sequence ('pbi')
-#' testYaps(pingType='sbi')
-#' testYaps(pingType='rbi')
-#' testYaps(pingType='pbi')
-#' }
+#' # # #	fixed burst interval (testYaps(pingType='sbi')), 
+#' # # # 	random burst interval with UNKNOWN burst interval sequence('testYaps(pingType='rbi')), 
+#' # # # 	random burst interval with KNOWN burst interval sequence (testYaps(pingType='pbi'))
 testYaps <- function(silent=TRUE, pingType='sbi', est_ss=TRUE, opt_fun='nlminb', opt_controls=list(), bounds=list(), return_yaps=FALSE, tmb_smartsearch=TRUE){
 	set.seed(42)
 	trueTrack <- simTrueTrack(model='crw', n = 2000, deltaTime=1, shape=1, scale=0.5, addDielPattern=TRUE, ss='rw')
-	# pingType <- 'sbi'
 	if(pingType == 'sbi'){
 		sbi_mean <- 20; sbi_sd <- 1e-3;
 		rbi_min <- sbi_mean; 
@@ -52,14 +48,11 @@ testYaps <- function(silent=TRUE, pingType='sbi', est_ss=TRUE, opt_fun='nlminb',
 		ss_data <- teleTrack$ss
 	}
 	inp <- getInp(hydros, toa, E_dist="Mixture", n_ss=5, pingType=pingType, sdInits=0, ss_data_what=ss_data_what, ss_data=ss_data, rbi_min=rbi_min, rbi_max=rbi_max, biTable=biTable)
-	# print(str(inp))
 	maxIter <- 500
-	# suppressWarnings(outTmb <- runTmb(inp, maxIter=maxIter, getPlsd=TRUE, getRep=TRUE, x.tol=1E-3))
-	outTmb <- runTmb(inp, maxIter=maxIter, getPlsd=TRUE, getRep=TRUE, silent=silent, opt_fun=opt_fun, opt_controls, bounds, tmb_smartsearch)
-	# print(str(outTmb))
-	pl <- outTmb$pl
+	yaps <- runYaps(inp, maxIter=maxIter, getPlsd=TRUE, getRep=TRUE, silent=silent, opt_fun=opt_fun, opt_controls, bounds, tmb_smartsearch)
+	pl <- yaps$pl
 	yaps_out <- data.table::data.table(X=pl$X + inp$inp_params$Hx0, Y=pl$Y + inp$inp_params$Hy0)
-	plsd <- outTmb$plsd
+	plsd <- yaps$plsd
 	plot(y~x, data=trueTrack, type="l", xlim=range(hydros$hx), ylim=range(hydros$hy), asp=1, lwd=2)
 	lines(y~x, data=teleTrack)
 	points(hy~hx, data=hydros, col="green", pch=20, cex=3)
@@ -67,5 +60,5 @@ testYaps <- function(silent=TRUE, pingType='sbi', est_ss=TRUE, opt_fun='nlminb',
 
 	if(!silent) {cat("You should now see a plot of a simulted track - if so YAPS core functions are working \n")}
 	
-	if(return_yaps) {return(outTmb)}
+	if(return_yaps) {return(yaps)}
 }

@@ -2,8 +2,9 @@
 #' @param raw_dat Data file from vendor supplied software
 #' @param type Type of the vendor file. Currently only 'vemco_vue' is supported.
 #' @export
+#' @return `data.table` containing detections extracted from manufacturer data file.
 #' @examples \dontrun{
-#' prepped_detections <- prepDetection("path-to-raw-data-file", type="vemco_vue")
+#' prepped_detections <- prepDetections("path-to-raw-data-file", type="vemco_vue")
 #' }
 prepDetections <- function(raw_dat, type){
 	detections <- data.table::data.table()

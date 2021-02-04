@@ -1,15 +1,20 @@
-# yaps v1.2.3.9001
+# yaps v1.2.3.9005
 
 ## New stuff
+* More checks in checkInp() to catch typical errors in format of inp.
+* EXPERIMENTAL Attempt to robustify runYaps() - use with care.
 
 ## Bug fixes
-* Fix bug in getToaYaps() re number of empty pings
+* Fix bug in getToaYaps() re number of empty pings.
+* Docs and examples fixed to meet requirements.
+* Make getToaYaps() aware of pingType
+
 
 # yaps v1.2.3
 
 ## New stuff
-* Moved example data `hald` to an external package with yaps example data `yapsdata`. Available from github using devtools::install_github('baktoft/yapsdata')
-* Lots of examples and tests added
+* Moved example data `hald` to an external package with yaps example data `yapsdata`. Available from github using devtools::install_github('baktoft/yapsdata').
+* Lots of examples and tests added.
 
 
 # yaps v1.2.2

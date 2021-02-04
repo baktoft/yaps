@@ -2,6 +2,7 @@
 #' 
 #' @param inp Object obtained using `getInp()`
 #' @export
+#' @return No return value, but prints errors/warnings if issues with `inp` is detected.
 #' @example man/examples/example-yaps_ssu1.R
 checkInp <- function(inp){
 

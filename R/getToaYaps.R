@@ -3,6 +3,7 @@
 #' @param synced_dat `data.table` containing synchronized data formatted as output from/or obtained using `applySync()`
 #' @inheritParams getInp
 #' @export
+#' @return Matrix of time-of-arrivals. One coloumn per hydro, one row per ping. 
 #' @example man/examples/example-yaps_ssu1.R
 getToaYaps <- function(synced_dat, hydros, rbi_min, rbi_max, pingType=NULL){
 	if(is.null(pingType)){

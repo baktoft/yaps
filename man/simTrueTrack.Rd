@@ -47,7 +47,7 @@ The output contains x, y, time and sound speed at each simulated position.
 library(yaps)
 set.seed(42)
 # Simulate true track of animal movement of n seconds
-trueTrack <- simTrueTrack(model='crw', n = 3000, deltaTime=1, shape=1, 
+trueTrack <- simTrueTrack(model='crw', n = 1000, deltaTime=1, shape=1, 
 	scale=0.5, addDielPattern=TRUE, ss='rw')
 
 # Simulate telemetry observations from true track.

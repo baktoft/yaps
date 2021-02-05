@@ -1,4 +1,4 @@
-# yaps v1.2.3.9005
+# yaps v1.2.4
 
 ## New stuff
 * More checks in checkInp() to catch typical errors in format of inp.

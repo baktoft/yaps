@@ -7,17 +7,20 @@
 plotSyncModelCheck(sync_model, by = "")
 }
 \arguments{
-\item{sync_model}{Synchronization model obtained using `getSyncModel()`}
+\item{sync_model}{Synchronization model obtained using \code{getSyncModel()}}
 
 \item{by}{What to facet/group the plot by? Currently supports one of 'sync_bin_sync', 'sync_bin_hydro', 'sync_bin_sync_smooth', 'sync_bin_hydro_smooth', 'hydro', 'sync_tag'}
 }
+\value{
+No return value, called to plot graphics.
+}
 \description{
-Delta values indicate absolute difference between true and estimated distances based on pairwise relative distances to sync_tag. 
+Delta values indicate absolute difference between true and estimated distances based on pairwise relative distances to sync_tag.
 For instance, a ping from sync_tag t colocated with hydro Ht is detected by hydros H1 and H2. The pairwise relative distance to sync tag is then
 delta = abs((true_dist(Ht, H1) - true_dist(Ht, H2)) - (est_dist(Ht, H1) - est_dist(Ht, H2)))
 }
 \examples{
-\dontrun{
+\donttest{
 sync_model <- ssu1$sync_model
 
 plotSyncModelHydros(sync_model)
@@ -34,9 +37,5 @@ plotSyncModelCheck(sync_model, by = "hydro")
 plotSyncModelCheck(sync_model, by = "sync_tag")
 plotSyncModelCheck(sync_model, by = "sync_bin_sync")
 plotSyncModelCheck(sync_model, by = "sync_bin_hydro")
-# # # if more sync periods are used, these two can be applied
-# plotSyncModelCheck(sync_model, by = "sync_bin_sync_smooth")
-# plotSyncModelCheck(sync_model, by = "sync_bin_hydro_smooth")
-
 }
 }

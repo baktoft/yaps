@@ -1,6 +1,7 @@
 #' Graphical representation of spatial constraints
 #' @inheritParams getInp
 #' @export
+#' @return No return value, called to plot graphic.
 #' @example man/examples/example-bbox.R
 plotBbox <- function(hydros, bbox){
 	Var1 <- Var2 <- NULL

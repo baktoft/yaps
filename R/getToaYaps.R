@@ -3,9 +3,15 @@
 #' @param synced_dat `data.table` containing synchronized data formatted as output from/or obtained using `applySync()`
 #' @inheritParams getInp
 #' @export
+#' @return Matrix of time-of-arrivals. One coloumn per hydro, one row per ping. 
 #' @example man/examples/example-yaps_ssu1.R
-getToaYaps <- function(synced_dat, hydros, rbi_min, rbi_max){
-
+getToaYaps <- function(synced_dat, hydros, rbi_min, rbi_max, pingType=NULL){
+	if(is.null(pingType)){
+		cat("WARNING: pingType not specified in getToaYaps() - will assume 'rbi'. This will become a fatal error in later versions.\n")
+		pingType <- 'rbi'
+	}
+	stopifnot(pingType %in% c('sbi', 'pbi', 'rbi'))
+	
 	# remove NAs in eposync
 	synced_dat <- synced_dat[!is.na(eposync)]
 	# remove multipaths...
@@ -73,7 +79,7 @@ getToaYaps <- function(synced_dat, hydros, rbi_min, rbi_max){
 	} else {
 		pings[, next_ping_too_late := diff > rbi_max+.1]
 	}
-	if(rbi_max > 15){ 														 ### USE PING_TYPE INSTEAD!!!!
+	if(pingType != 'sbi'){
 		pings[next_ping_too_late==TRUE, ping2next:=ping2next+round(diff/rbi_max)] 
 	} else {
 		pings[next_ping_too_late==TRUE, ping2next:=round(diff/rbi_max)] # the line above puts in an extra pang for pingType = "sbi"

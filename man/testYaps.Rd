@@ -22,30 +22,31 @@ testYaps(
 
 \item{est_ss}{Logical whether to test using ss_data_what = 'est' (est_ss = TRUE) or ss_data_what = 'data' (est_ss = FALSE)}
 
-\item{opt_fun}{Which optimization function to use. Default is 'nlminb' - alternative is 'nloptr' (experimental!). If using 'nloptr', `opt_controls` must be specified.}
+\item{opt_fun}{Which optimization function to use. Default is \code{opt_fun = 'nlminb'} - alternative is \code{opt_fun = 'nloptr'} (experimental!). If using nloptr, \code{opt_controls} must be specified.}
 
-\item{opt_controls}{List of controls passed to optimization function. For instances, tolerances such as x.tol=1E-8. If opt_fun = 'nloptr', `opt_controls` must be a list formatted appropriately. For instance: opt_controls <- list(algorithm="NLOPT_LD_AUGLAG", xtol_abs=1e-12, maxeval=2E+4, print_level = 1, local_opts= list(algorithm="NLOPT_LD_AUGLAG_EQ", xtol_rel=1e-4) ). See `?nloptr` and the NLopt site https://nlopt.readthedocs.io/en/latest/ for more info. Some algorithms in `nloptr` require bounded parameters - see `bounds`.}
+\item{opt_controls}{List of controls passed to optimization function. For instances, tolerances such as \code{x.tol=1E-8}. \cr
+If \code{opt_fun = 'nloptr'}, \code{opt_controls} must be a list formatted appropriately. For instance: \cr
+\code{opt_controls <- list( algorithm="NLOPT_LD_AUGLAG", xtol_abs=1e-12, maxeval=2E+4, print_level = 1, local_opts= list(algorithm="NLOPT_LD_AUGLAG_EQ", xtol_rel=1e-4) )}. \cr
+See \code{?nloptr} and the NLopt site https://nlopt.readthedocs.io/en/latest/ for more info. Some algorithms in \code{nloptr} require bounded parameters - see \code{bounds}.}
 
-\item{bounds}{List of two vectors specifying lower and upper bounds of fixed parameters. Length of each vector must be equal to number of fixed parameters. For instance, bounds = list(lb = c(-3, -1, -2), ub = c(2,0,1) ).}
+\item{bounds}{List of two vectors specifying lower and upper bounds of fixed parameters. Length of each vector must be equal to number of fixed parameters. For instance, \code{bounds = list(lb = c(-3, -1, -2), ub = c(2,0,1) )}.}
 
 \item{return_yaps}{Logical whether to return the fitted yaps model. Default=FALSE.}
 
-\item{tmb_smartsearch}{Logical whether to use the TMB smartsearch in the inner optimizer (see ?TMB::MakeADFun for info). Default and original implementation is TRUE. However, there seems to be an issue with Matrix v1.3.2 that requires tmb_smartsearch=FALSE.}
+\item{tmb_smartsearch}{Logical whether to use the TMB smartsearch in the inner optimizer (see \code{?TMB::MakeADFun} for info). Default and original implementation is TRUE. However, there seems to be an issue with recent versions of \code{Matrix} that requires \code{tmb_smartsearch=FALSE}.}
+}
+\value{
+If \code{return_yaps == TRUE}, the fitted \code{yaps} object. See \code{?runYaps} for further info.
 }
 \description{
-Run `testYaps()` to check that the core functions of YAPS is working correctly.
+Run \code{testYaps()} to check that the core functions of YAPS is working correctly.
 Output should be a random simulated (black) and estimated (red) track.
 }
 \examples{
-\dontrun{
-# To test  basic functionality of yaps using simulated data
+#' # To test  basic functionality of yaps using simulated data
 testYaps()
 # # # Three pingTypes are availabe: 
-# # #	fixed burst interval ('sbi'), 
-# # # 	random burst interval with UNKNOWN burst interval sequence('rbi'), 
-# # # 	random burst interval with KNOWN burst interval sequence ('pbi')
-testYaps(pingType='sbi')
-testYaps(pingType='rbi')
-testYaps(pingType='pbi')
-}
+# # #	fixed burst interval (testYaps(pingType='sbi')), 
+# # # 	random burst interval with UNKNOWN burst interval sequence('testYaps(pingType='rbi')), 
+# # # 	random burst interval with KNOWN burst interval sequence (testYaps(pingType='pbi'))
 }

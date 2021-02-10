@@ -2,12 +2,15 @@
 <!-- README_sync.md is generated from README_sync.Rmd. Please edit that file -->
 <!-- badges: start -->
 
+[![CRAN Status
+Badge](https://www.r-pkg.org/badges/version/yaps)](https://cran.r-project.org/package=yaps)
 [![R-CMD-check](https://github.com/baktoft/yaps/workflows/R-CMD-check/badge.svg)](https://github.com/baktoft/yaps/actions)
-[![Codecov test
-coverage](https://codecov.io/gh/baktoft/yaps/branch/master/graph/badge.svg)](https://codecov.io/gh/baktoft/yaps?branch=master)
 [![Travis build
 status](https://travis-ci.org/baktoft/yaps.svg?branch=master)](https://travis-ci.org/baktoft/yaps)
-
+[![Codecov test
+coverage](https://codecov.io/gh/baktoft/yaps/branch/master/graph/badge.svg)](https://codecov.io/gh/baktoft/yaps?branch=master)
+[![CRAN RStudio mirror
+downloads](https://cranlogs.r-pkg.org/badges/grand-total/yaps)](https://cran.r-project.org/package=yaps)
 <!-- badges: end -->
 
 # YAPS - (Yet Another Positioning Solver)<img src="man/logo/yaps_logo.png" align="right" width="120" />

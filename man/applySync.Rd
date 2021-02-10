@@ -7,17 +7,20 @@
 applySync(toa, hydros = "", sync_model)
 }
 \arguments{
-\item{toa}{Object containing data to be synchronized. Typically a `data.table` as e.g. `ssu1$detections`, but can also be a matrix dim=(n_ping, n_hydo).}
+\item{toa}{Object containing data to be synchronized. Typically a \code{data.table} as e.g. \code{ssu1$detections}, but can also be a matrix dim=(n_ping, n_hydo).}
 
-\item{hydros}{data.table formatted as `ssu1$hydros`}
+\item{hydros}{data.table formatted as \code{ssu1$hydros}}
 
-\item{sync_model}{Synchronization model obtained using `getSyncModel()`}
+\item{sync_model}{Synchronization model obtained using \code{getSyncModel()}}
+}
+\value{
+A \code{data.table} with the now synchronized time-of-arrivals in column \code{eposync}.
 }
 \description{
 Apply sync model to toa matrix to obtain synced data
 }
 \examples{
-\dontrun{
+\donttest{
 library(yaps)
 set.seed(42)
 
@@ -45,8 +48,7 @@ getSyncCoverage(inp_sync, plot=TRUE)
 sync_model <- getSyncModel(inp_sync, silent=TRUE, max_iter=200, tmb_smartsearch = TRUE)
 
 # # # On some systems it might work better, if we disbale the smartsearch feature in TMB
-# sync_model_no_smartsearch <- getSyncModel(inp_sync, silent=TRUE, max_iter=5000, 
-	# tmb_smartsearch = FALSE)
+# # # To do so, set tmb_smartsearch = FALSE in getSyncModel()
 
 # # # Visualize the resulting sync model
 plotSyncModelResids(sync_model, by = "overall")
@@ -56,11 +58,11 @@ plotSyncModelResids(sync_model, by = "hydro")
 plotSyncModelResids(sync_model, by = "temporal_hydro")
 plotSyncModelResids(sync_model, by = "temporal_sync_tag")
 
-# # # If the above plots show outlier, sync_model can be fine tuned by excluding these.
-# # # This should typically be done gradually as e.g.
-# sync_model_f1 <- fineTuneSyncModel(sync_model, eps_threshold=1E4, silent=TRUE)
-# sync_model_f2 <- fineTuneSyncModel(sync_model, eps_threshold=1E3, silent=TRUE)
-# sync_model_f3 <- fineTuneSyncModel(sync_model, eps_threshold=1E2, silent=TRUE)
+# # # If the above plots show outliers, sync_model can be fine tuned by excluding these.
+# # # Use fineTuneSyncModel() for this.
+# # # This should typically be done sequentially using eps_thresholds of e.g. 1E4, 1E3, 1E2, 1E2
+sync_model <- fineTuneSyncModel(sync_model, eps_threshold=1E3, silent=TRUE)
+sync_model <- fineTuneSyncModel(sync_model, eps_threshold=1E2, silent=TRUE)
 
 # # # Apply the sync_model to detections data.
 detections_synced <- applySync(toa=ssu1$detections, hydros=ssu1$hydros, sync_model)
@@ -72,7 +74,8 @@ focal_tag <- 15266
 rbi_min <- 20
 rbi_max <- 40
 synced_dat <- detections_synced[tag == focal_tag]
-toa <- getToaYaps(synced_dat, hydros_yaps, rbi_min, rbi_max)
+toa <- getToaYaps(synced_dat=synced_dat, hydros=hydros_yaps, pingType='rbi', 
+	rbi_min=rbi_min, rbi_max=rbi_max)
 inp <- getInp(hydros_yaps, toa, E_dist="Mixture", n_ss=5, pingType="rbi", 
 	sdInits=1, rbi_min=rbi_min, rbi_max=rbi_max, ss_data_what="est", ss_data=0)
 
@@ -83,6 +86,8 @@ checkInp(inp)
 yaps_out <- runYaps(inp, silent=TRUE, tmb_smartsearch=TRUE, maxIter=500) 
 
 # # # Plot the results and compare to "the truth" obtained using gps
+
+oldpar <- par(no.readonly = TRUE) 
 par(mfrow=c(2,2))
 plot(hy~hx, data=hydros_yaps, asp=1, xlab="UTM X", ylab="UTM Y", pch=20, col="green")
 lines(utm_y~utm_x, data=ssu1$gps, col="blue", lwd=2)
@@ -102,6 +107,6 @@ lines(y+2*y_sd~top, data=yaps_out$track, col="red", lty=2)
 
 plot(nobs~top, data=yaps_out$track, type="p", main="#detecting hydros per ping")
 lines(caTools::runmean(nobs, k=10)~top, data=yaps_out$track, col="orange", lwd=2)
-
+par(oldpar)
 }
 }

@@ -12,17 +12,17 @@ simHydros(auto = TRUE, trueTrack = NULL)
 \item{trueTrack}{Track obtained from simTrueTrack().}
 }
 \value{
-Dataframe containing X and Y for hydros
+\code{data.frame} containing X and Y for hydros
 }
 \description{
 Sim hydrophone array configuration
 }
 \examples{
-\dontrun{
+\donttest{
 library(yaps)
 set.seed(42)
 # Simulate true track of animal movement of n seconds
-trueTrack <- simTrueTrack(model='crw', n = 3000, deltaTime=1, shape=1, 
+trueTrack <- simTrueTrack(model='crw', n = 1000, deltaTime=1, shape=1, 
 	scale=0.5, addDielPattern=TRUE, ss='rw')
 
 # Simulate telemetry observations from true track.
@@ -58,7 +58,7 @@ if(pingType == 'sbi'){
 
 pl <- c()
 maxIter <- ifelse(pingType=="sbi", 500, 5000)
-outTmb <- runTmb(inp, maxIter=maxIter, getPlsd=TRUE, getRep=TRUE)
+outTmb <- runYaps(inp, maxIter=maxIter, getPlsd=TRUE, getRep=TRUE)
 
 # Estimates in pl
 pl <- outTmb$pl
@@ -75,6 +75,5 @@ plot(y~x, data=trueTrack, type="l", xlim=range(hydros$hx), ylim=range(hydros$hy)
 lines(y~x, data=teleTrack)
 points(hy~hx, data=hydros, col="green", pch=20, cex=3)
 lines(pl$Y~pl$X, col="red")
-
 }
 }

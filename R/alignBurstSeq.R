@@ -8,8 +8,8 @@
 #' @param seq_lng_min Minimum length of sequence of consecutive pings to use for the alignment. Finds first occurence of sequence of this length in the data and compare to the known burst sequence
 #' @param rbi_min,rbi_max Minimum and maximum burst interval of the transmitter. Used to identify sequence of consecutive pings in the data
 #' @param plot_diag Logical indicating if visual diagnosis plots should be created.
-#' return data.table like input, but with extra columns seq_ping_idx and seq_epo
 #' @export
+#' @return `data.table` like the input `synced_dat`, but with extra columns seq_ping_idx and seq_epo
 #' @example man/examples/example-alignBurstSeq.R
 alignBurstSeq <- function(synced_dat, burst_seq, seq_lng_min=10, rbi_min, rbi_max, plot_diag=TRUE){
 	burst_seq_dt <- data.table::data.table(bi=burst_seq)
@@ -52,12 +52,14 @@ alignBurstSeq <- function(synced_dat, burst_seq, seq_lng_min=10, rbi_min, rbi_ma
 
 	# plot if plot_diag == TRUE
 	if(plot_diag){
+		oldpar <- par(no.readonly = TRUE) 
+		on.exit(par(oldpar))
+		
 		par(mfrow=c(1,2))
 		plot(log(seq_diffs))
 		points(log(seq_diffs[seq_fix_idx]) ~ seq_fix_idx, col="red", pch=20, cex=2)
 
 		plot(synced_dat[, eposync - seq_epo] ~ synced_dat$ts, pch=".")
-		par(mfrow=c(1,1))
 	}
 	
 	return(synced_dat)

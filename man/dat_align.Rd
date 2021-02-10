@@ -7,12 +7,12 @@
 \format{
 A list containing 2 items:
 \describe{
-  \item{synced_dat_1315}{
-     data.table containing synced detections of tag 1315.
-  }
-  \item{synced_dat_1315}{
-     vector of small part of the complete sequence of known random BIs.
-  }
+\item{synced_dat_1315}{
+data.table containing synced detections of tag 1315.
+}
+\item{synced_dat_1315}{
+vector of small part of the complete sequence of known random BIs.
+}
 }
 }
 \usage{
@@ -21,6 +21,6 @@ dat_align
 \description{
 Function alignBurstSeq() is used to align synced detection data with a sequence of known random burst intervals (BI). \cr
 This step is needed to take advantage of the extra information available when working with random BI data with a known sequence. \cr
-This small sample is obtained from the accompanying data package `yapsdata`.
+This small sample is obtained from the accompanying data package \code{yapsdata}.
 }
 \keyword{datasets}

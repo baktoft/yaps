@@ -11,14 +11,15 @@ plotBbox(hydros, bbox)
 
 \item{bbox}{Spatial constraints in the form of a bounding box. See ?getBbox for details.}
 }
+\value{
+No return value, called to plot graphic.
+}
 \description{
 Graphical representation of spatial constraints
 }
 \examples{
-\dontrun{
 hydros <- ssu1$hydros
 colnames(hydros) <- c('serial','hx','hy','hz','sync_tag','idx')
 bbox <- getBbox(hydros)
 plotBbox(hydros, bbox)
-}
 }

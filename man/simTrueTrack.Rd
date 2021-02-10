@@ -36,18 +36,18 @@ simTrueTrack(
 \item{start_pos}{Specify the starting position of the track with c(x0, y0)}
 }
 \value{
-Dataframe containing a simulated track
+\code{data.frame} containing a simulated track
 }
 \description{
 Produces a simulated regular time-spaced track following the specified movement model. Linear movement between consecutive observations is assumed.
 The output contains x, y, time and sound speed at each simulated position.
 }
 \examples{
-\dontrun{
+\donttest{
 library(yaps)
 set.seed(42)
 # Simulate true track of animal movement of n seconds
-trueTrack <- simTrueTrack(model='crw', n = 3000, deltaTime=1, shape=1, 
+trueTrack <- simTrueTrack(model='crw', n = 1000, deltaTime=1, shape=1, 
 	scale=0.5, addDielPattern=TRUE, ss='rw')
 
 # Simulate telemetry observations from true track.
@@ -83,7 +83,7 @@ if(pingType == 'sbi'){
 
 pl <- c()
 maxIter <- ifelse(pingType=="sbi", 500, 5000)
-outTmb <- runTmb(inp, maxIter=maxIter, getPlsd=TRUE, getRep=TRUE)
+outTmb <- runYaps(inp, maxIter=maxIter, getPlsd=TRUE, getRep=TRUE)
 
 # Estimates in pl
 pl <- outTmb$pl
@@ -100,6 +100,5 @@ plot(y~x, data=trueTrack, type="l", xlim=range(hydros$hx), ylim=range(hydros$hy)
 lines(y~x, data=teleTrack)
 points(hy~hx, data=hydros, col="green", pch=20, cex=3)
 lines(pl$Y~pl$X, col="red")
-
 }
 }

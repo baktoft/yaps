@@ -5,6 +5,7 @@
 #' @param xlim,ylim Optional vectors of length 2 to set xlim and/or ylim. 
 #' @param main Title of plot - optional.
 #' @export
+#' @return No return value, called to plot graphics.
 #' @example man/examples/example-plotYaps.R
 plotYaps <- function(yaps_out, type="map", xlim=NULL, ylim=NULL, main=NULL){
 	inp <- yaps_out$inp

@@ -3,6 +3,7 @@
 #' @inheritParams getInpSync
 #' @param inp_sync Object obtained using `getInpSync()`
 #' @export
+#' @return No return value, but prints errors/warnings if issues with `inp_sync` is detected.
 #' @example man/examples/example-yaps_ssu1.R
 checkInpSync <- function(inp_sync, silent_check){
 	# speed of sound stuff
@@ -34,7 +35,6 @@ checkInpSync <- function(inp_sync, silent_check){
 	} else if(!silent_check & min(sync_coverage$N) < 50) {
 		cat("NOTE: At least one hydro has less than 50 pings in an offset_idx - try getSyncCoverage(inp_sync, plot=TRUE) for visual\n and rerun getInpSync() with increased keep_rate\n")
 	}
-	return(sync_coverage)
 }
 
 #' Quick overview to check if all hydros have enough data within each offset period.
@@ -42,6 +42,8 @@ checkInpSync <- function(inp_sync, silent_check){
 #' @inheritParams checkInpSync
 #' @param plot Logical indicating whether to plot a visual or not.
 #' @export
+#' @return A data.table containing number of pings included in each hydro x offset combination.
+#' @example man/examples/example-yaps_ssu1.R
 getSyncCoverage <- function(inp_sync, plot=FALSE){
 	toa <- inp_sync$dat_tmb_sync$toa
 	nh <- ncol(toa)

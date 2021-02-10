@@ -15,6 +15,9 @@ plotYaps(yaps_out, type = "map", xlim = NULL, ylim = NULL, main = NULL)
 
 \item{main}{Title of plot - optional.}
 }
+\value{
+No return value, called to plot graphics.
+}
 \description{
 Basic plots of yaps output
 }

@@ -1,6 +1,7 @@
 # yaps v1.2.4
 
 ## New stuff
+* Now on CRAN
 * More checks in checkInp() to catch typical errors in format of inp.
 * EXPERIMENTAL Attempt to robustify runYaps() - use with care.
 

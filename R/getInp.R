@@ -23,11 +23,13 @@ getInp <- function(hydros, toa, E_dist, n_ss, pingType, sdInits=1, rbi_min=0, rb
 	datTmb 		<- getDatTmb(hydros, toa, E_dist, n_ss, pingType, rbi_min, rbi_max, ss_data_what, ss_data, biTable, inp_params, z_vec, bbox)
 	params 		<- getParams(datTmb)
 	inits 		<- getInits(datTmb, sdInits)
+	bounds 		<- getBounds(datTmb)
 	return(list(
 		datTmb = datTmb,
 		params= params,
 		inits = inits,
-		inp_params = inp_params
+		inp_params = inp_params,
+		bounds = bounds
 		)
 	)
 }

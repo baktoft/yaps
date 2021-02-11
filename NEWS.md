@@ -1,6 +1,13 @@
+# yaps v1.2.4.9000
+
+## New stuff
+* More robustification of the optimizer.
+* More pre-flight checks to catch common issues with inp.
+
 # yaps v1.2.4
 
 ## New stuff
+* Now on CRAN
 * More checks in checkInp() to catch typical errors in format of inp.
 * EXPERIMENTAL Attempt to robustify runYaps() - use with care.
 

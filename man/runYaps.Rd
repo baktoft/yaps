@@ -13,7 +13,6 @@ runYaps(
   silent = TRUE,
   opt_fun = "nlminb",
   opt_controls = list(),
-  bounds = list(),
   tmb_smartsearch = TRUE
 )
 
@@ -25,7 +24,6 @@ runTmb(
   silent = TRUE,
   opt_fun = "nlminb",
   opt_controls = list(),
-  bounds = list(),
   tmb_smartsearch = TRUE
 )
 }
@@ -43,9 +41,7 @@ runTmb(
 \item{opt_controls}{List of controls passed to optimization function. For instances, tolerances such as \code{x.tol=1E-8}. \cr
 If \code{opt_fun = 'nloptr'}, \code{opt_controls} must be a list formatted appropriately. For instance: \cr
 \code{opt_controls <- list( algorithm="NLOPT_LD_AUGLAG", xtol_abs=1e-12, maxeval=2E+4, print_level = 1, local_opts= list(algorithm="NLOPT_LD_AUGLAG_EQ", xtol_rel=1e-4) )}. \cr
-See \code{?nloptr} and the NLopt site https://nlopt.readthedocs.io/en/latest/ for more info. Some algorithms in \code{nloptr} require bounded parameters - see \code{bounds}.}
-
-\item{bounds}{List of two vectors specifying lower and upper bounds of fixed parameters. Length of each vector must be equal to number of fixed parameters. For instance, \code{bounds = list(lb = c(-3, -1, -2), ub = c(2,0,1) )}.}
+See \code{?nloptr} and the NLopt site https://nlopt.readthedocs.io/en/latest/ for more info. Some algorithms in \code{nloptr} require bounded parameters - this is not currently implemented.}
 
 \item{tmb_smartsearch}{Logical whether to use the TMB smartsearch in the inner optimizer (see \code{?TMB::MakeADFun} for info). Default and original implementation is TRUE. However, there seems to be an issue with recent versions of \code{Matrix} that requires \code{tmb_smartsearch=FALSE}.}
 }

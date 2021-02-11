@@ -17,7 +17,7 @@
 #' # # #	fixed burst interval (testYaps(pingType='sbi')), 
 #' # # # 	random burst interval with UNKNOWN burst interval sequence('testYaps(pingType='rbi')), 
 #' # # # 	random burst interval with KNOWN burst interval sequence (testYaps(pingType='pbi'))
-testYaps <- function(silent=TRUE, pingType='sbi', est_ss=TRUE, opt_fun='nlminb', opt_controls=list(), bounds=list(), return_yaps=FALSE, tmb_smartsearch=TRUE){
+testYaps <- function(silent=TRUE, pingType='sbi', est_ss=TRUE, opt_fun='nlminb', opt_controls=list(), return_yaps=FALSE, tmb_smartsearch=TRUE){
 	set.seed(42)
 	trueTrack <- simTrueTrack(model='crw', n = 2000, deltaTime=1, shape=1, scale=0.5, addDielPattern=TRUE, ss='rw')
 	if(pingType == 'sbi'){
@@ -49,7 +49,7 @@ testYaps <- function(silent=TRUE, pingType='sbi', est_ss=TRUE, opt_fun='nlminb',
 	}
 	inp <- getInp(hydros, toa, E_dist="Mixture", n_ss=5, pingType=pingType, sdInits=0, ss_data_what=ss_data_what, ss_data=ss_data, rbi_min=rbi_min, rbi_max=rbi_max, biTable=biTable)
 	maxIter <- 500
-	yaps <- runYaps(inp, maxIter=maxIter, getPlsd=TRUE, getRep=TRUE, silent=silent, opt_fun=opt_fun, opt_controls, bounds, tmb_smartsearch)
+	yaps <- runYaps(inp, maxIter=maxIter, getPlsd=TRUE, getRep=TRUE, silent=silent, opt_fun=opt_fun, opt_controls, tmb_smartsearch)
 	pl <- yaps$pl
 	yaps_out <- data.table::data.table(X=pl$X + inp$inp_params$Hx0, Y=pl$Y + inp$inp_params$Hy0)
 	plsd <- yaps$plsd

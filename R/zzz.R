@@ -9,7 +9,6 @@
 #' @importFrom stats power rnorm median quantile
 #' @importFrom utils tail
 #' @importFrom data.table .N .SD := %between% %like% %between% .I 
-NULL
 
 
 # # UGLY hack to avoid notes about data.table or ggplot not recognizing bindings
@@ -30,10 +29,12 @@ if (getRversion() >= "2.15.1"){
 
  
 #' @useDynLib yaps
+#' @importFrom Rcpp sourceCpp
+
 .onUnload <- function (lib) {
   library.dynam.unload("yaps", lib)
 }
-#' @importFrom Rcpp sourceCpp
+
 .onAttach <- function(lib, pkg) {
 	new_version_on_github <- newPkgVersion()
 	if(is.null(new_version_on_github)) { new_version_on_github <- FALSE}
@@ -46,3 +47,6 @@ if (getRversion() >= "2.15.1"){
 	
     packageStartupMessage(out_msg)
  }
+
+
+NULL

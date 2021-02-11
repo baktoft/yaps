@@ -6,4 +6,5 @@
 	nll -= dnorm(top(1),Type(approxBI),Type(4.0),true);
 	for(int i = 2; i < np; ++i)	{
 		nll -= dnorm(top(i)-2*top(i-1)+top(i-2), Type(0), sigma_bi, true);
+		nll += bi_penalty * (softplus(0 - (top(i) - top(i-1)), bi_epsilon));
 	}

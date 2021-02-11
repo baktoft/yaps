@@ -13,10 +13,17 @@ checkInp <- function(inp){
 		stopifnot(inp$datTmb$rbi_max >= max(diff(inp$params$top)))
 	}
 	
+	# check correct dimensions...
 	stopifnot(ncol(inp$datTmb$toa) == inp$datTmb$np)
 	stopifnot(nrow(inp$datTmb$toa) == inp$datTmb$nh)
-	
 	stopifnot(dim(inp$datTmb$H)[2] == 3)
+	
+	# check for correct number of lower and upper bounds
+	stopifnot(nrow(inp$bounds) == length(inp$inits))
+	
+	# check that neither first nor last row in toa is all NAs
+	stopifnot(sum(!is.na(inp$datTmb$toa[,1])) > 0)
+	stopifnot(sum(!is.na(inp$datTmb$toa[,ncol(inp$datTmb$toa)])) > 0)
 	
 	# if z_vec != NULL 
 	if(inp$datTmb$how_3d != 'none'){

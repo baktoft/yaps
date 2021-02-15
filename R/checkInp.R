@@ -26,7 +26,7 @@ checkInp <- function(inp){
 	stopifnot(sum(!is.na(inp$datTmb$toa[,ncol(inp$datTmb$toa)])) > 0)
 	
 	# if z_vec != NULL 
-	if(inp$datTmb$how_3d != 'none'){
+	if(!inp$datTmb$how_3d %in% c('none', 'est')){
 		stopifnot(length(inp$datTmb$z_vec) == inp$datTmb$np)
 	}
 	

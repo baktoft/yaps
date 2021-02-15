@@ -126,7 +126,7 @@ getParams <- function(datTmb){
 	}
 
 	# # # Ping type related
-	if(datTmb$pingType == 'sbi'){
+	if(datTmb$pingType %in% c('sbi', 'sbi_double')){
 		out$logSigma_bi <- 0			#sigma  burst interval (sigma_bi in ms)
 	}
 	

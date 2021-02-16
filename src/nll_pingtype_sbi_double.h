@@ -12,6 +12,7 @@
 
 	for(int i = 4; i < np; ++i){
 		nll -= dnorm(top(i)-2*top(i-2)+top(i-4), Type(0), sigma_bi, true);
+		nll += bi_penalty * (softplus(0 - (top(i) - top(i-1)), bi_epsilon));
 	}
 
 
@@ -22,5 +23,4 @@
 	// 		nll -= dnorm(top(i)-2*top(i-1)+top(i-2) - approxBI_main + approxBI_sub, Type(0), sigma_bi, true);
 	// 	}
 	// 	//nll -= dnorm(top(i)-2*top(i-1)+top(i-2), Type(0), sigma_bi, true);
-	// 	//nll += bi_penalty * (softplus(0 - (top(i) - top(i-1)), bi_epsilon));
 	// }

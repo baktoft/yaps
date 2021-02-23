@@ -19,7 +19,7 @@
 #' # # # 	random burst interval with KNOWN burst interval sequence (testYaps(pingType='pbi'))
 testYaps <- function(silent=TRUE, pingType='sbi', est_ss=TRUE, opt_fun='nlminb', opt_controls=list(), return_yaps=FALSE, tmb_smartsearch=TRUE){
 	set.seed(42)
-	trueTrack <- simTrueTrack(model='crw', n = 2000, deltaTime=1, shape=1, scale=0.5, addDielPattern=TRUE, ss='rw')
+	trueTrack <- simTrueTrack(model='crw', n = 2000, deltaTime=1, shape=1, scale=0.5, addDielPattern=FALSE, ss='rw')
 	if(pingType == 'sbi'){
 		sbi_mean <- 20; sbi_sd <- 1e-3;
 		rbi_min <- sbi_mean; 

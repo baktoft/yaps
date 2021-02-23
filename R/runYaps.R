@@ -53,6 +53,10 @@ runYaps <- function(inp, maxIter=1000, getPlsd=TRUE, getRep=TRUE, silent=TRUE, o
 			inner.control = list(maxit = maxIter),
 			silent=silent
 		)
+	
+	# Attempt to robustify the inner optim problem.
+	# Refuse to optimize if gradient is too steep. Default is 1E60
+	# TMB::newtonOption(obj, mgcmax=1E8)
 
 	if(!silent){
 		obj$env$tracepar = TRUE

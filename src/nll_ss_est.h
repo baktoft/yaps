@@ -9,7 +9,7 @@
 		// nll -= dnorm(ss(i),Type(1475.0),Type(100.0),true);	
 	}
 	for(int i = 0; i < n_ss; ++i){
-		nll += bi_penalty * (softplus(ss(i) - 1600, bi_epsilon) + softplus(1400 - ss(i), bi_epsilon));
+		nll += Type(1E6) * (softplus(ss(i) - 1600, Type(1E-6)) + softplus(1400 - ss(i), Type(1E-6)));
 	}
 	
 	for(int i = 0; i < np; i++){

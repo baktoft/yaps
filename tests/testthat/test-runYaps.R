@@ -13,10 +13,10 @@ rbi_min <- 20
 rbi_max <- 40
 synced_dat <- detections_synced[tag == focal_tag]
 toa <- getToaYaps(synced_dat=synced_dat, hydros=hydros_yaps, rbi_min=rbi_min, rbi_max=rbi_max, pingType="rbi")
-bbox <- getBbox(hydros_yaps, buffer=50, pen=1e6)
+bbox <- getBbox(hydros_yaps, buffer=100)
 inp <- getInp(hydros_yaps, toa, E_dist="Mixture", n_ss=5, pingType="rbi", 
 	sdInits=1, rbi_min=rbi_min, rbi_max=rbi_max, ss_data_what="est", ss_data=0, bbox=bbox)
-	
+
 yaps_out <- NULL
 yaps_out <- runYaps(inp, silent=TRUE, tmb_smartsearch=TRUE, maxIter=5000, opt_controls=list(eval.max=500)) 
 

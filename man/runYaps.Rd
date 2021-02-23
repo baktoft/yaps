@@ -118,14 +118,15 @@ rbi_max <- 40
 synced_dat <- detections_synced[tag == focal_tag]
 toa <- getToaYaps(synced_dat=synced_dat, hydros=hydros_yaps, pingType='rbi', 
 	rbi_min=rbi_min, rbi_max=rbi_max)
+bbox <- getBbox(hydros_yaps, buffer=50, pen=1e6)
 inp <- getInp(hydros_yaps, toa, E_dist="Mixture", n_ss=5, pingType="rbi", 
-	sdInits=1, rbi_min=rbi_min, rbi_max=rbi_max, ss_data_what="est", ss_data=0)
+	sdInits=1, rbi_min=rbi_min, rbi_max=rbi_max, ss_data_what="est", ss_data=0, bbox=bbox)
 
 # # # Check that inp is ok
 checkInp(inp)
 
 # # # Run yaps on the prepared data to estimate track
-yaps_out <- runYaps(inp, silent=TRUE, tmb_smartsearch=TRUE, maxIter=500) 
+yaps_out <- runYaps(inp, silent=TRUE, tmb_smartsearch=TRUE, maxIter=5000) 
 
 # # # Plot the results and compare to "the truth" obtained using gps
 

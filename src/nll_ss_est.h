@@ -6,7 +6,10 @@
 	nll -= dnorm(ss(0),Type(1475.0),Type(100.0),true);		
 	for(int i = 1; i < n_ss; ++i){
 		nll -= dnorm(ss(i), ss(i-1),sqrt(2*D_v), true);
-		nll -= dnorm(ss(i),Type(1475.0),Type(100.0),true);		
+		// nll -= dnorm(ss(i),Type(1475.0),Type(100.0),true);	
+	}
+	for(int i = 0; i < n_ss; ++i){
+		nll += bi_penalty * (softplus(ss(i) - 1600, bi_epsilon) + softplus(1400 - ss(i), bi_epsilon));
 	}
 	
 	for(int i = 0; i < np; i++){

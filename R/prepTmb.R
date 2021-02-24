@@ -126,7 +126,7 @@ getParams <- function(datTmb){
 	}
 
 	# # # Ping type related
-	if(datTmb$pingType %in% c('sbi', 'sbi_double')){
+	if(datTmb$pingType %in% c('sbi', 'sbi_double', 'rbi')){
 		out$logSigma_bi <- 0			#sigma  burst interval (sigma_bi in ms)
 	}
 	
@@ -201,7 +201,7 @@ getInits <- function(datTmb, sdInits=1) {
 	if(datTmb$pingType == 'sbi'){
 		inits <- c(inits, init_logSigma_bi)#,  init_logD_v)#, init_logSigma_toa, init_logScale, init_log_t_part)
 	} else if (datTmb$pingType == 'rbi'){
-		inits <- c(inits)#, 					init_logD_v)#, init_logSigma_toa, init_logScale, init_log_t_part)
+		inits <- c(inits, init_logSigma_bi)#, 					init_logD_v)#, init_logSigma_toa, init_logScale, init_log_t_part)
 	} else if (datTmb$pingType == 'pbi'){
 		inits <- c(inits, init_logSigma_bi)#,  init_logD_v)#, init_logSigma_toa, init_logScale, init_log_t_part)
 	}
@@ -226,7 +226,11 @@ getBounds <- function(datTmb) {
 		lu_logScale 	<- c(-10,2)
 	}
 	lu_log_t_part 		<- c(-100, 100)
-	lu_logSigma_bi 		<- c(-20, -2)
+	if(datTmb$pingType == 'rbi'){
+		lu_logSigma_bi 		<- c(-20, 20)
+	} else {
+		lu_logSigma_bi 		<- c(-20, -2)
+	}
 	lu_logD_v 			<- c(-20,  2)
 
 	bounds <- c()
@@ -247,7 +251,7 @@ getBounds <- function(datTmb) {
 	if(datTmb$pingType == 'sbi'){
 		bounds <- rbind(bounds, lu_logSigma_bi)
 	} else if (datTmb$pingType == 'rbi'){
-		bounds <- bounds
+		bounds <- rbind(bounds, lu_logSigma_bi)
 	} else if (datTmb$pingType == 'pbi'){
 		bounds <- rbind(bounds, lu_logSigma_bi)
 	}

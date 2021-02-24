@@ -56,8 +56,13 @@ runYaps <- function(inp, maxIter=1000, getPlsd=TRUE, getRep=TRUE, silent=TRUE, o
 	
 	# Attempt to robustify the inner optim problem.
 	# Refuse to optimize if gradient is too steep. Default is 1E60
-	# TMB::newtonOption(obj, mgcmax=1E8)
-
+	# TMB::newtonOption(obj, tol10=1)
+	
+	# # # EXPERIMENTAL
+	if(inp$datTmb$pingType == 'rbi'){
+		TMB::newtonOption(obj, mgcmax=1E6)
+	}
+	
 	if(!silent){
 		obj$env$tracepar = TRUE
 		obj$env$tracemgc = TRUE

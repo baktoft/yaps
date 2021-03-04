@@ -1,8 +1,9 @@
-# yaps v1.2.4.9000
+# yaps v1.2.4.9001
 
 ## New stuff
 * More robustification of the optimizer.
-* More pre-flight checks to catch common issues with inp.
+* More pre-flight checks to catch issues with inp.
+* Add support for ping_type = 'sbi_doulbe'. Special case - needs carefull contrsuction of TOA-matrix.
 
 # yaps v1.2.4
 

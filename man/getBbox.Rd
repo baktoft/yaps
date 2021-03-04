@@ -4,7 +4,7 @@
 \alias{getBbox}
 \title{Get a standard bounding box to impose spatial constraints}
 \usage{
-getBbox(hydros, buffer = 5, eps = 0.001, pen = 1)
+getBbox(hydros, buffer = 100, eps = 0.001, pen = 1e+06)
 }
 \arguments{
 \item{hydros}{Dataframe from simHydros() or Dataframe with columns hx and hy containing positions of the receivers. Translate the coordinates to get the grid centre close to (0;0).}

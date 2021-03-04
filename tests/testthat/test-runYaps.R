@@ -13,10 +13,12 @@ rbi_min <- 20
 rbi_max <- 40
 synced_dat <- detections_synced[tag == focal_tag]
 toa <- getToaYaps(synced_dat=synced_dat, hydros=hydros_yaps, rbi_min=rbi_min, rbi_max=rbi_max, pingType="rbi")
+bbox <- getBbox(hydros_yaps, buffer=100)
 inp <- getInp(hydros_yaps, toa, E_dist="Mixture", n_ss=5, pingType="rbi", 
-	sdInits=1, rbi_min=rbi_min, rbi_max=rbi_max, ss_data_what="est", ss_data=0)
+	sdInits=1, rbi_min=rbi_min, rbi_max=rbi_max, ss_data_what="est", ss_data=0, bbox=bbox)
 
-yaps_out <- runYaps(inp, silent=TRUE, tmb_smartsearch=TRUE, maxIter=5000) 
+yaps_out <- NULL
+yaps_out <- runYaps(inp, silent=TRUE, tmb_smartsearch=TRUE, maxIter=5000, opt_controls=list(eval.max=500)) 
 
 
 # # # Only run to reset reference
@@ -28,15 +30,15 @@ test_that("yaps_out is as expected", {
 	load("yaps_out_ref.RData")
 	
 	# need to run individual tests - somehow order of items in the lists differ when running devtools::check()
-	expect_equal(yaps_out$pl$X, 							yaps_out_ref$pl$X, tolerance=1E-1)
-	expect_equal(yaps_out$pl$Y, 							yaps_out_ref$pl$Y, tolerance=1E-1)
-	expect_equal(yaps_out$pl$top, 							yaps_out_ref$pl$top, tolerance=1E-1)
-	expect_equal(yaps_out$pl$ss, 							yaps_out_ref$pl$ss, tolerance=1E-1)
-	expect_equal(yaps_out$pl$logD_xy, 						yaps_out_ref$pl$logD_xy, tolerance=1E-1)
+	testthat::expect_equal(yaps_out$pl$X, 			yaps_out_ref$pl$X, 			tolerance=1E-1)
+	testthat::expect_equal(yaps_out$pl$Y, 			yaps_out_ref$pl$Y, 			tolerance=1E-1)
+	testthat::expect_equal(yaps_out$pl$top, 		yaps_out_ref$pl$top, 		tolerance=1E-1)
+	testthat::expect_equal(yaps_out$pl$ss, 			yaps_out_ref$pl$ss, 		tolerance=1E-1)
+	testthat::expect_equal(yaps_out$pl$logD_xy, 	yaps_out_ref$pl$logD_xy, 	tolerance=1E-1)
 
-	expect_equal(yaps_out$pl_sd$X,   						yaps_out_ref$pl_sd$X, tolerance=1E-3)
-	expect_equal(yaps_out$pl_sd$Y,   						yaps_out_ref$pl_sd$Y, tolerance=1E-3)
-	expect_equal(yaps_out$pl_sd$top, 						yaps_out_ref$pl_sd$top, tolerance=1E-3)
-	expect_equal(yaps_out$pl_sd$ss,  						yaps_out_ref$pl_sd$ss, tolerance=1E-3)
-	expect_equal(yaps_out$pl_sd$logD_xy, 					yaps_out_ref$pl_sd$logD_xy, tolerance=1E-3)
+	testthat::expect_equal(yaps_out$pl_sd$X,   		yaps_out_ref$pl_sd$X, 		tolerance=1E-3)
+	testthat::expect_equal(yaps_out$pl_sd$Y,   		yaps_out_ref$pl_sd$Y, 		tolerance=1E-3)
+	testthat::expect_equal(yaps_out$pl_sd$top, 		yaps_out_ref$pl_sd$top, 	tolerance=1E-3)
+	testthat::expect_equal(yaps_out$pl_sd$ss,  		yaps_out_ref$pl_sd$ss, 		tolerance=1E-3)
+	testthat::expect_equal(yaps_out$pl_sd$logD_xy, 	yaps_out_ref$pl_sd$logD_xy, tolerance=1E-3)
 })

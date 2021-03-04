@@ -1,9 +1,10 @@
 # yaps v1.2.4.9001
 
 ## New stuff
+* Add support for ping_type = 'sbi_doulbe'. Special case - needs carefull contrsuction of TOA-matrix.
 * More robustification of the optimizer.
 * More pre-flight checks to catch issues with inp.
-* Add support for ping_type = 'sbi_doulbe'. Special case - needs carefull contrsuction of TOA-matrix.
+* Use separate diffusivity for Z when estimating 3D
 
 # yaps v1.2.4
 

@@ -104,10 +104,13 @@ getParams <- function(datTmb){
 		# , log_t_part = 0				#Mixture ratio between Gaussian and t
 	)
 	
+	# # # If estimating 3D	
 	if(datTmb$how_3d == "est"){
 		out$Z <- stats::runif(ncol(datTmb$toa), -10, 0)
+		out$logD_z <- 0				#diffusivity of transmitter vertical movement (D_z in ms)
 	}
 	
+
 	# # # ss related
 	if(datTmb$ss_data_what == 'est'){
 		out$logD_v <- 0				#diffusivity of speed of sound (D_v in ms)
@@ -134,8 +137,7 @@ getParams <- function(datTmb){
 		out$logSigma_bi <- 0			#sigma  burst interval (sigma_bi in ms)
 		out$tag_drift <- stats::rnorm(datTmb$np, 0, 1e-2)
 	}
-	
-	
+
 	
 	return(out)
 }
@@ -184,6 +186,11 @@ getInits <- function(datTmb, sdInits=1) {
 	init_log_t_part <- -4	# only used in mixture
 
 	inits <- c(init_logD_xy)
+
+	if(datTmb$how_3d == 'est'){
+		init_logD_z <- 0
+		inits <- c(inits, init_logD_z)
+	}
 	
 	if(datTmb$ss_data_what == 'est'){
 		inits <- c(inits, init_logD_v)
@@ -205,7 +212,6 @@ getInits <- function(datTmb, sdInits=1) {
 	} else if (datTmb$pingType == 'pbi'){
 		inits <- c(inits, init_logSigma_bi)#,  init_logD_v)#, init_logSigma_toa, init_logScale, init_log_t_part)
 	}
-
 	
 	inits <- stats::rnorm(length(inits), mean=inits, sd=sdInits)
 	return(inits)
@@ -219,6 +225,8 @@ getInits <- function(datTmb, sdInits=1) {
 #' @noRd
 getBounds <- function(datTmb) {
 	lu_logD_xy 			<- c(-50,  2)
+	lu_logD_z 			<- c(-50,  2)
+
 	lu_logSigma_toa 	<- c(-12, -2)
 	if(datTmb$Edist[2] == 1){ # mixture
 		lu_logScale 	<- c(-30, 10)
@@ -235,6 +243,10 @@ getBounds <- function(datTmb) {
 
 	bounds <- c()
 	bounds <- rbind(bounds, lu_logD_xy)
+
+	if(datTmb$how_3d == 'est'){
+		bounds <- rbind(bounds, lu_logD_z)
+	}
 
 	if(datTmb$ss_data_what == 'est'){
 		bounds <- rbind(bounds, lu_logD_v)

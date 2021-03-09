@@ -94,7 +94,7 @@
 	}
 	// make sure all pings come in correct order...
 	for(int i=1; i<np; ++i){
-		nll += bi_penalty * (softplus(1 - (top(i) - top(i-1)), bi_epsilon));
+		nll += bi_penalty * (softplus(0 - (top(i) - top(i-1)), bi_epsilon));
 	}
 
 

@@ -5,10 +5,14 @@
 	PARAMETER(logSigma_bi);		// Sigma for burst interval
 	Type sigma_bi = exp(logSigma_bi);
 
+	// nll -= dnorm(top(0),Type(0.0),Type(4.0),true);
+	// nll -= dnorm(top(1),Type(approxBI_sub),Type(4.0),true);
+	// nll -= dnorm(top(2),Type(approxBI_sub + approxBI_main),Type(4.0),true);
+	// nll -= dnorm(top(3),Type(approxBI_sub + approxBI_main + approxBI_sub),Type(4.0),true);
 	nll -= dnorm(top(0),Type(0.0),Type(4.0),true);
-	nll -= dnorm(top(1),Type(approxBI_sub),Type(4.0),true);
-	nll -= dnorm(top(2),Type(approxBI_sub + approxBI_main),Type(4.0),true);
-	nll -= dnorm(top(3),Type(approxBI_sub + approxBI_main + approxBI_sub),Type(4.0),true);
+	nll -= dnorm(top(1),top(0) + approxBI_sub, sigma_bi,true);
+	nll -= dnorm(top(2),top(0) + approxBI_sub + approxBI_main, sigma_bi,true);
+	nll -= dnorm(top(3),top(0) + approxBI_sub + approxBI_main + approxBI_sub, sigma_bi,true);
 
 	for(int i = 4; i < np; ++i){
 		nll -= dnorm(top(i)-2*top(i-2)+top(i-4), Type(0), sigma_bi, true);

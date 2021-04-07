@@ -34,11 +34,11 @@ test_that("yaps_out is as expected", {
 	testthat::expect_equal(yaps_out$pl$Y, 			yaps_out_ref$pl$Y, 			tolerance=1E-1)
 	testthat::expect_equal(yaps_out$pl$top, 		yaps_out_ref$pl$top, 		tolerance=1E-1)
 	testthat::expect_equal(yaps_out$pl$ss, 			yaps_out_ref$pl$ss, 		tolerance=1E-1)
-	testthat::expect_equal(yaps_out$pl$logD_xy, 	yaps_out_ref$pl$logD_xy, 	tolerance=1E-1)
+#	testthat::expect_equal(yaps_out$pl$logD_xy, 	yaps_out_ref$pl$logD_xy, 	tolerance=1E-1)
 
 	testthat::expect_equal(yaps_out$pl_sd$X,   		yaps_out_ref$pl_sd$X, 		tolerance=1E-3)
 	testthat::expect_equal(yaps_out$pl_sd$Y,   		yaps_out_ref$pl_sd$Y, 		tolerance=1E-3)
 	testthat::expect_equal(yaps_out$pl_sd$top, 		yaps_out_ref$pl_sd$top, 	tolerance=1E-3)
 	testthat::expect_equal(yaps_out$pl_sd$ss,  		yaps_out_ref$pl_sd$ss, 		tolerance=1E-3)
-	testthat::expect_equal(yaps_out$pl_sd$logD_xy, 	yaps_out_ref$pl_sd$logD_xy, tolerance=1E-3)
+#	testthat::expect_equal(yaps_out$pl_sd$logD_xy, 	yaps_out_ref$pl_sd$logD_xy, tolerance=1E-3)
 })

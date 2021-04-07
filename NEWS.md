@@ -1,4 +1,4 @@
-# yaps v1.2.4.9003
+# yaps v1.2.5
 
 ## New stuff
 * Add support for ping_type = 'sbi_doulbe'. Special case - needs carefull contrsuction of TOA-matrix.

@@ -11,12 +11,14 @@
 #' @return If `return_yaps == TRUE`, the fitted `yaps` object. See `?runYaps` for further info.
 
 #' @examples
+#' \donttest{
 #' #' # To test  basic functionality of yaps using simulated data
 #' testYaps()
 #' # # # Three pingTypes are availabe: 
 #' # # #	fixed burst interval (testYaps(pingType='sbi')), 
 #' # # # 	random burst interval with UNKNOWN burst interval sequence('testYaps(pingType='rbi')), 
 #' # # # 	random burst interval with KNOWN burst interval sequence (testYaps(pingType='pbi'))
+#' }
 testYaps <- function(silent=TRUE, pingType='sbi', est_ss=TRUE, opt_fun='nlminb', opt_controls=list(), return_yaps=FALSE, tmb_smartsearch=TRUE){
 	set.seed(42)
 	trueTrack <- simTrueTrack(model='crw', n = 2500, deltaTime=1, shape=1, scale=0.5, addDielPattern=FALSE, ss='rw')

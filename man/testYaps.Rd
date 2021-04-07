@@ -40,10 +40,12 @@ Run \code{testYaps()} to check that the core functions of YAPS is working correc
 Output should be a random simulated (black) and estimated (red) track.
 }
 \examples{
+\donttest{
 #' # To test  basic functionality of yaps using simulated data
 testYaps()
 # # # Three pingTypes are availabe: 
 # # #	fixed burst interval (testYaps(pingType='sbi')), 
 # # # 	random burst interval with UNKNOWN burst interval sequence('testYaps(pingType='rbi')), 
 # # # 	random burst interval with KNOWN burst interval sequence (testYaps(pingType='pbi'))
+}
 }

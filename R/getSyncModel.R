@@ -39,7 +39,13 @@ getSyncModel <- function(inp_sync, silent=TRUE, fine_tune=FALSE, max_iter=100, t
 	# ## Reduce memory peak of a parallel model by creating tapes in serial
 	# config(tape.parallel=0, DLL="yaps_sync")
 	obj <- TMB::MakeADFun(data = dat_tmb, parameters = params, random = random, DLL = "yaps", inner.control = list(maxit = max_iter), silent=silent)
-	obj$fn(obj$par) 
+	# obj$fn(obj$par) 
+	
+	if(!silent){
+		obj$env$tracepar = TRUE
+		obj$env$tracemgc = TRUE
+	}
+
 	
 	if(!tmb_smartsearch){
 		TMB::newtonOption(obj, smartsearch=FALSE)
@@ -50,7 +56,7 @@ getSyncModel <- function(inp_sync, silent=TRUE, fine_tune=FALSE, max_iter=100, t
 		# opt <- suppressWarnings(stats::nlminb(inits,obj$fn,obj$gr))
 		opt <- suppressWarnings(stats::nlminb(inits,obj$fn,obj$gr, lower=c(-10), upper=c(-2)))
 	} else {
-		opt <- stats::nlminb(inits,obj$fn,obj$gr, lower=c(-10), upper=c(-2))
+		opt <- stats::nlminb(inits,obj$fn,obj$gr, lower=c(-10), upper=c(2))
 		# opt <- stats::nlminb(inits,obj$fn,obj$gr)
 	}
 

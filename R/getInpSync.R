@@ -20,7 +20,7 @@
 #' @export
 #' @return List of input data ready for use in `getSyncModel()`
 #' @example man/examples/example-yaps_ssu1.R
-getInpSync <- function(sync_dat, max_epo_diff, min_hydros, time_keeper_idx, fixed_hydros_idx, n_offset_day, n_ss_day, keep_rate=1, excl_self_detect=TRUE, lin_corr_coeffs=NA, ss_data_what="est", ss_data=c(0), silent_check=FALSE){
+getInpSync <- function(sync_type='top', sync_dat, max_epo_diff, min_hydros, time_keeper_idx, fixed_hydros_idx, n_offset_day, n_ss_day, keep_rate=1, excl_self_detect=TRUE, lin_corr_coeffs=NA, ss_data_what="est", ss_data=c(0), silent_check=FALSE){
 	if(length(unique(sync_dat$hydros$serial)) != nrow(sync_dat$hydros)){
 		print(sync_dat$hydros[, .N, by=serial][N>=2])
 		stop("ERROR: At least one hydrophone serial number is used more than once in sync_dat$hydros!\n")
@@ -30,37 +30,33 @@ getInpSync <- function(sync_dat, max_epo_diff, min_hydros, time_keeper_idx, fixe
 		stop("ERROR: Invalid keep_rate! Must be either ]0;1] or integer >= 10\n")
 	}
 	
-	sync_dat <- appendDetections(sync_dat)
+	sync_dat <- yaps:::appendDetections(sync_dat)
 		
 	if(is.na(lin_corr_coeffs[1])){
 		lin_corr_coeffs <- matrix(0, nrow=nrow(sync_dat$hydros), ncol=2, byrow=TRUE)
 	}
 
-	sync_dat <- applyLinCorCoeffsInpSync(sync_dat, lin_corr_coeffs)
+	sync_dat <- yaps:::applyLinCorCoeffsInpSync(sync_dat, lin_corr_coeffs)
 	
 	T0 <- min(sync_dat$detections$epo)
 
-	inp_H_info <- getInpSyncHInfo(sync_dat)
+	inp_H_info <- yaps:::getInpSyncHInfo(sync_dat)
 
-	inp_toa_list_all		<- getInpSyncToaList(sync_dat, max_epo_diff, min_hydros, excl_self_detect)
-	fixed_hydros_vec 		<- getFixedHydrosVec(sync_dat, fixed_hydros_idx)
-	offset_vals_all			<- getOffsetVals(inp_toa_list_all, n_offset_day)
-	inp_toa_list 			<- getDownsampledToaList(inp_toa_list_all, offset_vals_all, keep_rate)
-	offset_vals				<- getOffsetVals(inp_toa_list, n_offset_day)
-	ss_vals 				<- getSsVals(inp_toa_list, n_ss_day)
+	inp_toa_list_all		<- yaps:::getInpSyncToaList(sync_dat, max_epo_diff, min_hydros, excl_self_detect)
+	fixed_hydros_vec 		<- yaps:::getFixedHydrosVec(sync_dat, fixed_hydros_idx)
+	offset_vals_all			<- yaps:::getOffsetVals(inp_toa_list_all, n_offset_day)
+	inp_toa_list 			<- yaps:::getDownsampledToaList(inp_toa_list_all, offset_vals_all, keep_rate)
+	offset_vals				<- yaps:::getOffsetVals(inp_toa_list, n_offset_day)
+	ss_vals 				<- yaps:::getSsVals(inp_toa_list, n_ss_day)
 	if(ss_data_what == "data"){
-		ss_data_vec		<- getSsDataVec(inp_toa_list, ss_data)
+		ss_data_vec		<- yaps:::getSsDataVec(inp_toa_list, ss_data)
 	} else {
 		ss_data_vec <- c(0)
 	}
 
-	dat_tmb_sync 		<- getDatTmbSync(sync_dat, time_keeper_idx, inp_toa_list, fixed_hydros_vec, offset_vals, ss_vals, inp_H_info, T0, ss_data_what, ss_data_vec)
+	dat_tmb_sync 		<- getDatTmbSync(sync_type, sync_dat, time_keeper_idx, inp_toa_list, fixed_hydros_vec, offset_vals, ss_vals, inp_H_info, T0, ss_data_what, ss_data_vec)
 	params_tmb_sync 	<- getParamsTmbSync(dat_tmb_sync, ss_data_what)
-	if(ss_data_what == "est"){
-		random_tmb_sync <- c("TOP", "OFFSET", "SLOPE1", "SLOPE2", "SS", "TRUE_H")
-	} else {
-		random_tmb_sync <- c("TOP", "OFFSET", "SLOPE1", "SLOPE2", "TRUE_H")
-	}
+	random_tmb_sync 	<- getRandomTmbSync(dat_tmb_sync, ss_data_what)
 	# inits_tmb_sync <- c(3, rep(-3,dat_tmb_sync$nh))
 	inits_tmb_sync <- c(-3)
 	inp_params <- list(toa=inp_toa_list$toa, T0=T0, Hx0=inp_H_info$Hx0, Hy0=inp_H_info$Hy0, offset_levels=offset_vals$offset_levels, 
@@ -68,7 +64,7 @@ getInpSync <- function(sync_dat, max_epo_diff, min_hydros, time_keeper_idx, fixe
 		lin_corr_coeffs=lin_corr_coeffs, min_hydros=min_hydros, ss_data=ss_data
 	)
 	
-	inp_sync <- list(dat_tmb_sync=dat_tmb_sync, params_tmb_sync=params_tmb_sync, random_tmb_sync=random_tmb_sync, inits_tmb_sync=inits_tmb_sync, inp_params=inp_params)
+	inp_sync <- list(sync_type=sync_type, dat_tmb_sync=dat_tmb_sync, params_tmb_sync=params_tmb_sync, random_tmb_sync=random_tmb_sync, inits_tmb_sync=inits_tmb_sync, inp_params=inp_params)
 	inp_sync$inp_params$sync_coverage <- checkInpSync(inp_sync, silent_check)
 	return(inp_sync)
 	

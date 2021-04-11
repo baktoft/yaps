@@ -5,6 +5,7 @@
 \title{Get object inp for synchronization}
 \usage{
 getInpSync(
+  sync_type = "top",
   sync_dat,
   max_epo_diff,
   min_hydros,

@@ -86,6 +86,12 @@ downsampleToaList_selective <- function(inp_toa_list_all, offset_vals_all, keep_
 				keep_pings_i <- c(keep_pings_i, keep_pings_h)
 			}
 		}
+		
+		
+		gnu <- toa_long_i[ping %in% keep_pings_i & !is.na(toa)]
+		
+		table(gnu$h_idx)
+		
 		keep_pings <- c(keep_pings, keep_pings_i)
 	}
 	
@@ -166,54 +172,46 @@ getSsVals <- function(inp_toa_list, n_ss_day){
 	return(list(n_ss_idx=n_ss_idx, ss_idx=ss_idx, ss_levels=ss_levels))
 }
 
-#' Internal function to get dat for TMB sync
-#' @inheritParams getInpSync
-#' @noRd
-getDatTmbSync <- function(sync_dat, time_keeper_idx, inp_toa_list, fixed_hydros_vec, offset_vals, ss_vals, inp_H_info, T0, ss_data_what, ss_data_vec){
-	H <- as.matrix(inp_H_info$inp_H)
-	dimnames(H) <- NULL
-	
-	toa_offset <- inp_toa_list$toa - offset_vals$offset_levels[offset_vals$offset_idx]
-
-	dat_tmb_sync <- list(
-		model = "yaps_sync",
-		H=H,
-		toa_offset=toa_offset,
-		sync_tag_idx_vec = inp_toa_list$sync_tag_idx_vec,
-		np = nrow(inp_toa_list$toa),
-		nh = ncol(inp_toa_list$toa),
-		tk = time_keeper_idx,
-		fixed_hydros_vec = fixed_hydros_vec,
-		offset_idx = offset_vals$offset_idx,
-		n_offset_idx = offset_vals$n_offset_idx,
-		ss_idx = ss_vals$ss_idx,
-		n_ss_idx = ss_vals$n_ss_idx,
-		ss_data_what = ss_data_what,
-		ss_data_vec = ss_data_vec
-	)
-	return(dat_tmb_sync)
-}
-
-
 #' Internal function to get params for TMB sync
 #' @inheritParams getInpSync
 #' @noRd
 getParamsTmbSync <- function(dat_tmb_sync, ss_data_what){
-	params_tmb_sync <- list(
-		TOP = 	rowMeans(dat_tmb_sync$toa, na.rm=TRUE),
-		OFFSET = matrix(rnorm(dat_tmb_sync$nh*dat_tmb_sync$n_offset_idx, 0, 3), nrow=dat_tmb_sync$nh, ncol=dat_tmb_sync$n_offset_idx),
-		SLOPE1 = matrix(rnorm(dat_tmb_sync$nh*dat_tmb_sync$n_offset_idx, 0, 3), nrow=dat_tmb_sync$nh, ncol=dat_tmb_sync$n_offset_idx),
-		SLOPE2 = matrix(rnorm(dat_tmb_sync$nh*dat_tmb_sync$n_offset_idx, 0, 3), nrow=dat_tmb_sync$nh, ncol=dat_tmb_sync$n_offset_idx),
-		TRUE_H = as.matrix(cbind(dat_tmb_sync$H[,1], dat_tmb_sync$H[,2], dat_tmb_sync$H[,3])),
-		LOG_SIGMA_TOA = 0
-		# LOG_SIGMA_HYDROS_XY = rnorm(dat_tmb_sync$nh,-3,1)
-	)
+	params_tmb_sync <- list()
+	# if(dat_tmb_sync$model == 'yaps_sync_top'){
+		params_tmb_sync$TOP <- rowMeans(dat_tmb_sync$toa, na.rm=TRUE)
+	# }
+	
+	params_tmb_sync$OFFSET <- matrix(rnorm(dat_tmb_sync$nh*dat_tmb_sync$n_offset_idx, 0, 3), nrow=dat_tmb_sync$nh, ncol=dat_tmb_sync$n_offset_idx)
+	params_tmb_sync$SLOPE1 <- matrix(rnorm(dat_tmb_sync$nh*dat_tmb_sync$n_offset_idx, 0, 3), nrow=dat_tmb_sync$nh, ncol=dat_tmb_sync$n_offset_idx)
+	params_tmb_sync$SLOPE2 <- matrix(rnorm(dat_tmb_sync$nh*dat_tmb_sync$n_offset_idx, 0, 3), nrow=dat_tmb_sync$nh, ncol=dat_tmb_sync$n_offset_idx)
+	params_tmb_sync$SLOPE3 <- matrix(rnorm(dat_tmb_sync$nh*dat_tmb_sync$n_offset_idx, 0, 3), nrow=dat_tmb_sync$nh, ncol=dat_tmb_sync$n_offset_idx)
+	params_tmb_sync$TRUE_H <- as.matrix(cbind(dat_tmb_sync$H[,1], dat_tmb_sync$H[,2], dat_tmb_sync$H[,3]))
+	params_tmb_sync$LOG_SIGMA_TOA <- 0
+	# LOG_SIGMA_HYDROS_XY = rnorm(dat_tmb_sync$nh,-3,1)
+
 	if(ss_data_what == "est"){
-		params_tmb_sync[['SS']] <- rnorm(dat_tmb_sync$n_ss_idx, 1420, 1)
+		params_tmb_sync$SS <- rnorm(dat_tmb_sync$n_ss_idx, 1420, 1)
 	}
 	return(params_tmb_sync)
 }
 
+#' Internal function to get random params for TMB sync
+#' @inheritParams getInpSync
+#' @noRd
+getRandomTmbSync <- function(dat_tmb_sync, ss_data_what){
+	if(dat_tmb_sync$model == "yaps_sync_top"){
+		random_tmb_sync <- c("TOP")
+	} else {
+		random_tmb_sync <- c("TOP")
+	}
+	
+	random_tmb_sync <- c(random_tmb_sync, "OFFSET", "SLOPE1", "SLOPE2", "SLOPE3", "TRUE_H")
+	
+	if(ss_data_what == "est"){
+		random_tmb_sync <- c(random_tmb_sync, "SS")
+	}
+	return(random_tmb_sync)
+}
 
 #' Internal function to get residuals from sync_model in long format
 #' @inheritParams getInpSync

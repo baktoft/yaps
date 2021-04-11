@@ -1,3 +1,11 @@
+# yaps v.1.2.5.9000
+
+## New stuff
+
+## Bug fixes
+* Fix bug when downsampling toa for sync
+
+
 # yaps v1.2.5
 
 ## New stuff

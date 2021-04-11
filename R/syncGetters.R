@@ -65,7 +65,11 @@ downsampleToaList_selective <- function(inp_toa_list_all, offset_vals_all, keep_
 	for(i in 1:length(unique(offset_idx))){
 		toa_long_i <- toa_long[offset_idx == i]
 		keep_pings_i <- c()
-		h_order <- order(nobs_per_offset[offset_idx == i, N])
+		# h_order <- order(nobs_per_offset[offset_idx == i, N])
+		h_dets <- nobs_per_offset[offset_idx == i, N, by=h_idx]
+		setorder(h_dets, N)
+		h_order <- h_dets$h_idx
+
 		for(h in 1:length(h_order)){
 			already_in_keeps <- nrow(toa_long_i[!is.na(toa) & ping %in% keep_pings_i & offset_idx == i & h_idx==h_order[h]])
 			if(already_in_keeps >= keep_rate){

@@ -14,27 +14,34 @@ fineTuneSyncModel <- function(sync_model, eps_threshold, silent=TRUE){
 	resids <- sync_model$report$eps
 	resids[resids == 0] <- NA
 	outliers  <- which(abs(resids)*1450 > eps_threshold)
-	inp_sync$dat_tmb_sync$toa_offset[outliers] <- NA
-	inp_sync$inp_params$toa[outliers] <- NA
+	if(inp_sync$sync_type == 'top'){
+		inp_sync$dat_tmb_sync$toa_offset[outliers] <- NA
+		inp_sync$inp_params$toa[outliers] <- NA
 
-	# check if any empty rows now exists - if so get rid of them entirely
-	nobs <- apply(inp_sync$dat_tmb_sync$toa_offset, 1, function(k) sum(!is.na(k)))
-	empty_rows <- which(nobs < inp_sync$inp_params$min_hydros)
+		# check if any empty rows now exists - if so get rid of them entirely
+		nobs <- apply(inp_sync$dat_tmb_sync$toa_offset, 1, function(k) sum(!is.na(k)))
+		empty_rows <- which(nobs < inp_sync$inp_params$min_hydros)
 
-	if(length(empty_rows) > 0){
-		inp_sync$dat_tmb_sync$toa_offset <- inp_sync$dat_tmb_sync$toa_offset[-empty_rows, ]
-		inp_sync$dat_tmb_sync$sync_tag_idx_vec <- inp_sync$dat_tmb_sync$sync_tag_idx_vec[-empty_rows]
-		inp_sync$dat_tmb_sync$offset_idx <- inp_sync$dat_tmb_sync$offset_idx[-empty_rows]
-		inp_sync$dat_tmb_sync$ss_idx <- inp_sync$dat_tmb_sync$ss_idx[-empty_rows]
-		inp_sync$dat_tmb_sync$np <- inp_sync$dat_tmb_sync$np - length(empty_rows)
-		
-		if(inp_sync$dat_tmb_sync$ss_data_what == "data"){
-			inp_sync$dat_tmb_sync$ss_data_vec = inp_sync$dat_tmb_sync$ss_data_vec [-empty_rows]
+		if(length(empty_rows) > 0){
+			inp_sync$dat_tmb_sync$toa_offset <- inp_sync$dat_tmb_sync$toa_offset[-empty_rows, ]
+			inp_sync$dat_tmb_sync$sync_tag_idx_vec <- inp_sync$dat_tmb_sync$sync_tag_idx_vec[-empty_rows]
+			inp_sync$dat_tmb_sync$offset_idx <- inp_sync$dat_tmb_sync$offset_idx[-empty_rows]
+			inp_sync$dat_tmb_sync$ss_idx <- inp_sync$dat_tmb_sync$ss_idx[-empty_rows]
+			inp_sync$dat_tmb_sync$np <- inp_sync$dat_tmb_sync$np - length(empty_rows)
+			
+			if(inp_sync$dat_tmb_sync$ss_data_what == "data"){
+				inp_sync$dat_tmb_sync$ss_data_vec = inp_sync$dat_tmb_sync$ss_data_vec [-empty_rows]
+			}
+			
+			inp_sync$params_tmb_sync$TOP <- inp_sync$params_tmb_sync$TOP[-empty_rows]
+			
+			inp_sync$inp_params$toa <- inp_sync$inp_params$toa[-empty_rows, ]
 		}
-		
-		inp_sync$params_tmb_sync$TOP <- inp_sync$params_tmb_sync$TOP[-empty_rows]
-		
-		inp_sync$inp_params$toa <- inp_sync$inp_params$toa[-empty_rows, ]
+	} else {
+		if(length(outliers) > 0){
+			inp_sync$dat_tmb_sync$toa_delta <- inp_sync$dat_tmb_sync$toa_delta[-outliers,]
+			inp_sync$dat_tmb_sync$ndelta <- nrow(inp_sync$dat_tmb_sync$toa_delta)
+		}
 	}
 
 	# # # attempt to speed up next getSyncModel() by setting initial param values to relevant values

@@ -67,7 +67,7 @@ downsampleToaList_selective <- function(inp_toa_list_all, offset_vals_all, keep_
 		keep_pings_i <- c()
 		# h_order <- order(nobs_per_offset[offset_idx == i, N])
 		h_dets <- nobs_per_offset[offset_idx == i, N, by=h_idx]
-		setorder(h_dets, N)
+		data.table::setorder(h_dets, N)
 		h_order <- h_dets$h_idx
 
 		for(h in 1:length(h_order)){
@@ -177,14 +177,10 @@ getSsVals <- function(inp_toa_list, n_ss_day){
 #' @noRd
 getParamsTmbSync <- function(dat_tmb_sync, ss_data_what){
 	params_tmb_sync <- list()
-	# if(dat_tmb_sync$model == 'yaps_sync_top'){
-		params_tmb_sync$TOP <- rowMeans(dat_tmb_sync$toa, na.rm=TRUE)
-	# }
 	
 	params_tmb_sync$OFFSET <- matrix(rnorm(dat_tmb_sync$nh*dat_tmb_sync$n_offset_idx, 0, 3), nrow=dat_tmb_sync$nh, ncol=dat_tmb_sync$n_offset_idx)
 	params_tmb_sync$SLOPE1 <- matrix(rnorm(dat_tmb_sync$nh*dat_tmb_sync$n_offset_idx, 0, 3), nrow=dat_tmb_sync$nh, ncol=dat_tmb_sync$n_offset_idx)
 	params_tmb_sync$SLOPE2 <- matrix(rnorm(dat_tmb_sync$nh*dat_tmb_sync$n_offset_idx, 0, 3), nrow=dat_tmb_sync$nh, ncol=dat_tmb_sync$n_offset_idx)
-	params_tmb_sync$SLOPE3 <- matrix(rnorm(dat_tmb_sync$nh*dat_tmb_sync$n_offset_idx, 0, 3), nrow=dat_tmb_sync$nh, ncol=dat_tmb_sync$n_offset_idx)
 	params_tmb_sync$TRUE_H <- as.matrix(cbind(dat_tmb_sync$H[,1], dat_tmb_sync$H[,2], dat_tmb_sync$H[,3]))
 	params_tmb_sync$LOG_SIGMA_TOA <- 0
 	# LOG_SIGMA_HYDROS_XY = rnorm(dat_tmb_sync$nh,-3,1)
@@ -192,6 +188,11 @@ getParamsTmbSync <- function(dat_tmb_sync, ss_data_what){
 	if(ss_data_what == "est"){
 		params_tmb_sync$SS <- rnorm(dat_tmb_sync$n_ss_idx, 1420, 1)
 	}
+	
+	if(dat_tmb_sync$sync_type == 'top'){
+		params_tmb_sync$TOP <- rowMeans(dat_tmb_sync$toa, na.rm=TRUE)
+	}
+	
 	return(params_tmb_sync)
 }
 
@@ -199,13 +200,13 @@ getParamsTmbSync <- function(dat_tmb_sync, ss_data_what){
 #' @inheritParams getInpSync
 #' @noRd
 getRandomTmbSync <- function(dat_tmb_sync, ss_data_what){
-	if(dat_tmb_sync$model == "yaps_sync_top"){
+	if(dat_tmb_sync$sync_type == "top"){
 		random_tmb_sync <- c("TOP")
 	} else {
-		random_tmb_sync <- c("TOP")
+		random_tmb_sync <- c()
 	}
 	
-	random_tmb_sync <- c(random_tmb_sync, "OFFSET", "SLOPE1", "SLOPE2", "SLOPE3", "TRUE_H")
+	random_tmb_sync <- c(random_tmb_sync, "OFFSET", "SLOPE1", "SLOPE2", "TRUE_H")
 	
 	if(ss_data_what == "est"){
 		random_tmb_sync <- c(random_tmb_sync, "SS")
@@ -225,12 +226,21 @@ getEpsLong <- function(report, pl, inp_sync){
 	}
 	
 	
-	eps <- report$eps_toa
+	eps <- report$eps
 	eps[which(eps==0)] <- NA
 	eps_long <- data.table::data.table(reshape2::melt(eps))
-	colnames(eps_long) <- c('ping', 'hydro_idx', 'E')
-	eps_long[, sync_tag_idx:=rep(inp_sync$dat_tmb_sync$sync_tag_idx_vec, times=ncol(eps))]
-	eps_long[, ss:=rep(ss_vec, times=ncol(eps))]
+	if(inp_sync$sync_type == 'top'){
+		colnames(eps_long) <- c('ping', 'hydro_idx', 'E')
+		eps_long[, sync_tag_idx:=rep(inp_sync$dat_tmb_sync$sync_tag_idx_vec, times=ncol(eps))]
+		eps_long[, ss:=rep(ss_vec, times=ncol(eps))]
+	} else {
+		colnames(eps_long) <- c('E')
+		eps_long[ , ping := inp_sync$dat_tmb_sync$toa_delta[,'ping_idx']]
+		eps_long[ , h1_idx := inp_sync$dat_tmb_sync$toa_delta[,'h1']]
+		eps_long[ , h2_idx := inp_sync$dat_tmb_sync$toa_delta[,'h2']]
+		eps_long[ , sync_tag_idx := inp_sync$dat_tmb_sync$toa_delta[,'sync_tag_idx']]
+		eps_long[ , ss := ss_vec[inp_sync$dat_tmb_sync$toa_delta[,'ping_idx']]]
+	}
 	eps_long[, E_m:=E*ss]
 	
 	eps_long <- eps_long[!is.na(E)]

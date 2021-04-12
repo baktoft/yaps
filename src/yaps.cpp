@@ -22,14 +22,12 @@ template<class Type>
 Type objective_function<Type>::operator() ()
 {
   DATA_STRING(model);
-  if (model == "yaps_sync_top") {
-    #include "yaps_sync_top.h"
-  } else if(model == "yaps_sync_delta"){
-    #include "yaps_sync_delta.h"
+  if (model == "yaps_sync") {
+    #include "yaps_sync.h"
   } else if (model == "yaps_track") {
     #include "yaps_track.h"
   } else {
-    error ("Unknown model type");
+    error ("Unknown model!");
   }
   return 0;
 }

@@ -7,6 +7,13 @@
 #' @example man/examples/example-syncModelPlots.R
 plotSyncModelResids <- function(sync_model, by='overall'){
 	eps_long <- sync_model$eps_long
+	
+	if(sync_model$inp_synced$sync_type == 'delta'){
+		eps_long_h1 <- eps_long[, hydro_idx := h1_idx]
+		eps_long_h2 <- eps_long[, hydro_idx := h2_idx]
+		eps_long <- rbind(eps_long_h1, eps_long_h2)
+	}
+	
 	if(by == 'overall'){
 		# print(quantile(eps_long$E_m, probs=c(0.01, 0.025, 0.05, 0.25, 0.5, 0.57, 0.95, 0.975, 0.99)))
 		p <- ggplot2::ggplot(data=eps_long) + geom_histogram(aes(E_m), bins=50)
@@ -38,9 +45,13 @@ plotSyncModelResids <- function(sync_model, by='overall'){
 		T0 <- sync_model$inp_synced$inp_params$T0
 		offset_idx <- sync_model$inp_synced$dat_tmb_sync$offset_idx
 		offset_levels <- sync_model$inp_synced$inp_params$offset_levels
-		# tops <- sync_model$pl$TOP + sync_model$inp_synced$inp_params$T0
-		tops <- as.POSIXct(sync_model$pl$TOP + offset_levels[offset_idx, 1], origin="1970-01-01", tz="UTC")
-		eps_long[, top := tops[ping]]
+		
+		if(sync_model$inp_synced$sync_type == 'top'){
+			tops <- as.POSIXct(sync_model$pl$TOP + offset_levels[offset_idx, 1], origin="1970-01-01", tz="UTC")
+			eps_long[, top := tops[ping]]
+		} else {
+			eps_long[, top := as.POSIXct(sync_model$inp_synced$dat_tmb_sync$toa[as.matrix(cbind(eps_long$ping, eps_long$h1_idx))] + sync_model$inp_synced$inp_params$T0, origin="1970-01-01", tz="UTC")]
+		}
 		if(by == 'temporal_hydro'){
 			p <- ggplot2::ggplot(data=eps_long) + ggtitle("by hydro") + geom_point(aes(x=top, y=E_m), pch=".") + geom_hline(data=eps_long[, .(mean_E_m=mean(E_m)), by=hydro_idx], aes(yintercept=mean_E_m), col="red") + facet_wrap(~hydro_idx)
 		} else if(by == 'temporal_sync_tag'){

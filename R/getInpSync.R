@@ -16,11 +16,12 @@
 #' @param excl_self_detect Logical whether to excluded detections of sync tags on the hydros they are co-located with. Sometimes self detections can introduce excessive residuals in the sync model in which case they should be excluded.
 #' @param lin_corr_coeffs Matrix of coefficients used for pre-sync linear correction. `dim(lin_corr_coeffs)=(#hydros, 2)`. 
 #' @param silent_check Logical whether to get output from `checkInpSync()`. Default is FALSE
+#' @param sync_type String specifying which type og sync model to use. Default sync_type='top' is the original included in yaps. Experimental sync_type='delta' is the ealternative - seems to works just as good, but might be much faster.
 #'
 #' @export
 #' @return List of input data ready for use in `getSyncModel()`
 #' @example man/examples/example-yaps_ssu1.R
-getInpSync <- function(sync_type='top', sync_dat, max_epo_diff, min_hydros, time_keeper_idx, fixed_hydros_idx, n_offset_day, n_ss_day, keep_rate=1, excl_self_detect=TRUE, lin_corr_coeffs=NA, ss_data_what="est", ss_data=c(0), silent_check=FALSE){
+getInpSync <- function(sync_dat, max_epo_diff, min_hydros, time_keeper_idx, fixed_hydros_idx, n_offset_day, n_ss_day, keep_rate=1, excl_self_detect=TRUE, lin_corr_coeffs=NA, ss_data_what="est", ss_data=c(0), silent_check=FALSE, sync_type='top'){
 	if(length(unique(sync_dat$hydros$serial)) != nrow(sync_dat$hydros)){
 		print(sync_dat$hydros[, .N, by=serial][N>=2])
 		stop("ERROR: At least one hydrophone serial number is used more than once in sync_dat$hydros!\n")
@@ -37,31 +38,31 @@ getInpSync <- function(sync_type='top', sync_dat, max_epo_diff, min_hydros, time
 	}
 	
 	
-	sync_dat <- yaps:::appendDetections(sync_dat)
+	sync_dat <- appendDetections(sync_dat)
 		
 	if(is.na(lin_corr_coeffs[1])){
 		lin_corr_coeffs <- matrix(0, nrow=nrow(sync_dat$hydros), ncol=2, byrow=TRUE)
 	}
 
-	sync_dat <- yaps:::applyLinCorCoeffsInpSync(sync_dat, lin_corr_coeffs)
+	sync_dat <- applyLinCorCoeffsInpSync(sync_dat, lin_corr_coeffs)
 	
 	T0 <- min(sync_dat$detections$epo)
 
-	inp_H_info <- yaps:::getInpSyncHInfo(sync_dat)
+	inp_H_info <- getInpSyncHInfo(sync_dat)
 
-	inp_toa_list_all		<- yaps:::getInpSyncToaList(sync_dat, max_epo_diff, min_hydros, excl_self_detect)
-	fixed_hydros_vec 		<- yaps:::getFixedHydrosVec(sync_dat, fixed_hydros_idx)
-	offset_vals_all			<- yaps:::getOffsetVals(inp_toa_list_all, n_offset_day)
-	inp_toa_list 			<- yaps:::getDownsampledToaList(inp_toa_list_all, offset_vals_all, keep_rate)
-	offset_vals				<- yaps:::getOffsetVals(inp_toa_list, n_offset_day)
-	ss_vals 				<- yaps:::getSsVals(inp_toa_list, n_ss_day)
+	inp_toa_list_all		<- getInpSyncToaList(sync_dat, max_epo_diff, min_hydros, excl_self_detect)
+	fixed_hydros_vec 		<- getFixedHydrosVec(sync_dat, fixed_hydros_idx)
+	offset_vals_all			<- getOffsetVals(inp_toa_list_all, n_offset_day)
+	inp_toa_list 			<- getDownsampledToaList(inp_toa_list_all, offset_vals_all, keep_rate)
+	offset_vals				<- getOffsetVals(inp_toa_list, n_offset_day)
+	ss_vals 				<- getSsVals(inp_toa_list, n_ss_day)
 	if(ss_data_what == "data"){
-		ss_data_vec		<- yaps:::getSsDataVec(inp_toa_list, ss_data)
+		ss_data_vec		<- getSsDataVec(inp_toa_list, ss_data)
 	} else {
 		ss_data_vec <- c(0)
 	}
 
-	dat_tmb_sync 		<- yaps:::getDatTmbSync(sync_type, sync_dat, keep_rate, time_keeper_idx, inp_toa_list, fixed_hydros_vec, offset_vals, ss_vals, inp_H_info, T0, ss_data_what, ss_data_vec)
+	dat_tmb_sync 		<- getDatTmbSync(sync_type, sync_dat, keep_rate, time_keeper_idx, inp_toa_list, fixed_hydros_vec, offset_vals, ss_vals, inp_H_info, T0, ss_data_what, ss_data_vec)
 	params_tmb_sync 	<- getParamsTmbSync(dat_tmb_sync, ss_data_what)
 	random_tmb_sync 	<- getRandomTmbSync(dat_tmb_sync, ss_data_what)
 	# inits_tmb_sync <- c(3, rep(-3,dat_tmb_sync$nh))

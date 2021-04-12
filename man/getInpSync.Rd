@@ -5,7 +5,6 @@
 \title{Get object inp for synchronization}
 \usage{
 getInpSync(
-  sync_type = "top",
   sync_dat,
   max_epo_diff,
   min_hydros,
@@ -18,7 +17,8 @@ getInpSync(
   lin_corr_coeffs = NA,
   ss_data_what = "est",
   ss_data = c(0),
-  silent_check = FALSE
+  silent_check = FALSE,
+  sync_type = "top"
 )
 }
 \arguments{
@@ -50,6 +50,8 @@ OR (if keep_rate > 10) number of pings (approximate) to keep in each hydro X off
 \item{ss_data}{data.table containing timestamp and speed of sound for the entire period to by synchronised. Must contain columns 'ts' (POSIXct timestamp) and 'ss' speed of sound in m/s (typical values range 1400 - 1550).}
 
 \item{silent_check}{Logical whether to get output from \code{checkInpSync()}. Default is FALSE}
+
+\item{sync_type}{String specifying which type og sync model to use. Default sync_type='top' is the original included in yaps. Experimental sync_type='delta' is th ealternative - seems to works just as good, but is much faster.}
 }
 \value{
 List of input data ready for use in \code{getSyncModel()}

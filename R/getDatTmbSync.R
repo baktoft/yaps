@@ -9,24 +9,22 @@ getDatTmbSync <- function(sync_type, sync_dat, keep_rate, time_keeper_idx, inp_t
 	toa_offset <- inp_toa_list$toa - offset_vals$offset_levels[offset_vals$offset_idx]
 	
 	if(sync_type == 'delta'){
-		dat_delta <- getDatDelta(toa, inp_toa_list, keep_rate, time_keeper_idx, offset_vals, ss_vals)
-		model <- "yaps_sync_delta"
+		toa_delta <- getToaDelta(toa, inp_toa_list, keep_rate, time_keeper_idx, offset_vals, ss_vals)
 	} else {
-		dat_delta <- c(0)
-		
-		model <- "yaps_sync_top"
+		toa_delta <- matrix(0)
 	}
 
 	dat_tmb_sync <- list(
-		model = model,
+		model = 'yaps_sync', 
+		sync_type = sync_type,
 		H=H,
 		toa = toa,
 		toa_offset=toa_offset,
-		dat_delta = dat_delta,
+		toa_delta = toa_delta,
 		sync_tag_idx_vec = inp_toa_list$sync_tag_idx_vec,
 		np = nrow(inp_toa_list$toa),
 		nh = ncol(inp_toa_list$toa),
-		ndelta = nrow(dat_delta),
+		ndelta = nrow(toa_delta),
 		tk = time_keeper_idx,
 		fixed_hydros_vec = fixed_hydros_vec,
 		offset_idx = offset_vals$offset_idx,

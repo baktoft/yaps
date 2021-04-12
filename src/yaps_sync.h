@@ -1,6 +1,7 @@
+	DATA_STRING(sync_type);
 	DATA_ARRAY(H);
 	DATA_ARRAY(toa_offset);
-	DATA_ARRAY(dat_delta); 
+	DATA_ARRAY(toa_delta); 
 	DATA_IVECTOR(sync_tag_idx_vec);
 	DATA_INTEGER(np);
 	DATA_INTEGER(nh);
@@ -15,7 +16,6 @@
 	DATA_IVECTOR(ss_idx);
 	DATA_INTEGER(n_ss_idx);
 	
-	PARAMETER_VECTOR(TOP);
 	PARAMETER_ARRAY(OFFSET);
 	PARAMETER_ARRAY(SLOPE1);
 	PARAMETER_ARRAY(SLOPE2);
@@ -29,8 +29,14 @@
 	// PARAMETER_VECTOR(LOG_SIGMA_HYDROS_XY);
 	// vector<Type> SIGMA_HYDROS_XY = exp(LOG_SIGMA_HYDROS_XY);
 
-	array<Type> mu_toa(np,nh); 
-	array<Type> eps_toa(np,nh);
+	// if(sync_type == 'top'){
+	// 	array<Type> mu(np,nh); 
+	// 	array<Type> eps(np,nh);
+	// } else {
+	// 	vector<Type> mu(ndelta);
+	// 	vector<Type> eps(ndelta);
+	// }
+
 	array<Type> dist_mat(nh,nh);
 	vector<Type> ss_i(np);
 	
@@ -75,16 +81,49 @@
 			}
 		}
 	}
-	for(int p = 0; p < np; ++p){   		// iterate pings
-		for(int h=0; h < nh; ++h){		// iterate hydros in ping p
-			if(!isNA(toa_offset(p,h))){
-				mu_toa(p,h) = TOP(p) + dist_mat(sync_tag_idx_vec(p), h)/ss_i(p) + OFFSET(h, offset_idx(p)) + SLOPE1(h, offset_idx(p))*(toa_offset(p,h)/1E6) + SLOPE2(h, offset_idx(p))*pow((toa_offset(p,h)/1E6),2);
-				eps_toa(p,h) = toa_offset(p,h) - mu_toa(p,h);
-				// nll -= dnorm(eps_toa(p,h), Type(0.0), SIGMA_TOA, true);
-				// nll -= log(dt(eps_toa(p,h)/SCALE, Type(3.0), false)/SCALE);
-				nll -= log(dt(eps_toa(p,h)/SIGMA_TOA, Type(3.0), false)/SIGMA_TOA);
+
+	if(sync_type == "top"){
+		PARAMETER_VECTOR(TOP);
+
+		array<Type> mu(np,nh); 
+		array<Type> eps(np,nh);
+
+
+		for(int p = 0; p < np; ++p){   		// iterate pings
+			for(int h=0; h < nh; ++h){		// iterate hydros in ping p
+				if(!isNA(toa_offset(p,h))){
+					mu(p,h) = TOP(p) + dist_mat(sync_tag_idx_vec(p), h)/ss_i(p) + OFFSET(h, offset_idx(p)) + SLOPE1(h, offset_idx(p))*(toa_offset(p,h)/1E6) + SLOPE2(h, offset_idx(p))*pow((toa_offset(p,h)/1E6),2);
+					eps(p,h) = toa_offset(p,h) - mu(p,h);
+					// nll -= dnorm(eps(p,h), Type(0.0), SIGMA_TOA, true);
+					// nll -= log(dt(eps(p,h)/SCALE, Type(3.0), false)/SCALE);
+					nll -= log(dt(eps(p,h)/SIGMA_TOA, Type(3.0), false)/SIGMA_TOA);
+				}
 			}
 		}
+		REPORT(eps);
+	} else {
+		vector<Type> mu(ndelta);
+		vector<Type> eps(ndelta);
+
+
+		for(int d = 0; d < ndelta; ++d){   		// iterate pings
+			int H1 = CppAD::Integer(toa_delta(d,0)) - 1;
+			int H2 = CppAD::Integer(toa_delta(d,1)) - 1;
+			int ping_idx = CppAD::Integer(toa_delta(d,3)) - 1;
+			int sync_tag_idx = CppAD::Integer(toa_delta(d,4)) - 1;
+			int offset_idx = CppAD::Integer(toa_delta(d,5)) -1;
+			int ss_idx = CppAD::Integer(toa_delta(d,6)) - 1;
+
+			// mu(d) = 	(dist_mat(sync_tag_idx, H1)/ss_i(ping_idx) + OFFSET(H1, 0) + SLOPE1(H1, 0)*(toa(ping_idx, H1)/1E6) + SLOPE2(H1, 0)*pow(toa(ping_idx, H1)/1E6, 2) + SLOPE3(H1, 0)*pow(toa(ping_idx, H1)/1E6, 3))  - 
+							// (dist_mat(sync_tag_idx, H2)/ss_i(ping_idx) + OFFSET(H2, 0) + SLOPE1(H2, 0)*(toa(ping_idx, H2)/1E6) + SLOPE2(H2, 0)*pow(toa(ping_idx, H2)/1E6, 2) + SLOPE3(H2, 0)*pow(toa(ping_idx, H2)/1E6, 3));
+			mu(d) = 	(dist_mat(sync_tag_idx, H1)/ss_i(ping_idx) + OFFSET(H1, offset_idx) + SLOPE1(H1, offset_idx)*(toa_offset(ping_idx, H1)/1E6) + SLOPE2(H1, offset_idx)*pow(toa_offset(ping_idx, H1)/1E6, 2))  - 
+							(dist_mat(sync_tag_idx, H2)/ss_i(ping_idx) + OFFSET(H2, offset_idx) + SLOPE1(H2, offset_idx)*(toa_offset(ping_idx, H2)/1E6) + SLOPE2(H2, offset_idx)*pow(toa_offset(ping_idx, H2)/1E6, 2));
+
+			eps(d) = toa_delta(d, 2) - mu(d);
+			nll -= log(dt(eps(d)/SIGMA_TOA, Type(3.0), false)/SIGMA_TOA);
+
+		}
+		REPORT(eps);
 	}
 
 	for(int h=0; h<nh; ++h){
@@ -101,17 +140,7 @@
 			nll -= dnorm(TRUE_H(h,1), H(h,1), Type(10), true);
 		}
 	}
-	
-	// //speed of sound component
-	// if(ss_data_what == "est"){
-		// for(int i = 0; i < n_ss_idx; ++i){
-			// nll -= dnorm(SS(i), Type(1475.0), Type(100), true);
-		// }
-	// } else {
-		// SS = ss_data_vec;
-	// }
-	
-	REPORT(eps_toa);
+
 	REPORT(dist_mat);
 	
 	return nll;

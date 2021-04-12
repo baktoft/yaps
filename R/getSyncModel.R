@@ -39,7 +39,7 @@ getSyncModel <- function(inp_sync, silent=TRUE, fine_tune=FALSE, max_iter=100, t
 	# ## Reduce memory peak of a parallel model by creating tapes in serial
 	# config(tape.parallel=0, DLL="yaps_sync")
 	obj <- TMB::MakeADFun(data = dat_tmb, parameters = params, random = random, DLL = "yaps", inner.control = list(maxit = max_iter), silent=silent)
-	# obj$fn(obj$par) 
+	obj$fn(obj$par) 
 	
 	if(!silent){
 		obj$env$tracepar = TRUE
@@ -51,12 +51,14 @@ getSyncModel <- function(inp_sync, silent=TRUE, fine_tune=FALSE, max_iter=100, t
 		TMB::newtonOption(obj, smartsearch=FALSE)
 	}
 
+	lower <- c(-10)
+	upper <- c(-2)
 	
 	if(silent){
 		# opt <- suppressWarnings(stats::nlminb(inits,obj$fn,obj$gr))
-		opt <- suppressWarnings(stats::nlminb(inits,obj$fn,obj$gr, lower=c(-10), upper=c(-2)))
+		opt <- suppressWarnings(stats::nlminb(inits,obj$fn,obj$gr, lower=lower, upper=upper))
 	} else {
-		opt <- stats::nlminb(inits,obj$fn,obj$gr, lower=c(-10), upper=c(2))
+		opt <- stats::nlminb(inits,obj$fn,obj$gr, lower=lower, upper=upper)
 		# opt <- stats::nlminb(inits,obj$fn,obj$gr)
 	}
 
@@ -66,8 +68,8 @@ getSyncModel <- function(inp_sync, silent=TRUE, fine_tune=FALSE, max_iter=100, t
 	cat(".... obj = ", obj_val, " \n")
 	report <- obj$report()
 
-	crazy_outliers <- which(abs(report$eps_toa)*1450 > 10000)
-	fine_outliers  <- which(abs(report$eps_toa)*1450 > 1000)
+	crazy_outliers <- which(abs(report$eps)*1450 > 10000)
+	fine_outliers  <- which(abs(report$eps)*1450 > 1000)
 	if(length(crazy_outliers > 0)){
 		cat(".... some extreme outliers potentially affecting the model where identified \n Consider to run fineTuneSyncModel(sync_model, eps_threshold=10000). See ?fineTuneSyncModel for more info. \n")
 		# dat_tmb$toa_offset[crazy_outliers] <- NA

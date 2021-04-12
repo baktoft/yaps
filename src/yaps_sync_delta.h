@@ -20,7 +20,6 @@
 	PARAMETER_ARRAY(OFFSET);
 	PARAMETER_ARRAY(SLOPE1);
 	PARAMETER_ARRAY(SLOPE2);
-	PARAMETER_ARRAY(SLOPE3);
 	// PARAMETER_VECTOR(SS);
 
 	PARAMETER_ARRAY(TRUE_H);
@@ -72,13 +71,11 @@
 					nll -= dnorm(OFFSET(h, i) , Type(0.0), Type(0.0000000001), true);
 					nll -= dnorm(SLOPE1(h, i) , Type(0.0), Type(0.0000000001), true);
 					nll -= dnorm(SLOPE2(h,i) , Type(0.0), Type(0.0000000001), true);
-					nll -= dnorm(SLOPE3(h,i) , Type(0.0), Type(0.0000000001), true);
 			}
 			else {
 					nll -= dnorm(OFFSET(h,i), Type(0),Type(30),true);
 					nll -= dnorm(SLOPE1(h,i), Type(0),Type(10),true);
 					nll -= dnorm(SLOPE2(h,i), Type(0),Type(10),true);
-					nll -= dnorm(SLOPE3(h,i), Type(0),Type(10),true);
 			}
 		}
 	}
@@ -103,10 +100,10 @@
 		int offset_idx = CppAD::Integer(dat_delta(d,5)) -1;
 		int ss_idx = CppAD::Integer(dat_delta(d,6)) - 1;
 
-		mu_delta(d) = 	(dist_mat(sync_tag_idx, H1)/ss_i(ping_idx) + OFFSET(H1, 0) + SLOPE1(H1, 0)*(toa(ping_idx, H1)/1E6) + SLOPE2(H1, 0)*pow(toa(ping_idx, H1)/1E6, 2) + SLOPE3(H1, 0)*pow(toa(ping_idx, H1)/1E6, 3))  - 
-						(dist_mat(sync_tag_idx, H2)/ss_i(ping_idx) + OFFSET(H2, 0) + SLOPE1(H2, 0)*(toa(ping_idx, H2)/1E6) + SLOPE2(H2, 0)*pow(toa(ping_idx, H2)/1E6, 2) + SLOPE3(H2, 0)*pow(toa(ping_idx, H2)/1E6, 3));
-		// mu_delta(d) = 	(dist_mat(sync_tag_idx, H1)/ss_i(ping_idx) + OFFSET(H1, offset_idx) + SLOPE1(H1, offset_idx)*(toa_offset(ping_idx, H1)/1E6))  - 
-		// 				(dist_mat(sync_tag_idx, H2)/ss_i(ping_idx) + OFFSET(H2, offset_idx) + SLOPE1(H2, offset_idx)*(toa_offset(ping_idx, H2)/1E6));
+		// mu_delta(d) = 	(dist_mat(sync_tag_idx, H1)/ss_i(ping_idx) + OFFSET(H1, 0) + SLOPE1(H1, 0)*(toa(ping_idx, H1)/1E6) + SLOPE2(H1, 0)*pow(toa(ping_idx, H1)/1E6, 2) + SLOPE3(H1, 0)*pow(toa(ping_idx, H1)/1E6, 3))  - 
+						// (dist_mat(sync_tag_idx, H2)/ss_i(ping_idx) + OFFSET(H2, 0) + SLOPE1(H2, 0)*(toa(ping_idx, H2)/1E6) + SLOPE2(H2, 0)*pow(toa(ping_idx, H2)/1E6, 2) + SLOPE3(H2, 0)*pow(toa(ping_idx, H2)/1E6, 3));
+		mu_delta(d) = 	(dist_mat(sync_tag_idx, H1)/ss_i(ping_idx) + OFFSET(H1, offset_idx) + SLOPE1(H1, offset_idx)*(toa_offset(ping_idx, H1)/1E6) + SLOPE2(H1, offset_idx)*pow(toa_offset(ping_idx, H1)/1E6, 2))  - 
+						(dist_mat(sync_tag_idx, H2)/ss_i(ping_idx) + OFFSET(H2, offset_idx) + SLOPE1(H2, offset_idx)*(toa_offset(ping_idx, H2)/1E6) + SLOPE2(H2, offset_idx)*pow(toa_offset(ping_idx, H2)/1E6, 2));
 
 		eps_delta(d) = dat_delta(d, 2) - mu_delta(d);
 		nll -= log(dt(eps_delta(d)/SIGMA_TOA, Type(3.0), false)/SIGMA_TOA);

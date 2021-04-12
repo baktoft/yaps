@@ -30,6 +30,13 @@ getInpSync <- function(sync_type='top', sync_dat, max_epo_diff, min_hydros, time
 		stop("ERROR: Invalid keep_rate! Must be either ]0;1] or integer >= 10\n")
 	}
 	
+	if(length(unique(sync_dat$detections$serial))  != nrow(sync_dat$hydros)){
+		det_hydros <- unique(sync_dat$detections$serial)
+		not_dets <- det_hydros[!sync_dat$hydros$serial %in% det_hydros]
+		stop("ERROR: These hydro serials were not found in the detection tabel. They cannot be synced. Please fix or remove. \n",not_dets,"")
+	}
+	
+	
 	sync_dat <- yaps:::appendDetections(sync_dat)
 		
 	if(is.na(lin_corr_coeffs[1])){
@@ -54,7 +61,7 @@ getInpSync <- function(sync_type='top', sync_dat, max_epo_diff, min_hydros, time
 		ss_data_vec <- c(0)
 	}
 
-	dat_tmb_sync 		<- getDatTmbSync(sync_type, sync_dat, time_keeper_idx, inp_toa_list, fixed_hydros_vec, offset_vals, ss_vals, inp_H_info, T0, ss_data_what, ss_data_vec)
+	dat_tmb_sync 		<- yaps:::getDatTmbSync(sync_type, sync_dat, keep_rate, time_keeper_idx, inp_toa_list, fixed_hydros_vec, offset_vals, ss_vals, inp_H_info, T0, ss_data_what, ss_data_vec)
 	params_tmb_sync 	<- getParamsTmbSync(dat_tmb_sync, ss_data_what)
 	random_tmb_sync 	<- getRandomTmbSync(dat_tmb_sync, ss_data_what)
 	# inits_tmb_sync <- c(3, rep(-3,dat_tmb_sync$nh))

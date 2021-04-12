@@ -51,7 +51,7 @@ OR (if keep_rate > 10) number of pings (approximate) to keep in each hydro X off
 
 \item{silent_check}{Logical whether to get output from \code{checkInpSync()}. Default is FALSE}
 
-\item{sync_type}{String specifying which type og sync model to use. Default sync_type='top' is the original included in yaps. Experimental sync_type='delta' is th ealternative - seems to works just as good, but is much faster.}
+\item{sync_type}{String specifying which type og sync model to use. Default sync_type='top' is the original included in yaps. Experimental sync_type='delta' is the ealternative - seems to works just as good, but might be much faster.}
 }
 \value{
 List of input data ready for use in \code{getSyncModel()}
@@ -72,7 +72,7 @@ time_keeper_idx <- 5
 fixed_hydros_idx <- c(2:3, 6, 8, 11, 13:17)
 n_offset_day <- 2
 n_ss_day <- 2
-keep_rate <- 20
+keep_rate <- 15
 
 # # # Get input data ready for getSyncModel()
 inp_sync <- getInpSync(sync_dat=ssu1, max_epo_diff, min_hydros, time_keeper_idx, 

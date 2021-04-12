@@ -66,6 +66,7 @@ downsampleToaList_selective <- function(inp_toa_list_all, offset_vals_all, keep_
 		toa_long_i <- toa_long[offset_idx == i]
 		keep_pings_i <- c()
 		# h_order <- order(nobs_per_offset[offset_idx == i, N])
+
 		h_dets <- nobs_per_offset[offset_idx == i, N, by=h_idx]
 		data.table::setorder(h_dets, N)
 		h_order <- h_dets$h_idx
@@ -86,12 +87,6 @@ downsampleToaList_selective <- function(inp_toa_list_all, offset_vals_all, keep_
 				keep_pings_i <- c(keep_pings_i, keep_pings_h)
 			}
 		}
-		
-		
-		gnu <- toa_long_i[ping %in% keep_pings_i & !is.na(toa)]
-		
-		table(gnu$h_idx)
-		
 		keep_pings <- c(keep_pings, keep_pings_i)
 	}
 	
@@ -190,7 +185,7 @@ getParamsTmbSync <- function(dat_tmb_sync, ss_data_what){
 	}
 	
 	if(dat_tmb_sync$sync_type == 'top'){
-		params_tmb_sync$TOP <- rowMeans(dat_tmb_sync$toa, na.rm=TRUE)
+		params_tmb_sync$TOP <- rowMeans(dat_tmb_sync$toa_offset, na.rm=TRUE)
 	}
 	
 	return(params_tmb_sync)

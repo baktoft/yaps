@@ -8,6 +8,10 @@
 plotSyncModelResids <- function(sync_model, by='overall'){
 	eps_long <- sync_model$eps_long
 	
+	if(is.null(sync_model$inp_synced$sync_type)){
+		sync_model$inp_synced$sync_type <- 'top'
+	}
+
 	if(sync_model$inp_synced$sync_type == 'delta'){
 		eps_long_h1 <- eps_long[, hydro_idx := h1_idx]
 		eps_long_h2 <- eps_long[, hydro_idx := h2_idx]

@@ -13,7 +13,7 @@ keep_rate <- 15
 
 # get input data ready for getSyncModel()
 inp_sync <- getInpSync(sync_dat=ssu1, max_epo_diff, min_hydros, time_keeper_idx, 
-    fixed_hydros_idx, n_offset_day, n_ss_day, keep_rate=keep_rate, silent_check=TRUE)
+    fixed_hydros_idx, n_offset_day, n_ss_day, keep_rate=keep_rate, silent_check=TRUE, sync_type='top')
 
 
 

@@ -55,6 +55,7 @@ synced_dat <- detections_synced[tag == focal_tag]
 toa <- getToaYaps(synced_dat=synced_dat, hydros=hydros_yaps, pingType='rbi', 
 	rbi_min=rbi_min, rbi_max=rbi_max)
 bbox <- getBbox(hydros_yaps, buffer=50, pen=1e6)
+
 inp <- getInp(hydros_yaps, toa, E_dist="Mixture", n_ss=5, pingType="rbi", 
 	sdInits=1, rbi_min=rbi_min, rbi_max=rbi_max, ss_data_what="est", ss_data=0, bbox=bbox)
 

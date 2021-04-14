@@ -1,6 +1,8 @@
 # yaps v.1.2.5.9000
 
 ## New stuff
+* Add another approach to do array synchronization. Still experimental, but seems to work just as well, but much faster. 
+Set sync_type="delta" in getInpSync() to try it out.
 
 ## Bug fixes
 * Fix bug when downsampling toa for sync

@@ -13,7 +13,6 @@ runYaps(
   silent = TRUE,
   opt_fun = "nlminb",
   opt_controls = list(),
-  bounds = list(),
   tmb_smartsearch = TRUE
 )
 
@@ -25,7 +24,6 @@ runTmb(
   silent = TRUE,
   opt_fun = "nlminb",
   opt_controls = list(),
-  bounds = list(),
   tmb_smartsearch = TRUE
 )
 }
@@ -43,9 +41,7 @@ runTmb(
 \item{opt_controls}{List of controls passed to optimization function. For instances, tolerances such as \code{x.tol=1E-8}. \cr
 If \code{opt_fun = 'nloptr'}, \code{opt_controls} must be a list formatted appropriately. For instance: \cr
 \code{opt_controls <- list( algorithm="NLOPT_LD_AUGLAG", xtol_abs=1e-12, maxeval=2E+4, print_level = 1, local_opts= list(algorithm="NLOPT_LD_AUGLAG_EQ", xtol_rel=1e-4) )}. \cr
-See \code{?nloptr} and the NLopt site https://nlopt.readthedocs.io/en/latest/ for more info. Some algorithms in \code{nloptr} require bounded parameters - see \code{bounds}.}
-
-\item{bounds}{List of two vectors specifying lower and upper bounds of fixed parameters. Length of each vector must be equal to number of fixed parameters. For instance, \code{bounds = list(lb = c(-3, -1, -2), ub = c(2,0,1) )}.}
+See \code{?nloptr} and the NLopt site https://nlopt.readthedocs.io/en/latest/ for more info. Some algorithms in \code{nloptr} require bounded parameters - this is not currently implemented.}
 
 \item{tmb_smartsearch}{Logical whether to use the TMB smartsearch in the inner optimizer (see \code{?TMB::MakeADFun} for info). Default and original implementation is TRUE. However, there seems to be an issue with recent versions of \code{Matrix} that requires \code{tmb_smartsearch=FALSE}.}
 }
@@ -78,7 +74,7 @@ time_keeper_idx <- 5
 fixed_hydros_idx <- c(2:3, 6, 8, 11, 13:17)
 n_offset_day <- 2
 n_ss_day <- 2
-keep_rate <- 15
+keep_rate <- 20
 
 # # # Get input data ready for getSyncModel()
 inp_sync <- getInpSync(sync_dat=ssu1, max_epo_diff, min_hydros, time_keeper_idx, 
@@ -122,14 +118,15 @@ rbi_max <- 40
 synced_dat <- detections_synced[tag == focal_tag]
 toa <- getToaYaps(synced_dat=synced_dat, hydros=hydros_yaps, pingType='rbi', 
 	rbi_min=rbi_min, rbi_max=rbi_max)
+bbox <- getBbox(hydros_yaps, buffer=50, pen=1e6)
 inp <- getInp(hydros_yaps, toa, E_dist="Mixture", n_ss=5, pingType="rbi", 
-	sdInits=1, rbi_min=rbi_min, rbi_max=rbi_max, ss_data_what="est", ss_data=0)
+	sdInits=1, rbi_min=rbi_min, rbi_max=rbi_max, ss_data_what="est", ss_data=0, bbox=bbox)
 
 # # # Check that inp is ok
 checkInp(inp)
 
 # # # Run yaps on the prepared data to estimate track
-yaps_out <- runYaps(inp, silent=TRUE, tmb_smartsearch=TRUE, maxIter=500) 
+yaps_out <- runYaps(inp, silent=TRUE, tmb_smartsearch=TRUE, maxIter=5000) 
 
 # # # Plot the results and compare to "the truth" obtained using gps
 

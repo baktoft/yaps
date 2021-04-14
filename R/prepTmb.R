@@ -62,8 +62,8 @@ getDatTmb <- function(hydros, toa, E_dist, n_ss, pingType, rbi_min, rbi_max, ss_
 		np = ncol(toa),
 		Edist = Edist,
 		toa = toa,
-		bi_epsilon = 1e-6,
-		bi_penalty = 1*1e9,
+		bi_epsilon = 1E-6,
+		bi_penalty = 1E9,
 		rbi_min = rbi_min,
 		rbi_max = rbi_max,
 		pingType = pingType,
@@ -104,10 +104,13 @@ getParams <- function(datTmb){
 		# , log_t_part = 0				#Mixture ratio between Gaussian and t
 	)
 	
+	# # # If estimating 3D	
 	if(datTmb$how_3d == "est"){
 		out$Z <- stats::runif(ncol(datTmb$toa), -10, 0)
+		out$logD_z <- 0				#diffusivity of transmitter vertical movement (D_z in ms)
 	}
 	
+
 	# # # ss related
 	if(datTmb$ss_data_what == 'est'){
 		out$logD_v <- 0				#diffusivity of speed of sound (D_v in ms)
@@ -126,7 +129,7 @@ getParams <- function(datTmb){
 	}
 
 	# # # Ping type related
-	if(datTmb$pingType == 'sbi'){
+	if(datTmb$pingType %in% c('sbi', 'sbi_double', 'rbi')){
 		out$logSigma_bi <- 0			#sigma  burst interval (sigma_bi in ms)
 	}
 	
@@ -134,8 +137,7 @@ getParams <- function(datTmb){
 		out$logSigma_bi <- 0			#sigma  burst interval (sigma_bi in ms)
 		out$tag_drift <- stats::rnorm(datTmb$np, 0, 1e-2)
 	}
-	
-	
+
 	
 	return(out)
 }
@@ -184,6 +186,11 @@ getInits <- function(datTmb, sdInits=1) {
 	init_log_t_part <- -4	# only used in mixture
 
 	inits <- c(init_logD_xy)
+
+	if(datTmb$how_3d == 'est'){
+		init_logD_z <- 0
+		inits <- c(inits, init_logD_z)
+	}
 	
 	if(datTmb$ss_data_what == 'est'){
 		inits <- c(inits, init_logD_v)
@@ -201,14 +208,67 @@ getInits <- function(datTmb, sdInits=1) {
 	if(datTmb$pingType == 'sbi'){
 		inits <- c(inits, init_logSigma_bi)#,  init_logD_v)#, init_logSigma_toa, init_logScale, init_log_t_part)
 	} else if (datTmb$pingType == 'rbi'){
-		inits <- c(inits)#, 					init_logD_v)#, init_logSigma_toa, init_logScale, init_log_t_part)
+		inits <- c(inits, init_logSigma_bi)#, 					init_logD_v)#, init_logSigma_toa, init_logScale, init_log_t_part)
 	} else if (datTmb$pingType == 'pbi'){
 		inits <- c(inits, init_logSigma_bi)#,  init_logD_v)#, init_logSigma_toa, init_logScale, init_log_t_part)
 	}
-
 	
 	inits <- stats::rnorm(length(inits), mean=inits, sd=sdInits)
 	return(inits)
+}
+
+#' Get bounds restricting the optimizer
+#* 
+#' Compile a matrix of lower (bounds[,1]) and upper (bounds[,2]) bounds for the parameters to be estimated.
+#' @param datTmb Object obtained using getDatTmb()
+#' @return Matrix of bounds restricting the optimizer when running runYaps().
+#' @noRd
+getBounds <- function(datTmb) {
+	lu_logD_xy 			<- c(-50,  2)
+	lu_logD_z 			<- c(-50,  2)
+
+	lu_logSigma_toa 	<- c(-12, -2)
+	if(datTmb$Edist[2] == 1){ # mixture
+		lu_logScale 	<- c(-30, 10)
+	} else if (datTmb$Edist[3] == 1) { # t
+		lu_logScale 	<- c(-10,2)
+	}
+	lu_log_t_part 		<- c(-100, 100)
+	if(datTmb$pingType == 'rbi'){
+		lu_logSigma_bi 		<- c(-20, 20)
+	} else {
+		lu_logSigma_bi 		<- c(-20, -2)
+	}
+	lu_logD_v 			<- c(-20,  2)
+
+	bounds <- c()
+	bounds <- rbind(bounds, lu_logD_xy)
+
+	if(datTmb$how_3d == 'est'){
+		bounds <- rbind(bounds, lu_logD_z)
+	}
+
+	if(datTmb$ss_data_what == 'est'){
+		bounds <- rbind(bounds, lu_logD_v)
+	}
+
+	if(datTmb$Edist[1] == 1){
+		bounds <- rbind(bounds, lu_logSigma_toa)
+	} else if(datTmb$Edist[2] == 1){
+		bounds <- rbind(bounds, lu_logSigma_toa, lu_logScale, lu_log_t_part)
+	} else if(datTmb$Edist[3] == 1){
+		bounds <- rbind(bounds, lu_logScale)
+	}
+	
+	if(datTmb$pingType == 'sbi'){
+		bounds <- rbind(bounds, lu_logSigma_bi)
+	} else if (datTmb$pingType == 'rbi'){
+		bounds <- rbind(bounds, lu_logSigma_bi)
+	} else if (datTmb$pingType == 'pbi'){
+		bounds <- rbind(bounds, lu_logSigma_bi)
+	}
+	
+	return(bounds)
 }
 
 #' Get parameters for this specific data set

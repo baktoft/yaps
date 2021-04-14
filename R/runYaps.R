@@ -8,8 +8,7 @@
 #' @param opt_controls List of controls passed to optimization function. For instances, tolerances such as `x.tol=1E-8`. \cr 
 #'   If `opt_fun = 'nloptr'`, `opt_controls` must be a list formatted appropriately. For instance: \cr
 #'  `opt_controls <- list( algorithm="NLOPT_LD_AUGLAG", xtol_abs=1e-12, maxeval=2E+4, print_level = 1, local_opts= list(algorithm="NLOPT_LD_AUGLAG_EQ", xtol_rel=1e-4) )`. \cr
-#'  See `?nloptr` and the NLopt site https://nlopt.readthedocs.io/en/latest/ for more info. Some algorithms in `nloptr` require bounded parameters - see `bounds`.
-#' @param bounds List of two vectors specifying lower and upper bounds of fixed parameters. Length of each vector must be equal to number of fixed parameters. For instance, `bounds = list(lb = c(-3, -1, -2), ub = c(2,0,1) )`.
+#'  See `?nloptr` and the NLopt site https://nlopt.readthedocs.io/en/latest/ for more info. Some algorithms in `nloptr` require bounded parameters - this is not currently implemented.
 #' @param tmb_smartsearch Logical whether to use the TMB smartsearch in the inner optimizer (see `?TMB::MakeADFun` for info). Default and original implementation is TRUE. However, there seems to be an issue with recent versions of `Matrix` that requires `tmb_smartsearch=FALSE`. 
 #'
 #' @export
@@ -27,7 +26,7 @@
 #'  }
 #'
 #' @example man/examples/example-yaps_ssu1.R
-runYaps <- function(inp, maxIter=1000, getPlsd=TRUE, getRep=TRUE, silent=TRUE, opt_fun='nlminb', opt_controls=list(), bounds=list(), tmb_smartsearch=TRUE){
+runYaps <- function(inp, maxIter=1000, getPlsd=TRUE, getRep=TRUE, silent=TRUE, opt_fun='nlminb', opt_controls=list(), tmb_smartsearch=TRUE){
 	
 	# making sure inp is correct...
 	checkInp(inp)
@@ -51,39 +50,55 @@ runYaps <- function(inp, maxIter=1000, getPlsd=TRUE, getRep=TRUE, silent=TRUE, o
 			parameters = inp$params,
 			random = random,
 			DLL = "yaps",
-			inner.control = list(maxit = maxIter), 
+			inner.control = list(maxit = maxIter),
 			silent=silent
 		)
+	
+	# Attempt to robustify the inner optim problem.
+	# Refuse to optimize if gradient is too steep. Default is 1E60
+	# TMB::newtonOption(obj, tol10=1)
+	
+	# # # EXPERIMENTAL
+	if(inp$datTmb$pingType == 'rbi'){
+		TMB::newtonOption(obj, mgcmax=1E6)
+	}
+	
+	if(!silent){
+		obj$env$tracepar = TRUE
+		obj$env$tracemgc = TRUE
+	}
+	
 	if(!tmb_smartsearch){
 		obj$fn(obj$par) 
 		TMB::newtonOption(obj, smartsearch=FALSE)
 	}
 
-	if(	!is.null(opt_controls[['use_bounds']])){
-		lower <- opt_controls[['lower']]
-		upper <- opt_controls[['upper']]
-		opt_controls <- list()
-	} else {
-		lower <- -Inf
-		upper <- Inf
-	}
+	# if(	!is.null(opt_controls[['use_bounds']])){
+		# lower <- opt_controls[['lower']]
+		# upper <- opt_controls[['upper']]
+		# opt_controls <- list()
+	# } else {
+		# lower <- -Inf
+		# upper <- Inf
+	# }
 	
 	if(opt_fun == 'nloptr'){
 		opts <- opt_controls
-		if(length(bounds) == 0){
-			opt <- nloptr::nloptr(inp$inits,obj$fn,obj$gr,opts=opts,...=NA)
-		} else {
-			opt <- nloptr::nloptr(inp$inits,obj$fn,obj$gr,opts=opts,...=NA, lb=bounds$lb, ub=bounds$ub)
-		}
+		# if(length(bounds) == 0){
+			# opt <- nloptr::nloptr(inp$inits,obj$fn,obj$gr,opts=opts,...=NA)
+		# } else {
+			# opt <- nloptr::nloptr(inp$inits,obj$fn,obj$gr,opts=opts,...=NA, lb=inp$bounds[,1], ub=inp$bounds[,2])
+		# }
+		opt <- nloptr::nloptr(inp$inits,obj$fn,obj$gr,opts=opts,...=NA)#, lb=inp$bounds[,1], ub=inp$bounds[,2])
 		
 	} else if(opt_fun == 'nlminb'){
 		control_list <- opt_controls
 		if(!silent){
 				# opt <- stats::nlminb(inp$inits,obj$fn,obj$gr, control = control_list)
 				# opt <- stats::nlminb(inp$inits,obj$fn,obj$gr, control = control_list, lower=c(-50,-15, -100, -50, -20), upper= c(2, 2, 100, 2, -2))
-				opt <- stats::nlminb(inp$inits,obj$fn,obj$gr, control = control_list, lower=lower, upper=upper)
+				opt <- stats::nlminb(inp$inits,obj$fn,obj$gr, control = control_list, lower=inp$bounds[,1], upper=inp$bounds[,2])
 		} else {
-			suppressWarnings(opt <- stats::nlminb(inp$inits,obj$fn,obj$gr, control = control_list, lower=lower, upper=upper))
+			suppressWarnings(opt <- stats::nlminb(inp$inits,obj$fn,obj$gr, control = control_list, lower=inp$bounds[,1], upper=inp$bounds[,2]))
 		}
 	}
 	

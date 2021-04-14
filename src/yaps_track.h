@@ -12,6 +12,7 @@
 	DATA_IVECTOR(ss_idx);
 	DATA_INTEGER(n_ss);
 	DATA_SCALAR(approxBI);
+
 	DATA_VECTOR(Edist);
 	DATA_VECTOR(biTable);
 	DATA_VECTOR(bbox);
@@ -84,10 +85,16 @@
 	//burst interval component
 	if(pingType == "sbi"){
 	    #include "nll_pingtype_sbi.h"
+	} else if(pingType == "sbi_double"){
+		#include "nll_pingtype_sbi_double.h"
 	} else if(pingType == "rbi"){
 		#include "nll_pingtype_rbi.h"
 	} else if(pingType == "pbi"){
 		#include "nll_pingtype_pbi.h"
+	}
+	// make sure all pings come in correct order...
+	for(int i=1; i<np; ++i){
+		nll += bi_penalty * (softplus(0 - (top(i) - top(i-1)), bi_epsilon));
 	}
 
 

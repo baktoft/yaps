@@ -1,9 +1,12 @@
 		PARAMETER_VECTOR(Z);	//Position at time of ping
+		PARAMETER(logD_z);    		// Diffusivity of z
+		Type D_z = exp(logD_z);
+
 	
-		nll -= dnorm(Z(0),Type(0),Type(10000),true);
+		nll -= dnorm(Z(0),Type(-10),Type(200),true);
 		
 		for(int i=1; i<np; ++i)	{
-			nll -= dnorm(Z(i), Z(i-1),sqrt(2*D_xy*(top(i) - top(i-1))),true);
+			nll -= dnorm(Z(i), Z(i-1),sqrt(2*D_z*(top(i) - top(i-1))),true);
 		}
 		
 		for(int i=0; i<np; ++i){ //iterate pings

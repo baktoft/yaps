@@ -23,13 +23,11 @@ getSyncModel <- function(inp_sync, silent=TRUE, fine_tune=FALSE, max_iter=100, t
 	cat(". Running optimization of the sync model. Please be patient - this can take a long time. \n")
 	if(fine_tune){cat(".... fine tuning is enabled, but is getting deprecated in future version. Consider to use the function fineTuneSyncModel() instead. See ?fineTuneSyncModel for info. \n")}
 
-	tictoc::tic("Fitting sync model: ")
 	opt <- c()
 	pl <- c()
 	plsd <- c()
 	obj <- c()
 
-	tictoc::tic()
 	obj <- c()
 	opt <- c()
 	report <- c()
@@ -78,7 +76,6 @@ getSyncModel <- function(inp_sync, silent=TRUE, fine_tune=FALSE, max_iter=100, t
 		# dat_tmb$toa_offset[fine_outliers] <- NA
 	} 
 
-	tictoc::toc()
 
 	jointrep <- try(TMB::sdreport(obj, getJointPrecision=TRUE), silent=silent)
 	param_names <- rownames(summary(jointrep))

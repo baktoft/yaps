@@ -6,7 +6,7 @@ Set sync_type="delta" in getInpSync() to try it out.
 
 ## Bug fixes
 * Fix bug when downsampling toa for sync
-
+* Remove dependency of deprecated package tictoc
 
 # yaps v1.2.5
 

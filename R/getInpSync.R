@@ -33,7 +33,7 @@ getInpSync <- function(sync_dat, max_epo_diff, min_hydros, time_keeper_idx, fixe
 	
 	if(length(unique(sync_dat$detections$serial))  != nrow(sync_dat$hydros)){
 		det_hydros <- unique(sync_dat$detections$serial)
-		not_dets <- det_hydros[!sync_dat$hydros$serial %in% det_hydros]
+		not_dets <- sync_dat$hydros$serial[!sync_dat$hydros$serial %in% det_hydros]
 		stop("ERROR: These hydro serials were not found in the detection tabel. They cannot be synced. Please fix or remove. \n",not_dets,"")
 	}
 	

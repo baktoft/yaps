@@ -9,11 +9,12 @@
 prepDetections <- function(raw_dat, type){
 	detections <- data.table::data.table()
 	if (type == "vemco_vue"){
-		detections[, ts:=as.POSIXct(raw_dat$'Date and Time (UTC)', tz="UTC")]
-		detections[, tag:=as.numeric(sapply(raw_dat$Transmitter, function(x) strsplit(x, "-")[[1]][3]))]
-		detections[, epo:=as.numeric(ts)]
-		detections[, frac:= (as.numeric(sapply(raw_dat$'Date and Time (UTC)', function(x) strsplit(x, "\\.")[[1]][2]))) / 1000]
-		detections[, serial:=as.numeric(sapply(raw_dat$Receiver, function(x) strsplit(x, "-")[[1]][2]))]
+	  detections[, ts := as.POSIXct(raw_dat$'Date and Time (UTC)', tz = "UTC")]
+	  detections[, tag := as.numeric(gsub('.*-', '', raw_dat$Transmitter))]
+	  detections[, epo := as.numeric(ts)]
+	  detections[, frac := as.numeric(gsub('.*\\.', '',
+	                                       raw_dat$"Date and Time (UTC)")) / 1000]
+	  detections[, serial := as.numeric(gsub('.*-', '', raw_dat$Receiver))]
 	}
 	detections[]
 	return(detections)

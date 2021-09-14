@@ -7,6 +7,8 @@ Set sync_type="delta" in getInpSync() to try it out.
 ## Bug fixes
 * Fix bug when downsampling toa for sync
 * Remove dependency of deprecated package tictoc
+* Fix bug in plotSyncModelCheck() when number of offsets is low
+* Enable use of lin_corr_coeffs in applySync() when type=="toa_matrix"
 
 # yaps v1.2.5
 

@@ -42,7 +42,6 @@ applySync <- function(toa, hydros="", sync_model){
 
 		toa_synced <- offset_level_mat + toa_offset - offset_mat - slope_mat*toa_offset/1E6 - slope2_mat*(toa_offset/1E6)^2
 		
-		matplot((toa_synced[,1] - toa_synced)*1450)
 		# sync_dt[, epofrac_lin_corr := epofrac - lin_corr_coeffs_offset - lin_corr_coeffs_slope*epofrac]
 		# sync_dt[, eposync := epofrac_lin_corr - OFFSET - SLOPE1*(epofrac_lin_corr - offset_level)/1E6 - SLOPE2*(((epofrac_lin_corr - offset_level)/1E6)^2)]
 

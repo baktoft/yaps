@@ -128,11 +128,19 @@ plotSyncModelCheck <- function(sync_model, by=""){
 		p <- p + xlab("Sync period")
 	} else if(by == "sync_bin_sync_smooth"){
 		plot_dat <- sync_check_dat[, .(med_delta=median((delta))), by=c('sync_tag_idx', 'focal_hydro_idx', 'hydro_idx', 'offset_idx')]
-		p <- ggplot2::ggplot(data=plot_dat) + geom_smooth(aes(x=offset_idx, y=med_delta), method = "gam", formula = y ~ s(x, bs = "cs")) + facet_wrap(~sync_tag_idx)
+		if(	length(unique(plot_dat$offset_idx)) >= 10){
+			p <- ggplot2::ggplot(data=plot_dat) + geom_smooth(aes(x=offset_idx, y=med_delta), method = "gam", formula = y ~ s(x, bs = "cs")) + facet_wrap(~sync_tag_idx)
+		} else {
+			p <- ggplot2::ggplot(data=plot_dat) + geom_point(aes(x=jitter(offset_idx), y=med_delta)) + facet_wrap(~sync_tag_idx)
+		}
 		p <- p + xlab("Sync period")
 	} else if(by == "sync_bin_hydro_smooth"){
 		plot_dat <- sync_check_dat[, .(med_delta=median((delta))), by=c('sync_tag_idx', 'focal_hydro_idx', 'hydro_idx', 'offset_idx')]
-		p <- ggplot2::ggplot(data=plot_dat) + geom_smooth(aes(x=offset_idx, y=med_delta), method = "gam", formula = y ~ s(x, bs = "cs")) + facet_wrap(~focal_hydro_idx)
+		if(	length(unique(plot_dat$offset_idx)) >= 10){
+			p <- ggplot2::ggplot(data=plot_dat) + geom_smooth(aes(x=offset_idx, y=med_delta), method = "gam", formula = y ~ s(x, bs = "cs")) + facet_wrap(~focal_hydro_idx)
+		} else {
+			p <- ggplot2::ggplot(data=plot_dat) + geom_point(aes(x=offset_idx, y=med_delta)) + facet_wrap(~focal_hydro_idx)
+		}
 		p <- p + xlab("Sync period")
 	} else if(by == "sync_tag"){
 		plot_dat <- sync_check_dat[, .(med_delta=median((delta))), by=c('sync_tag_idx', 'focal_hydro_idx', 'hydro_idx')]

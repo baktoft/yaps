@@ -18,13 +18,22 @@ applySync <- function(toa, hydros="", sync_model){
 	
 	
 	if(type=="toa_matrix"){
-		if(sum(inp_synced$inp_params$lin_corr_coeffs != 0)){
-			stop("ERROR: Use of linear correction is not yet implemented in applying sync to a matrix!\n If linear corrections are used in sync, these are ignored in this step and results will be wrong!\n")
-		}
+		# # # 2021-09-14 - DOH! the toa from sync_model already has lin_corr_coeffs applied...
+		# if(sum(inp_synced$inp_params$lin_corr_coeffs != 0)){
+			# stop("ERROR: Use of linear correction is not yet implemented in applying sync to a matrix!\n If linear corrections are used in sync, these are ignored in this step and results will be wrong!\n")
+		# }
+		
+		# lin_corr_coeffs <- sync_model$inp_synced$inp_params$lin_corr_coeffs
+
+		# subtract the intercept using sweep
+		# ...and multiply the slope
+		# toa_lin_corr <- sweep(toa, 2, lin_corr_coeffs[,1]) - t(t(toa) * lin_corr_coeffs[,2])
+		
 		offset_idx_mat <- matrix(findInterval(toa, ks), ncol=ncol(toa))
 		offset_level_mat <- matrix(inp_synced$inp_params$offset_levels[offset_idx_mat, 1], ncol=ncol(offset_idx_mat))
 		
 		toa_offset <- toa - offset_level_mat
+		# toa_offset <- toa_lin_corr - offset_level_mat
 		offset_hydro_idx <- as.matrix(reshape2::melt(offset_idx_mat, value.name="idx")[,c(2,3)])
 
 		offset_mat <- matrix(sync_model$pl$OFFSET[offset_hydro_idx], ncol=ncol(toa))
@@ -32,6 +41,11 @@ applySync <- function(toa, hydros="", sync_model){
 		slope2_mat <- matrix(sync_model$pl$SLOPE2[offset_hydro_idx], ncol=ncol(toa))
 
 		toa_synced <- offset_level_mat + toa_offset - offset_mat - slope_mat*toa_offset/1E6 - slope2_mat*(toa_offset/1E6)^2
+		
+		matplot((toa_synced[,1] - toa_synced)*1450)
+		# sync_dt[, epofrac_lin_corr := epofrac - lin_corr_coeffs_offset - lin_corr_coeffs_slope*epofrac]
+		# sync_dt[, eposync := epofrac_lin_corr - OFFSET - SLOPE1*(epofrac_lin_corr - offset_level)/1E6 - SLOPE2*(((epofrac_lin_corr - offset_level)/1E6)^2)]
+
 	}
 
 	if(type=="detections_table"){

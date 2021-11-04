@@ -47,7 +47,7 @@
 			for(int h=0; h<nh; ++h){ //iterate hydros
 				if(!isNA(toa(h,i))){ //ignore NA's...
 					if(how_3d == "none"){
-						dist(h,i) = sqrt((H(h,0)-X(i))*(H(h,0)-X(i)) + (H(h,1)-Y(i))*(H(h,1)-Y(i)));
+						dist(h,i) = sqrt((H(i, h,0)-X(i))*(H(i, h,0)-X(i)) + (H(i, h,1)-Y(i))*(H(i, h,1)-Y(i)));
 					} else if(how_3d == "data"){
 						dist(h,i) = sqrt((H(h,0)-X(i))*(H(h,0)-X(i)) + (H(h,1)-Y(i))*(H(h,1)-Y(i)) + (H(h,2)-z_vec(i))*(H(h,2)-z_vec(i)));
 					}

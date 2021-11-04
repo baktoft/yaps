@@ -29,7 +29,7 @@
 runYaps <- function(inp, maxIter=1000, getPlsd=TRUE, getRep=TRUE, silent=TRUE, opt_fun='nlminb', opt_controls=list(), tmb_smartsearch=TRUE){
 	
 	# making sure inp is correct...
-	checkInp(inp)
+	# checkInp(inp)
 	
 	nobs <- z <- z_sd <- NULL
 	print("Running yaps...")

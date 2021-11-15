@@ -175,7 +175,11 @@ getInits <- function(datTmb, sdInits=1) {
 	if(datTmb$pingType == 'sbi') {
 		init_logSigma_bi <- -6
 	} else if(datTmb$pingType == 'rbi'){
-		init_logSigma_bi <- 4 # not used in rbi
+		if(datTmb$rbi_max >= 10){
+			init_logSigma_bi <- 4 
+		} else {
+			init_logSigma_bi <- -3
+		}
 	} else if(datTmb$pingType == 'pbi'){
 		init_logSigma_bi <- -5
 	}

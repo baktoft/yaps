@@ -42,7 +42,8 @@ getToaYaps <- function(synced_dat, hydros, rbi_min, rbi_max, pingType=NULL){
 	if(rbi_min > 10){														### USE PING_TYPE INSTEAD!!!!
 		rem_idx <- which(diffs1 < rbi_min-1) # THIS NEEDS TO BE SET BASED ON USED SYSTEM - 1 IS TOO HIGH FOR HR-LIKE
 	} else {
-		rem_idx <- which(diffs1 < rbi_min-0.1) # rbi_min < 10 should always be HR???
+		rem_idx <- which(diffs1 < rbi_min-0.05) # rbi_min < 10 should always be HR???
+		rem_idx <- c(rem_idx, which(diffs1 > rbi_max+0.05 & diffs1 < rbi_min*2+0.05))
 	}
 	if(length(rem_idx) > 0){
 		toa[rem_idx, ] <- NA
@@ -74,13 +75,14 @@ getToaYaps <- function(synced_dat, hydros, rbi_min, rbi_max, pingType=NULL){
 	pings <- data.table::data.table(top=top2, diff=diffs2)
 	pings[, toa_idx:=1:.N]
 	pings[, ping2next := 1]
-	if(rbi_max > 15){														### USE PING_TYPE INSTEAD!!!!
+	if(rbi_max > 10){														### USE PING_TYPE INSTEAD!!!!
 		pings[, next_ping_too_late := diff > rbi_max+1] # same as for rbi_min above when trying to exclude impossible pings
 	} else {
-		pings[, next_ping_too_late := diff > rbi_max+.1]
+		pings[, next_ping_too_late := diff > rbi_max+.05]
 	}
 	if(pingType != 'sbi'){
-		pings[next_ping_too_late==TRUE, ping2next:=ping2next+round(diff/rbi_max)] 
+		# pings[next_ping_too_late==TRUE, ping2next:=ping2next+round(diff/rbi_max)] 
+		pings[next_ping_too_late==TRUE, ping2next:=round(diff/mean(c(rbi_max, rbi_min)))] 
 	} else {
 		pings[next_ping_too_late==TRUE, ping2next:=round(diff/rbi_max)] # the line above puts in an extra pang for pingType = "sbi"
 	}
@@ -88,19 +90,9 @@ getToaYaps <- function(synced_dat, hydros, rbi_min, rbi_max, pingType=NULL){
 	toa_all <- matrix(ncol=ncol(toa), nrow=max(pings$ping_idx))
 	toa_all[pings$ping_idx, ] <- toa
 	
-	
-	# pings[, ping2next:=round(diffs2 / ((rbi_max - rbi_min)/2 + rbi_min))]
-	# pings[, min_ping2next:=round(diffs2 / rbi_max)]
-	# pings[, max_ping2next:=round(diffs2 / rbi_min)]
-
 	# top3 <- rowMeans(toa_all, na.rm=TRUE) # we use rowMeans instead of apply(... median) - rowMeans is much faster...
 	# diffs3 <- c(diff(top3),NA)
 	# plot(diffs3)
-	# which(diffs3 > 31)
-	
-	# toa_all[110:115,]
 	
 	return(toa_all)
-	
-	
 }

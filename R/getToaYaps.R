@@ -94,5 +94,10 @@ getToaYaps <- function(synced_dat, hydros, rbi_min, rbi_max, pingType=NULL){
 	# diffs3 <- c(diff(top3),NA)
 	# plot(diffs3)
 	
+	# tops3 <- zoo::na.approx(apply(toa_all, 1, function(k) {stats::median(k, na.rm=TRUE)}), rule=2)	#time of ping
+	# range(diff(tops3))
+	# plot(diff(tops3))
+
+	
 	return(toa_all)
 }

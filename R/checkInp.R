@@ -11,10 +11,12 @@ checkInp <- function(inp){
 	if(inp$datTmb$pingType != 'sbi'){
 		if(inp$datTmb$rbi_min > min(diff(inp$params$top)))	{
 			print(paste0("WARNING: inp$datTmb$rbi_min > min(diff(inp$params$top)) | ",inp$datTmb$rbi_min," > ",min(diff(inp$params$top)),""))
+			inp$datTmb$rbi_min <- min(diff(inp$params$top))
 		}
 
 		if(inp$datTmb$rbi_max < max(diff(inp$params$top))){
 			print(paste0("WARNING: inp$datTmb$rbi_max < max(diff(inp$params$top)) | ",inp$datTmb$rbi_max," < ",max(diff(inp$params$top)),""))
+			inp$datTmb$rbi_max <- max(diff(inp$params$top))
 		}
 	}
 	
@@ -38,5 +40,7 @@ checkInp <- function(inp){
 	}
 	
 	print("Pre-flight checkInp() passed!")
+	
+	return(inp)
 
 }

@@ -71,6 +71,10 @@ buildToaListGross <- function(sync_dat, excl_self_detect){
 			k <- data.table::data.table(k)
 			return(as.numeric(k[self_detections, roll="nearest", on=.(epo_roll)]$epofrac))
 		}))
+		
+		if(nrow(toa_i) == 1 ){
+			toa_i <- t(toa_i)
+		}
 
 		# idx <- unique(other_detections$hydro_idx)
 		# toa_i <- matrix(nrow=nrow(self_detections), ncol=length(idx))

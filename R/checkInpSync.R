@@ -36,7 +36,7 @@ checkInpSync <- function(inp_sync, silent_check){
 		cat("NOTE: At least one hydro has less than 50 pings in an offset_idx - try getSyncCoverage(inp_sync, plot=TRUE) for visual\n and rerun getInpSync() with increased keep_rate\n")
 	}
 	
-
+	# check that we have data for the time keeper
 	if(sum(sync_coverage[h == inp_sync$dat_tmb_sync$tk, N] == 0) > 0){
 		cat("SERIOUS WARNING: The designated time_keeper does not have data in all offset_idxs \n try getSyncCoverage(inp_sync, plot=TRUE) for visual \n")
 		cat("SERIOUS WARNING: The designated time_keeper does not have data in all offset_idxs \n try getSyncCoverage(inp_sync, plot=TRUE) for visual \n")
@@ -44,6 +44,14 @@ checkInpSync <- function(inp_sync, silent_check){
 	} else if(sum(sync_coverage[h == inp_sync$dat_tmb_sync$tk, N] < 10) > 0){
 		cat("WARNING: The designated time_keeper has less than 10 pings in at least one offset_idx \n try getSyncCoverage(inp_sync, plot=TRUE) for visual \n")
 	}
+	
+	
+	# check that no NAs in ss_data_vec
+	if(sum(is.na(inp_sync$dat_tmb_sync$ss_data_vec)) != 0){
+		stop("FATAL ERROR: NAs found in the provided ss_data! \n")
+	}
+
+	
 	
 }
 

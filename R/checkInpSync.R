@@ -16,7 +16,7 @@ checkInpSync <- function(inp_sync, silent_check){
 	if(!silent_check & inp_sync$dat_tmb_sync$fixed_hydros_vec[inp_sync$dat_tmb_sync$tk ] != 1){
 		cat("NOTE: The designated time-keeper is not a fixed hydrophone - is this intentional?\n")
 	}
-
+	
 	# are dimensions correct?
 	stopifnot(ncol(inp_sync$dat_tmb_sync$toa) == inp_sync$dat_tmb_sync$nh)
 	stopifnot(nrow(inp_sync$dat_tmb_sync$toa) == inp_sync$dat_tmb_sync$np)
@@ -35,6 +35,16 @@ checkInpSync <- function(inp_sync, silent_check){
 	} else if(!silent_check & min(sync_coverage$N) < 50) {
 		cat("NOTE: At least one hydro has less than 50 pings in an offset_idx - try getSyncCoverage(inp_sync, plot=TRUE) for visual\n and rerun getInpSync() with increased keep_rate\n")
 	}
+	
+
+	if(sum(sync_coverage[h == inp_sync$dat_tmb_sync$tk, N] == 0) > 0){
+		cat("SERIOUS WARNING: The designated time_keeper does not have data in all offset_idxs \n try getSyncCoverage(inp_sync, plot=TRUE) for visual \n")
+		cat("SERIOUS WARNING: The designated time_keeper does not have data in all offset_idxs \n try getSyncCoverage(inp_sync, plot=TRUE) for visual \n")
+		cat("SERIOUS WARNING: The designated time_keeper does not have data in all offset_idxs \n try getSyncCoverage(inp_sync, plot=TRUE) for visual \n")
+	} else if(sum(sync_coverage[h == inp_sync$dat_tmb_sync$tk, N] < 10) > 0){
+		cat("WARNING: The designated time_keeper has less than 10 pings in at least one offset_idx \n try getSyncCoverage(inp_sync, plot=TRUE) for visual \n")
+	}
+	
 }
 
 #' Quick overview to check if all hydros have enough data within each offset period.

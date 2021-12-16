@@ -34,13 +34,13 @@ getInpSync <- function(sync_dat, max_epo_diff, min_hydros, time_keeper_idx, fixe
 	if(sum(!sync_dat$hydros$serial %in% unique(sync_dat$detections$serial)) != 0){
 		det_hydros <- unique(sync_dat$detections$serial)
 		not_dets <- sync_dat$hydros$serial[!sync_dat$hydros$serial %in% det_hydros]
-		stop(paste0("ERROR: These hydro serials were not found in the detection tabel. They cannot be synced. Please fix or remove. \n",paste(not_dets, collapse=", "),""))
+		cat(paste0("WARNING: These hydro serials were not found in the detection tabel. They cannot be synced. Please fix or remove. \n",paste(not_dets, collapse=", "),"\n"))
 	}
 	
 	if(sum(!unique(sync_dat$detections$serial) %in% sync_dat$hydros$serial) != 0){
 		det_hydros <- unique(sync_dat$detections$serial)
 		not_dets <- det_hydros[!sync_dat$hydros$serial %in% det_hydros]
-		stop(paste0("ERROR: These hydro serials are present in the detection tabel, but not in hydros. Please fix or remove. \n",paste(not_dets, collapse=", "),""))
+		cat(paste0("WARNING: These hydro serials are present in the detection tabel, but not in hydros. Please fix or remove. \n",paste(not_dets, collapse=", "),"\n"))
 	}
 	
 	sync_dat <- appendDetections(sync_dat)

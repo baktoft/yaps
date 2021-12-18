@@ -3,12 +3,17 @@
 ## New stuff
 * Add another approach to do array synchronization. Still experimental, but seems to work just as well, but much faster. 
 Set sync_type="delta" in getInpSync() to try it out.
+* Enable use of lin_corr_coeffs in applySync() when type=="toa_matrix".
+* Change from fatal error to warning if observed rbi_min/max is outside specified rbi_min/max. Now also updates input to runYaps to allow for deviations.
+* Add check to ensure ss_data does not contain NAs.
+* Add check that time_keeper has data in all subsets of sync_model.
+* Much better performance of prepDetections() - thanks @mhpob!
 
 ## Bug fixes
-* Fix bug when downsampling toa for sync
-* Remove dependency of deprecated package tictoc
-* Fix bug in plotSyncModelCheck() when number of offsets is low
-* Enable use of lin_corr_coeffs in applySync() when type=="toa_matrix"
+* Fix bug when downsampling toa for sync.
+* Remove dependency of deprecated package tictoc.
+* Fix bug in plotSyncModelCheck() when number of offsets is low.
+* Various minor bug fixes.
 
 # yaps v1.2.5
 

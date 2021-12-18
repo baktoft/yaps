@@ -6,6 +6,7 @@
 #' @return No return value, but prints errors/warnings if issues with `inp_sync` is detected.
 #' @example man/examples/example-yaps_ssu1.R
 checkInpSync <- function(inp_sync, silent_check){
+	h <- NULL
 	# speed of sound stuff
 	if(!silent_check & inp_sync$dat_tmb_sync$ss_data_what != "data"){cat("WARNING: getSyncModel() will estimate speed of sound. It is strongly advised to use data instead!\n")}
 	if(inp_sync$dat_tmb_sync$ss_data_what == "data" ){

@@ -73,8 +73,8 @@ detections_synced <- applySync(toa=ssu1$detections, hydros=ssu1$hydros, sync_mod
 hydros_yaps <- data.table::data.table(sync_model$pl$TRUE_H)
 colnames(hydros_yaps) <- c('hx','hy','hz')
 focal_tag <- 15266
-rbi_min <- 20
-rbi_max <- 40
+rbi_min <- 23 # Some times deviate from manufacturer specifications. This tag was supposed to be 20-40
+rbi_max <- 43
 synced_dat <- detections_synced[tag == focal_tag]
 toa <- getToaYaps(synced_dat=synced_dat, hydros=hydros_yaps, pingType='rbi', 
 	rbi_min=rbi_min, rbi_max=rbi_max)
@@ -87,7 +87,7 @@ inp <- getInp(hydros_yaps, toa, E_dist="Mixture", n_ss=5, pingType="rbi",
 checkInp(inp)
 
 # # # Run yaps on the prepared data to estimate track
-yaps_out <- runYaps(inp, silent=TRUE, tmb_smartsearch=TRUE, maxIter=5000) 
+yaps_out <- runYaps(inp, silent=TRUE, tmb_smartsearch=TRUE, maxIter=1000) 
 
 # # # Plot the results and compare to "the truth" obtained using gps
 

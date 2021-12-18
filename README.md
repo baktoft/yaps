@@ -8,7 +8,7 @@ Badge](https://www.r-pkg.org/badges/version/yaps)](https://cran.r-project.org/pa
 [![Travis build
 status](https://travis-ci.org/baktoft/yaps.svg?branch=master)](https://travis-ci.org/baktoft/yaps)
 [![Codecov test
-coverage](https://codecov.io/gh/baktoft/yaps/branch/master/graph/badge.svg)](https://codecov.io/gh/baktoft/yaps?branch=master)
+coverage](https://app.codecov.io/gh/baktoft/yaps/branch/master/graph/badge.svg)](https://app.codecov.io/gh/baktoft/yaps?branch=master)
 [![CRAN RStudio mirror
 downloads](https://cranlogs.r-pkg.org/badges/grand-total/yaps)](https://cran.r-project.org/package=yaps)
 <!-- badges: end -->

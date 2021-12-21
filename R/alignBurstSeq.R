@@ -29,7 +29,7 @@ alignBurstSeq <- function(synced_dat, burst_seq, seq_lng_min=10, rbi_min, rbi_ma
 	synced_dat[, seq_lng := rep(ping_rle$lengths, ping_rle$lengths)]
 	
 	first_seq_info <- synced_dat[delta_ping == 1 & seq_lng >= seq_lng_min][1]
-	if(is.na(first_seq_info[1, epo])) {
+	if(is.na(first_seq_info[1, eposync])) {
 		cat("WARNING: Could not align burst sequence. Decreasing seq_lng_min might help \n")
 		return(FALSE)
 	}

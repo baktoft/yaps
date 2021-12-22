@@ -31,7 +31,7 @@ alignBurstSeq <- function(synced_dat, burst_seq, seq_lng_min=10, rbi_min, rbi_ma
 	first_seq_info <- synced_dat[delta_ping == 1 & seq_lng >= seq_lng_min][1]
 	if(is.na(first_seq_info[1, eposync])) {
 		cat("WARNING: Could not align burst sequence. Decreasing seq_lng_min might help \n")
-		return(FALSE)
+		return(synced_dat)
 	}
 	
 	first_seq_bi <- synced_dat[hydro_idx==first_seq_info$hydro_idx & ping_idx %between% c(first_seq_info$ping_idx, first_seq_info$ping_idx + seq_lng_min), diff(eposync)]

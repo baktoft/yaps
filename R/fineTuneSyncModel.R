@@ -14,6 +14,13 @@ fineTuneSyncModel <- function(sync_model, eps_threshold, silent=TRUE){
 	resids <- sync_model$report$eps
 	resids[resids == 0] <- NA
 	outliers  <- which(abs(resids)*1450 > eps_threshold)
+	
+	# fast forward if no resids larger than eps_threshold
+	if(length(outliers) == 0){
+		cat("NOTE: No residuals larger than eps_threshold found - returning same sync_model\n")
+		return(sync_model)
+	}
+	
 	if(inp_sync$sync_type == 'top'){
 		inp_sync$dat_tmb_sync$toa_offset[outliers] <- NA
 		inp_sync$inp_params$toa[outliers] <- NA

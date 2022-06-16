@@ -39,7 +39,7 @@ if (getRversion() >= "2.15.1"){
 	new_version_on_github <- newPkgVersion()
 	if(is.null(new_version_on_github)) { new_version_on_github <- FALSE}
     ver <- utils::packageVersion('yaps')
-	out_msg <- paste0('Welcome to yaps (v', ver,')')
+	out_msg <- paste0('Welcome to yaps (v', ver,')\n NOTE: THIS IS THE ROAMING HYDROS VERSION\n NOTE: THIS IS THE ROAMING HYDROS VERSION\n NOTE: THIS IS THE ROAMING HYDROS VERSION')
 	if(new_version_on_github) {
 		out_msg <- paste0(out_msg, '\n There seems to be a new version of yaps available on github - please consider updating using: \n devtools::install_github("baktoft/yaps")')
 	}

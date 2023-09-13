@@ -96,7 +96,7 @@ getParams <- function(datTmb){
 		  # X = 0 + stats::rnorm(ncol(datTmb$toa), sd=10)
 		# , Y = 0 + stats::rnorm(ncol(datTmb$toa), sd=10)
 		, top = zoo::na.approx(apply(datTmb$toa, 2, function(k) {stats::median(k, na.rm=TRUE)}), rule=2)	#time of ping
-		# , ss=stats::rnorm(datTmb$n_ss, 1450, 5) 	#speed of sound
+		# , SS=stats::rnorm(datTmb$n_ss, 1450, 5) 	#speed of sound
 		, logD_xy = 0				#diffusivity of transmitter movement (D_xy in ms)
 		# , logD_v = 0				#diffusivity of speed of sound (D_v in ms)
 		# , logSigma_toa = 0			#sigma for Gaussian
@@ -114,7 +114,7 @@ getParams <- function(datTmb){
 	# # # ss related
 	if(datTmb$ss_data_what == 'est'){
 		out$logD_v <- 0				#diffusivity of speed of sound (D_v in ms)
-		out$ss <- stats::rnorm(datTmb$n_ss, 1450, 5) 	#speed of sound
+		out$SS <- stats::rnorm(datTmb$n_ss, 1450, 5) 	#speed of sound
 	}
 	
 	# # # Edist related

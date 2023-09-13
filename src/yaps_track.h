@@ -30,6 +30,7 @@
 	
 
 	array<Type> mu_toa(nh,np);  // mu-matrix
+	array<Type> delta_t(nh,np);  // matrix for delta toa - top
 	array<Type> dist(nh,np);	// dist-matrix
 	array<Type> eps(nh,np);		// eps-matrix
 	vector<Type> ss_i(np);
@@ -53,6 +54,11 @@
 					}
 					mu_toa(h,i) = top(i) +  dist(h,i)/ss_i(i);
 					eps(h,i) = toa(h,i) - mu_toa(h,i);
+					
+					// // Making sure that all toas are later than top
+					// delta_t(h,i) = (toa(h,i) - top(i));
+					// nll += bi_penalty * (softplus(0 - delta_t(h,i), bi_epsilon));
+					// nll += Type(1E6) * (softplus(delta_t(h,i) - 2, Type(1E-6)) + softplus(-1 - delta_t(h,i), Type(1E-6)));
 				}
 			}
 		}
@@ -75,6 +81,10 @@
 	for(int i=1; i<np; ++i)	{
 		nll -= dnorm(X(i), X(i-1),sqrt(2*D_xy*(top(i) - top(i-1))),true);	
 		nll -= dnorm(Y(i), Y(i-1),sqrt(2*D_xy*(top(i) - top(i-1))),true);
+
+		// nll -= dnorm(X(i),Type(0),Type(10000),true);
+		// nll -= dnorm(Y(i),Type(0),Type(10000),true);
+		
 	}
 	
 	// spatial constraints

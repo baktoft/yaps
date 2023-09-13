@@ -11,9 +11,7 @@ getToaYaps(synced_dat, hydros, rbi_min, rbi_max, pingType = NULL)
 
 \item{hydros}{Dataframe from simHydros() or Dataframe with columns hx and hy containing positions of the receivers. Translate the coordinates to get the grid centre close to (0;0).}
 
-\item{rbi_min}{Minimum and maximum BI for random burst interval transmitters}
-
-\item{rbi_max}{Minimum and maximum BI for random burst interval transmitters}
+\item{rbi_min, rbi_max}{Minimum and maximum BI for random burst interval transmitters}
 
 \item{pingType}{Type of transmitter to simulate - either stable burst interval ('sbi'), random burst interval ('rbi') or random burst interval but where the random sequence is known a priori}
 }
@@ -75,7 +73,7 @@ detections_synced <- applySync(toa=ssu1$detections, hydros=ssu1$hydros, sync_mod
 hydros_yaps <- data.table::data.table(sync_model$pl$TRUE_H)
 colnames(hydros_yaps) <- c('hx','hy','hz')
 focal_tag <- 15266
-rbi_min <- 23 # Some times deviate from manufacturer specifications. This tag was supposed to be 20-40
+rbi_min <- 23 # Can deviate from manufacturer specifications. This tag was supposed to be 20-40
 rbi_max <- 43
 synced_dat <- detections_synced[tag == focal_tag]
 toa <- getToaYaps(synced_dat=synced_dat, hydros=hydros_yaps, pingType='rbi', 

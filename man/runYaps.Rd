@@ -113,7 +113,7 @@ detections_synced <- applySync(toa=ssu1$detections, hydros=ssu1$hydros, sync_mod
 hydros_yaps <- data.table::data.table(sync_model$pl$TRUE_H)
 colnames(hydros_yaps) <- c('hx','hy','hz')
 focal_tag <- 15266
-rbi_min <- 23 # Some times deviate from manufacturer specifications. This tag was supposed to be 20-40
+rbi_min <- 23 # Can deviate from manufacturer specifications. This tag was supposed to be 20-40
 rbi_max <- 43
 synced_dat <- detections_synced[tag == focal_tag]
 toa <- getToaYaps(synced_dat=synced_dat, hydros=hydros_yaps, pingType='rbi', 

@@ -38,7 +38,7 @@ runYaps <- function(inp, maxIter=1000, getPlsd=TRUE, getRep=TRUE, silent=TRUE, o
 		random <- c(random, "Z")
 	}	
 	if(inp$datTmb$ss_data_what == 'est'){
-		random <- c(random, 'ss')
+		random <- c(random, 'SS')
 	}
 
 	if(inp$datTmb$pingType == 'pbi'){

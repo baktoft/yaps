@@ -20,9 +20,7 @@ simTelemetryTrack(
 
 \item{sbi_mean, sbi_sd}{Mean and SD of burst interval when pingType = 'sbi'}
 
-\item{rbi_min}{Minimum and maximum BI for random burst interval transmitters}
-
-\item{rbi_max}{Minimum and maximum BI for random burst interval transmitters}
+\item{rbi_min, rbi_max}{Minimum and maximum BI for random burst interval transmitters}
 }
 \value{
 \code{data.frame} containing time of ping and true positions

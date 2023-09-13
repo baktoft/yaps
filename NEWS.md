@@ -1,3 +1,14 @@
+# yaps v.2.0.0.9000
+
+* Work in progress - still in early phase
+* Complete rework of all/most/many functions
+* Will not be backward compatible
+* Will break current code 
+* Improve functions to obtain sync models
+* Attempt to improve workflow
+* Remove dependence of deprecated package splusTimeSeries 
+
+
 # yaps v.1.2.5.9000
 
 ## New stuff

@@ -21,64 +21,51 @@
 #' @export
 #' @return List of input data ready for use in `getSyncModel()`
 #' @example man/examples/example-yaps_ssu1.R
-getInpSync <- function(sync_dat, max_epo_diff, min_hydros, time_keeper_idx, fixed_hydros_idx, n_offset_day, n_ss_day, keep_rate=1, excl_self_detect=TRUE, lin_corr_coeffs=NA, ss_data_what="est", ss_data=c(0), silent_check=FALSE, sync_type='top'){
-	if(length(unique(sync_dat$hydros$serial)) != nrow(sync_dat$hydros)){
-		print(sync_dat$hydros[, .N, by=serial][N>=2])
-		stop("ERROR: At least one hydrophone serial number is used more than once in sync_dat$hydros!\n")
-	}
-	
-	if(keep_rate <=0 | (keep_rate > 1 & keep_rate < 10) | (keep_rate >= 10 & keep_rate %% 1 != 0)){
-		stop("ERROR: Invalid keep_rate! Must be either ]0;1] or integer >= 10\n")
-	}
-	
-	if(sum(!sync_dat$hydros$serial %in% unique(sync_dat$detections$serial)) != 0){
-		det_hydros <- unique(sync_dat$detections$serial)
-		not_dets <- sync_dat$hydros$serial[!sync_dat$hydros$serial %in% det_hydros]
-		cat(paste0("WARNING: These hydro serials were not found in the detection tabel. They cannot be synced. Please fix or remove. \n",paste(not_dets, collapse=", "),"\n"))
-	}
-	
-	if(sum(!unique(sync_dat$detections$serial) %in% sync_dat$hydros$serial) != 0){
-		det_hydros <- unique(sync_dat$detections$serial)
-		not_dets <- det_hydros[!sync_dat$hydros$serial %in% det_hydros]
-		cat(paste0("WARNING: These hydro serials are present in the detection tabel, but not in hydros. Please fix or remove. \n",paste(not_dets, collapse=", "),"\n"))
-	}
-	
-	sync_dat <- appendDetections(sync_dat)
+# getInpSync <- function(sync_dat, max_epo_diff, min_hydros, time_keeper_idx, fixed_hydros_idx, n_offset_day, n_ss_day, keep_rate=1, 
+	# excl_self_detect=TRUE, lin_corr_coeffs=NA, ss_data_what="est", ss_data=c(0), silent_check=FALSE, sync_type='top', Edist_sync){
+
+getInpSync <- function(hydros, dat_sync, dat_ss=NA, sync_params){
+	# run some checks on the data going in...
+	checkInpSyncData(hydros, dat_sync, dat_ss, sync_params)
 		
-	if(is.na(lin_corr_coeffs[1])){
-		lin_corr_coeffs <- matrix(0, nrow=nrow(sync_dat$hydros), ncol=2, byrow=TRUE)
-	}
-
-	sync_dat <- applyLinCorCoeffsInpSync(sync_dat, lin_corr_coeffs)
+	# apply linear corrections if corrections values are provided - otherwise ignore
+	dat_sync <- applyLinCor(hydros, dat_sync, sync_params)
 	
-	T0 <- min(sync_dat$detections$epo)
-
-	inp_H_info <- getInpSyncHInfo(sync_dat)
-
-	inp_toa_list_all		<- getInpSyncToaList(sync_dat, max_epo_diff, min_hydros, excl_self_detect)
-	fixed_hydros_vec 		<- getFixedHydrosVec(sync_dat, fixed_hydros_idx)
-	offset_vals_all			<- getOffsetVals(inp_toa_list_all, n_offset_day)
-	inp_toa_list 			<- getDownsampledToaList(inp_toa_list_all, offset_vals_all, keep_rate)
-	offset_vals				<- getOffsetVals(inp_toa_list, n_offset_day)
-	ss_vals 				<- getSsVals(inp_toa_list, n_ss_day)
-	if(ss_data_what == "data"){
-		ss_data_vec		<- getSsDataVec(inp_toa_list, ss_data)
-	} else {
+	# get time 0
+	t0 <- min(dat_sync$epo)
+	
+	
+	inp_toa_list_all		<- getSyncToa(hydros, dat_sync, sync_params)
+	offset_vals_all			<- getOffsetVals(inp_toa_list = inp_toa_list_all, sync_params)
+	
+	inp_toa_list 			<- getDownsampledToaList(inp_toa_list_all, offset_vals_all, keep_rate=sync_params$keep_rate)
+	offset_vals				<- getOffsetVals(inp_toa_list, sync_params)
+	
+	
+	# tk_idx <- hydros[h_sn == sync_params$time_keeper, h_idx]
+	# init_offsets <- colMeans(inp_toa_list$toa - inp_toa_list$toa[, tk_idx], na.rm=TRUE)
+	
+	# gnu <- t(t(inp_toa_list$toa) - init_offsets)
+	# inp_toa_list$toa <- gnu
+	
+	if(is.na(dat_ss)){
 		ss_data_vec <- c(0)
+	} else {
+		ss_data_vec			<- getSsDataVec(inp_toa_list, ss_data) # not upgraded to ver2 yet!!!
 	}
 
-	dat_tmb_sync 		<- getDatTmbSync(sync_type, sync_dat, keep_rate, time_keeper_idx, inp_toa_list, fixed_hydros_vec, offset_vals, ss_vals, inp_H_info, T0, ss_data_what, ss_data_vec)
-	params_tmb_sync 	<- getParamsTmbSync(dat_tmb_sync, ss_data_what)
-	random_tmb_sync 	<- getRandomTmbSync(dat_tmb_sync, ss_data_what)
-	# inits_tmb_sync <- c(3, rep(-3,dat_tmb_sync$nh))
-	inits_tmb_sync <- c(-3)
-	inp_params <- list(toa=inp_toa_list$toa, T0=T0, Hx0=inp_H_info$Hx0, Hy0=inp_H_info$Hy0, offset_levels=offset_vals$offset_levels, 
-		ss_levels=ss_vals$ss_levels, max_epo_diff=max_epo_diff, hydros=sync_dat$hydros,
-		lin_corr_coeffs=lin_corr_coeffs, min_hydros=min_hydros, ss_data=ss_data
-	)
+	dat_tmb_sync 		<- getDatTmbSync(hydros, dat_sync, sync_params, inp_toa_list, offset_vals, t0, ss_data_vec)
+	params_tmb_sync 	<- getParamsTmbSync(dat_tmb_sync, ss_data_vec)
+	random_tmb_sync 	<- getRandomTmbSync(dat_tmb_sync, ss_data_vec)
+
+	inits_tmb_sync <- c(-3, -3) # inits for LOG_SIGMA_TOA and LOG_SIGMA_OFFSET
 	
-	inp_sync <- list(sync_type=sync_type, dat_tmb_sync=dat_tmb_sync, params_tmb_sync=params_tmb_sync, random_tmb_sync=random_tmb_sync, inits_tmb_sync=inits_tmb_sync, inp_params=inp_params)
-	inp_sync$inp_params$sync_coverage <- checkInpSync(inp_sync, silent_check)
+	
+	
+	inp_params <- list(hydros=hydros, toa=inp_toa_list$toa, offset_levels=offset_vals$offset_levels, dat_ss=dat_ss, t0 = t0)
+	
+	inp_sync <- list(dat_tmb_sync=dat_tmb_sync, params_tmb_sync=params_tmb_sync, random_tmb_sync=random_tmb_sync, inits_tmb_sync=inits_tmb_sync, inp_params=inp_params, sync_params=sync_params)
+	# inp_sync$inp_params$sync_coverage <- checkInpSync(inp_sync, silent_check)
 	return(inp_sync)
 	
 }

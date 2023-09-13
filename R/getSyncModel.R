@@ -9,8 +9,7 @@
 #' @export
 #' @return List containing relevant data constituting the `sync_model` ready for use in `fineTuneSyncModel()` if needed or in `applySync()`
 #' @example man/examples/example-yaps_ssu1.R
-getSyncModel <- function(inp_sync, silent=TRUE, fine_tune=FALSE, max_iter=100, tmb_smartsearch=TRUE){
-	inp_sync$inp_params$tmb_smartsearch <- tmb_smartsearch
+getSyncModel <- function(inp_sync, silent=TRUE, max_iter=500){
 	inp_sync$inp_params$max_iter <- max_iter
 	
 	dat_tmb <- inp_sync$dat_tmb_sync
@@ -21,7 +20,6 @@ getSyncModel <- function(inp_sync, silent=TRUE, fine_tune=FALSE, max_iter=100, t
 
 	cat(paste0(Sys.time(), " \n"))
 	cat(". Running optimization of the sync model. Please be patient - this can take a long time. \n")
-	if(fine_tune){cat(".... fine tuning is enabled, but is getting deprecated in future version. Consider to use the function fineTuneSyncModel() instead. See ?fineTuneSyncModel for info. \n")}
 
 	opt <- c()
 	pl <- c()
@@ -44,11 +42,6 @@ getSyncModel <- function(inp_sync, silent=TRUE, fine_tune=FALSE, max_iter=100, t
 		obj$env$tracemgc = TRUE
 	}
 
-	
-	if(!tmb_smartsearch){
-		TMB::newtonOption(obj, smartsearch=FALSE)
-	}
-
 	lower <- c(-10)
 	upper <- c(-2)
 	
@@ -69,13 +62,9 @@ getSyncModel <- function(inp_sync, silent=TRUE, fine_tune=FALSE, max_iter=100, t
 	crazy_outliers <- which(abs(report$eps)*1450 > 10000)
 	fine_outliers  <- which(abs(report$eps)*1450 > 1000)
 	if(length(crazy_outliers > 0)){
-		cat(".... some extreme outliers potentially affecting the model where identified \n Consider to run fineTuneSyncModel(sync_model, eps_threshold=10000). See ?fineTuneSyncModel for more info. \n")
+		cat(".... some extreme outliers potentially affecting the model where identified \n Consider running fineTuneSyncModel(sync_model, eps_threshold=10000). See ?fineTuneSyncModel for more info. \n")
 		# dat_tmb$toa_offset[crazy_outliers] <- NA
-	} else if(fine_tune){
-		cat(".... fine tuning is enabled, but is deprecated. Use the function fineTuneSyncModel() instead. See ?fineTuneSyncModel for info. \n")
-		# dat_tmb$toa_offset[fine_outliers] <- NA
-	} 
-
+	}
 
 	jointrep <- try(TMB::sdreport(obj, getJointPrecision=TRUE), silent=silent)
 	param_names <- rownames(summary(jointrep))
@@ -83,8 +72,8 @@ getSyncModel <- function(inp_sync, silent=TRUE, fine_tune=FALSE, max_iter=100, t
 	summ <- data.frame(param=param_names, sd=sds)
 	plsd <- split(summ[,2], f=summ$param)
 	
-	pl$TRUE_H[,1] <- pl$TRUE_H[,1] + inp_params$Hx0
-	pl$TRUE_H[,2] <- pl$TRUE_H[,2] + inp_params$Hy0
+	pl$TRUE_H[,1] <- pl$TRUE_H[,1] + attr(inp_params$hydros, 'Hx0')
+	pl$TRUE_H[,2] <- pl$TRUE_H[,2] + attr(inp_params$hydros, 'Hy0')
 	eps_long <- getEpsLong(report, pl, inp_sync)
 	
 	offset_nas <- which(pl$OFFSET == 0)

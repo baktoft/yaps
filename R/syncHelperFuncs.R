@@ -1,19 +1,3 @@
-#' Internal function. Get hydros for sync from sync_dat
-#' @inheritParams getInpSync
-#' @noRd
-getInpSyncHInfo <- function(sync_dat){
-	Hx0 <- sync_dat$hydros[1,x]
-	Hy0 <- sync_dat$hydros[1,y]
-
-	inp_H <- sync_dat$hydros[, c('x','y','z')]
-	inp_H[, x:=x-Hx0]
-	inp_H[, y:=y-Hy0]
-	inp_H[]
-	
-	return(list(inp_H=inp_H, Hx0=Hx0, Hy0=Hy0))
-}
-
-
 
 
 #' Internal function to append needed columns to table detections 

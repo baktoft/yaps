@@ -24,23 +24,42 @@
 # getInpSync <- function(sync_dat, max_epo_diff, min_hydros, time_keeper_idx, fixed_hydros_idx, n_offset_day, n_ss_day, keep_rate=1, 
 	# excl_self_detect=TRUE, lin_corr_coeffs=NA, ss_data_what="est", ss_data=c(0), silent_check=FALSE, sync_type='top', Edist_sync){
 
-getInpSync <- function(hydros, dat_sync, dat_ss=NA, sync_params){
-	# run some checks on the data going in...
-	checkInpSyncData(hydros, dat_sync, dat_ss, sync_params)
+getInpSync <- function(hydros, dat_sync, dat_ss=NA, sync_params, plot=TRUE){
+	
+	dat_sync_temp <- copy(dat_sync)
+	
+	# add defaults and calculated values to sync_params
+	sync_params <- prepSyncParams(hydros, dat_sync_temp, sync_params)
 		
+	# run some checks on the data going in...
+	checkInpSyncData(hydros, dat_sync_temp, dat_ss, sync_params)
+	
+	if(!is.na(sync_params$trial_days)){
+		cat("NOTE: Using first ",sync_params$trial_days," days as a trial run... \n")
+		cat("...run sync_params$trial_days <- NA  to skip trial mode\n")
+		dat_sync_temp <- dat_sync_temp[ts <= min(ts) + sync_params$trial_days*24*60*60]
+	}
+
 	# apply linear corrections if corrections values are provided - otherwise ignore
-	dat_sync <- applyLinCor(hydros, dat_sync, sync_params)
+	dat_sync_temp <- applyLinCor(hydros, dat_sync_temp, sync_params)
 	
 	# get time 0
-	t0 <- min(dat_sync$epo)
+	t0 <- min(dat_sync_temp$epo)
 	
 	
-	inp_toa_list_all		<- getSyncToa(hydros, dat_sync, sync_params)
+	inp_toa_list_all		<- getSyncToa(hydros, dat_sync_temp, sync_params)
 	offset_vals_all			<- getOffsetVals(inp_toa_list = inp_toa_list_all, sync_params)
 	
 	inp_toa_list 			<- getDownsampledToaList(inp_toa_list_all, offset_vals_all, keep_rate=sync_params$keep_rate)
 	offset_vals				<- getOffsetVals(inp_toa_list, sync_params)
-	
+
+
+	# check if any hydros are completely missing...
+	nobs_h <- apply(inp_toa_list$toa, 2, function(k) sum(!is.na(k)))
+	if(sum(nobs_h == 0) > 0){
+		cat("ERROR: At least one hydros gets no detection is TOA matrix! This/these cannot be synced and must be removed!\n... h_sn ", names(nobs_h)[(nobs_h == 0)], "\n")
+		stopSilent()
+	}
 	
 	# tk_idx <- hydros[h_sn == sync_params$time_keeper, h_idx]
 	# init_offsets <- colMeans(inp_toa_list$toa - inp_toa_list$toa[, tk_idx], na.rm=TRUE)
@@ -48,23 +67,43 @@ getInpSync <- function(hydros, dat_sync, dat_ss=NA, sync_params){
 	# gnu <- t(t(inp_toa_list$toa) - init_offsets)
 	# inp_toa_list$toa <- gnu
 	
-	if(is.na(dat_ss)){
-		ss_data_vec <- c(0)
+	if(is.null(nrow(dat_ss))){
+		ss_vec <- c(0)
 	} else {
-		ss_data_vec			<- getSsDataVec(inp_toa_list, ss_data) # not upgraded to ver2 yet!!!
+		ss_vec			<- getSsVec(inp_toa_list, ss_data) # not upgraded to ver2 yet!!!
 	}
 
-	dat_tmb_sync 		<- getDatTmbSync(hydros, dat_sync, sync_params, inp_toa_list, offset_vals, t0, ss_data_vec)
-	params_tmb_sync 	<- getParamsTmbSync(dat_tmb_sync, ss_data_vec)
-	random_tmb_sync 	<- getRandomTmbSync(dat_tmb_sync, ss_data_vec)
+	dat_tmb_sync 		<- getDatTmbSync(hydros, dat_sync_temp, sync_params, inp_toa_list, offset_vals, t0, ss_vec)
+	params_tmb_sync 	<- getParamsTmbSync(dat_tmb_sync, ss_vec)
+	random_tmb_sync 	<- getRandomTmbSync(dat_tmb_sync, ss_vec)
 
 	inits_tmb_sync <- c(-3, -3) # inits for LOG_SIGMA_TOA and LOG_SIGMA_OFFSET
 	
-	
-	
+	if(ss_vec[1] == 0){
+		inits_tmb_sync <- c(inits_tmb_sync, -1)
+	}
+
 	inp_params <- list(hydros=hydros, toa=inp_toa_list$toa, offset_levels=offset_vals$offset_levels, dat_ss=dat_ss, t0 = t0)
 	
 	inp_sync <- list(dat_tmb_sync=dat_tmb_sync, params_tmb_sync=params_tmb_sync, random_tmb_sync=random_tmb_sync, inits_tmb_sync=inits_tmb_sync, inp_params=inp_params, sync_params=sync_params)
+	
+	if(plot){
+		p0 <- plotSyncNetwork(hydros, dat_sync_temp)
+		p1 <- plotSyncCov(inp_sync)
+		print(cowplot::plot_grid(p0, p1, ncol=1))
+	}
+
+	# check to ensure that the timekeeper has data in all offset_idxs
+	dat_tk <- data.table(cbind(toa=inp_toa_list$toa[, colnames(inp_toa_list$toa) == sync_params$time_keeper], offset_idx = factor(dat_tmb_sync$offset_idx)))
+	
+	if(nrow(dat_tk[!is.na(toa), .N, by=offset_idx]) != length(unique(dat_tk$offset_idx)) | nrow(dat_tk[!is.na(toa), .N, by=offset_idx][N < 10]) > 0){
+		cat("WARNING: The time keeper should have data (N >= 10) in all offset_idx!\n")
+		cat("...Data in these periods will not be synced!\n")
+		# stopSilent()
+	}
+
+
+	
 	# inp_sync$inp_params$sync_coverage <- checkInpSync(inp_sync, silent_check)
 	return(inp_sync)
 	

@@ -3,7 +3,7 @@
 #' @param extreme_threshold Ignore delta values larger than this threshold. 
 #' @inheritParams getInpSync
 #' @noRd
-getSyncCheckDat <- function(sync_model, extreme_threshold=1000){
+getSyncCheckDat_old <- function(sync_model, extreme_threshold=1000){
 	toa <- sync_model$inp_synced$inp_params$toa
 	toa_sync <- applySync(toa, sync_model=sync_model)
 

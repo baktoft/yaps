@@ -4,7 +4,7 @@
 \alias{getInpSync}
 \title{Get object inp for synchronization}
 \usage{
-getInpSync(hydros, dat_sync, dat_ss = NA, sync_params)
+getInpSync(hydros, dat_sync, dat_ss = NA, sync_params, plot = TRUE)
 }
 \arguments{
 \item{sync_dat}{List containing data.tables with hydrophone information and detections. See e.g. \code{?ssu1} for example}

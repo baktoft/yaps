@@ -7,24 +7,23 @@ checkInpSyncData <- function(hydros, dat_sync, dat_ss, sync_params){
 	
 	if(is.null(attr(hydros, 'yapsified'))){
 		Es <- Es + 1
-		stop("ERROR: The hydros data.table is not yapsified. Run e.g. hydros <- yapsifyHydros(hydros) to do so. \n")
+		stop("ERROR: The hydros data.table is not yapsified. Run e.g. hydros <- yapsify(hydros) to do so. \n")
 	}
 
 	if(!is.null(attr(hydros, 'yapsified')) & attr(hydros, 'yapsified') == FALSE){
 		Es <- Es + 1
-		stop("ERROR: The hydros data.table is not yapsified. Run e.g. hydros <- yapsifyHydros(hydros) to do so. \n")
+		stop("ERROR: The hydros data.table is not yapsified. Run e.g. hydros <- yapsify(hydros) to do so. \n")
 	}
 	
 	if(!"epo" %in% colnames(dat_sync)){
-		cat("Note: Adding column epo to dat_sync \n")
-		dat_sync[, epo := as.numeric(ts)]
+		cat("NOTE: Adding column epo to dat_sync using epo := floor(as.numeric(ts)) \n")
+		dat_sync[, epo := floor(as.numeric(ts))]
 	}
 	
 	if(!"epofrac" %in% colnames(dat_sync)){
-		cat("Note: Adding column epofrac to dat_sync \n")
+		cat("NOTE: Adding column epofrac to dat_sync \n")
 		dat_sync[, epofrac := epo+frac]
 	}
-	
 	
 	if(length(unique(hydros$h_sn)) != nrow(hydros)){
 		Es <- Es+1
@@ -39,16 +38,19 @@ checkInpSyncData <- function(hydros, dat_sync, dat_ss, sync_params){
 	if(sum(!hydros$h_sn %in% unique(dat_sync$h_sn)) != 0){
 		det_hydros <- unique(dat_sync$h_sn)
 		not_dets <- hydros$h_sn[!hydros$h_sn %in% det_hydros]
-		cat(paste0("WARNING: These hydro serials were not found in the detection tabel. They cannot be synced. Please fix or remove. \n",paste(not_dets, collapse=", "),"\n"))
+		stop(paste0("ERROR: These hydro serials were not found in the detection tabel. They cannot be synced. Please fix or remove. \n",paste(not_dets, collapse=", "),"\n"))
 		Ws <- Ws + 1
 	}
 	
 	if(sum(!unique(dat_sync$h_sn) %in% hydros$h_sn) != 0){
 		det_hydros <- unique(dat_sync$h_sn)
 		not_dets <- det_hydros[!hydros$h_sn %in% det_hydros]
-		cat(paste0("WARNING: These hydro serials are present in the detection tabel, but not in hydros. Please fix or remove. \n",paste(not_dets, collapse=", "),"\n"))
+		stop(paste0("ERROR: These hydro serials are present in the detection tabel, but not in hydros. Please fix or remove. \n",paste(not_dets, collapse=", "),"\n"))
 		Ws <- Ws + 1
 	}
+	
+	
+	
 	
 	if(Es == 0 & Ws == 0){
 		# cat("No errors or warnings found in InpSyncData\n")

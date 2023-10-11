@@ -6,7 +6,7 @@
 # getSyncToa <- function(hydros, dat_sync, excl_self_detect, max_epo_diff, min_hydros){
 getSyncToa <- function(hydros, dat_sync, sync_params){
 	
-	hs 		<- yapsifyHydros(hydros)
+	hs 		<- hydros
 	dets 	<- dat_sync
 	
 	dets <- merge(dets, hs[, .(h_sn, h_idx)])

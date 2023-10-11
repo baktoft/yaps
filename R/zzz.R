@@ -4,8 +4,8 @@
 
 #' @importFrom graphics par plot matplot abline points lines
 #' @importFrom grDevices dev.off pdf
-#' @importFrom ggplot2 aes coord_fixed facet_grid facet_wrap ggtitle labs scale_fill_gradientn scale_y_log10 theme xlab ylab  ylim xlim
-#' @importFrom ggplot2 geom_bar geom_boxplot geom_histogram geom_hline geom_line geom_point geom_ribbon geom_smooth geom_tile geom_violin geom_vline
+#' @importFrom ggplot2 aes coord_fixed facet_grid facet_wrap ggtitle labs scale_fill_gradientn scale_y_log10 scale_y_continuous theme xlab ylab  ylim xlim
+#' @importFrom ggplot2 geom_bar geom_boxplot geom_histogram geom_hline geom_label geom_line geom_point geom_ribbon geom_segment geom_smooth geom_tile geom_violin geom_vline
 #' @importFrom stats power rnorm median quantile
 #' @importFrom utils tail
 #' @importFrom data.table .N .SD := %between% %like% %between% .I 

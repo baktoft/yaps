@@ -1,5 +1,4 @@
 	DATA_ARRAY(H);
-	DATA_ARRAY(toa);
 	DATA_ARRAY(toa_offset);
 	DATA_IVECTOR(sync_tag_idx_vec);
 	DATA_INTEGER(np);
@@ -9,14 +8,11 @@
 	DATA_IVECTOR(offset_idx);
 	DATA_INTEGER(n_offset_idx);
 
-	DATA_VECTOR(ss_data_vec);		// Vector of SS-data if used - length(ss_data) = np
+	DATA_VECTOR(ss_vec);		// Vector of SS-data if used - length(ss_data) = np
 	
 	DATA_INTEGER(E_model); //1 => Gaus; 2 => t
 	
 	PARAMETER_ARRAY(OFFSET);
-	// // PARAMETER_ARRAY(SLOPE1);
-	// // PARAMETER_ARRAY(SLOPE2);
-	// // PARAMETER_VECTOR(SS);
 
 	PARAMETER_ARRAY(TRUE_H);
 
@@ -26,16 +22,10 @@
 	PARAMETER(LOG_SIGMA_OFFSET);    		
 	Type SIGMA_OFFSET = exp(LOG_SIGMA_OFFSET);
 	
-	// // PARAMETER_VECTOR(LOG_SIGMA_HYDROS_XY);
-	// // vector<Type> SIGMA_HYDROS_XY = exp(LOG_SIGMA_HYDROS_XY);
+	PARAMETER_VECTOR(TOP);
 
-	// // if(sync_type == 'top'){
-	// // 	array<Type> mu(np,nh); 
-	// // 	array<Type> eps(np,nh);
-	// // } else {
-	// // 	vector<Type> mu(ndelta);
-	// // 	vector<Type> eps(ndelta);
-	// // }
+	array<Type> mu(np,nh); 
+	array<Type> eps(np,nh);
 
 	array<Type> dist_mat(nh,nh);
 	vector<Type> ss_i(np);
@@ -58,90 +48,69 @@
 		}
 	}
 	
-	if(ss_data_vec(0) == 0){
+	if(ss_vec(0) == 0){
 		#include "nll_sync_ss_est.h"
 	} else {
 		#include "nll_sync_ss_data.h"
 	}
 
 	
+	// // OFFSET as 1-D random walks...
+	// for(int i = 0; i < n_offset_idx; ++i){	
+		// for(int h=0; h <nh;++h){
+			// if(h==tk){
+					// nll -= dnorm(OFFSET(h, i) , Type(0.0), Type(0.0000000001), true);
+			// }
+			// else {
+				// if(i == 0){
+					// nll -= dnorm(OFFSET(h,i), Type(0),Type(30),true);
+				// } else {
+					// nll -= dnorm(OFFSET(h,i), OFFSET(h, i-1), SIGMA_OFFSET, true);
+				// }
+			// }
+		// }
+	// }
+
 	// OFFSET as 1-D random walks...
-	for(int i = 0; i < n_offset_idx; ++i){	
-		for(int h=0; h <nh;++h){
-			if(h==tk){
-					nll -= dnorm(OFFSET(h, i) , Type(0.0), Type(0.0000000001), true);
-					// nll -= dnorm(SLOPE1(h, i) , Type(0.0), Type(0.0000000001), true);
-					// nll -= dnorm(SLOPE2(h,i) , Type(0.0), Type(0.0000000001), true);
+	for(int h=0; h <nh;++h){
+		if(h==tk){
+			for(int i = 0; i < n_offset_idx; ++i){	
+				nll -= dnorm(OFFSET(h, i) , Type(0.0), Type(0.0000000001), true);
 			}
-			else {
-				if(i == 0){
-					nll -= dnorm(OFFSET(h,i), Type(0),Type(30),true);
-					// nll -= dnorm(SLOPE1(h,i), Type(0),Type(10),true);
-					// nll -= dnorm(SLOPE2(h,i), Type(0),Type(10),true);
-				} else {
-					nll -= dnorm(OFFSET(h,i), OFFSET(h, i-1), SIGMA_OFFSET, true);
-				}
+		}
+		else {
+			nll -= dnorm(OFFSET(h,0), Type(0),Type(30),true);
+			for(int i = 1; i < n_offset_idx; ++i){	
+				nll -= dnorm(OFFSET(h,i), OFFSET(h, i-1), SIGMA_OFFSET, true);
 			}
 		}
 	}
 
-	// // if(sync_type == "top"){
-		PARAMETER_VECTOR(TOP);
-
-		array<Type> mu(np,nh); 
-		array<Type> eps(np,nh);
 
 
-		for(int p = 0; p < np; ++p){   		// iterate pings
-			for(int h=0; h < nh; ++h){		// iterate hydros in ping p
-				if(!isNA(toa_offset(p,h))){
-					mu(p,h) = TOP(p) + dist_mat(sync_tag_idx_vec(p), h)/ss_i(p) + OFFSET(h, offset_idx(p));
-					eps(p,h) = toa_offset(p,h) - mu(p,h);
-					
-					if(E_model == 1){			//gaus sync model
-						nll -= dnorm(eps(p,h), Type(0.0), SIGMA_TOA, true);
-					} else if(E_model == 2){	//t sync model
-						nll -= log(dt(eps(p,h)/SIGMA_TOA, Type(3.0), false)/SIGMA_TOA);
-					}
+	for(int p = 0; p < np; ++p){   		// iterate pings
+		for(int h=0; h < nh; ++h){		// iterate hydros in ping p
+			if(!isNA(toa_offset(p,h))){
+				mu(p,h) = TOP(p) + dist_mat(sync_tag_idx_vec(p), h)/ss_i(p) + OFFSET(h, offset_idx(p));
+				eps(p,h) = toa_offset(p,h) - mu(p,h);
+				
+				if(E_model == 1){			//gaus sync model
+					nll -= dnorm(eps(p,h), Type(0.0), SIGMA_TOA, true);
+				} else if(E_model == 2){	//t sync model
+					nll -= log(dt(eps(p,h)/SIGMA_TOA, Type(3.0), false)/SIGMA_TOA);
 				}
 			}
 		}
-		REPORT(eps);
-	// // } else {
-		// // vector<Type> mu(ndelta);
-		// // vector<Type> eps(ndelta);
-
-
-		// // for(int d = 0; d < ndelta; ++d){   		// iterate pings
-			// // int H1 = CppAD::Integer(toa_delta(d,0)) - 1;
-			// // int H2 = CppAD::Integer(toa_delta(d,1)) - 1;
-			// // int ping_idx = CppAD::Integer(toa_delta(d,3)) - 1;
-			// // int sync_tag_idx = CppAD::Integer(toa_delta(d,4)) - 1;
-			// // int offset_idx = CppAD::Integer(toa_delta(d,5)) -1;
-			// // int ss_idx = CppAD::Integer(toa_delta(d,6)) - 1;
-
-			// // // mu(d) = 	(dist_mat(sync_tag_idx, H1)/ss_i(ping_idx) + OFFSET(H1, offset_idx) + SLOPE1(H1, offset_idx)*(toa_offset(ping_idx, H1)/1E6) + SLOPE2(H1, offset_idx)*pow(toa_offset(ping_idx, H1)/1E6, 2))  - 
-							// // // (dist_mat(sync_tag_idx, H2)/ss_i(ping_idx) + OFFSET(H2, offset_idx) + SLOPE1(H2, offset_idx)*(toa_offset(ping_idx, H2)/1E6) + SLOPE2(H2, offset_idx)*pow(toa_offset(ping_idx, H2)/1E6, 2));
-			// // mu(d) = 	(dist_mat(sync_tag_idx, H1)/ss_i(ping_idx) + OFFSET(H1, offset_idx) )  - 
-						// // (dist_mat(sync_tag_idx, H2)/ss_i(ping_idx) + OFFSET(H2, offset_idx) );
-
-			// // eps(d) = toa_delta(d, 2) - mu(d);
-			// // nll -= log(dt(eps(d)/SIGMA_TOA, Type(3.0), false)/SIGMA_TOA);
-
-		// // }
-		// // REPORT(eps);
-	// // }
+	}
+	REPORT(eps);
 
 	for(int h=0; h<nh; ++h){
 		nll -= dnorm(TRUE_H(h,2), H(h,2), Type(1e-6), true); // depth of hydros can rarely be estimated due to low vertical coverage and variation of hydros
 		if(fixed_hydros_vec(h) == 1){
 			nll -= dnorm(TRUE_H(h,0), H(h,0), Type(1e-6), true);
 			nll -= dnorm(TRUE_H(h,1), H(h,1), Type(1e-6), true);
-			// nll -= dnorm(SIGMA_HYDROS_XY(h), Type(0), Type(1), true);
 		} 
 		else {
-			// nll -= dnorm(TRUE_H(h,0), H(h,0), SIGMA_HYDROS_XY(h), true);
-			// nll -= dnorm(TRUE_H(h,1), H(h,1), SIGMA_HYDROS_XY(h), true);
 			nll -= dnorm(TRUE_H(h,0), H(h,0), Type(10), true);
 			nll -= dnorm(TRUE_H(h,1), H(h,1), Type(10), true);
 		}

@@ -7,7 +7,7 @@
 #' @export
 #' @return A `data.table` with the now synchronized time-of-arrivals in column `eposync`. 
 #' @example man/examples/example-yaps_ssu1.R
-applySync <- function(toa, hydros="", sync_model){
+applySync_old <- function(toa, hydros="", sync_model){
 	if(is.matrix(toa)) {type <- "toa_matrix"
 	} else if(data.table::is.data.table(toa)) {type <- "detections_table"}
 

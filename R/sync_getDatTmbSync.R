@@ -2,12 +2,12 @@
 #' @inheritParams getInpSync
 #' @noRd
 #' @export
-getDatTmbSync <- function(hydros, dat_sync, sync_params, inp_toa_list, offset_vals, T0, ss_data_vec){
+getDatTmbSync <- function(hydros, dat_sync, sync_params, inp_toa_list, offset_vals, T0, ss_vec){
 	# H <- as.matrix(inp_H_info$inp_H)
 	H <- as.matrix(hydros[, .(x,y,z)])
 	dimnames(H) <- NULL
 	
-	toa <- inp_toa_list$toa - T0
+	toa_0 <- inp_toa_list$toa - T0
 	toa_offset <- inp_toa_list$toa - offset_vals$offset_levels[offset_vals$offset_idx]
 	
 	if(sync_params$E_dist == 'Gaus' | sync_params$E_dist == 'gaus'){
@@ -20,7 +20,7 @@ getDatTmbSync <- function(hydros, dat_sync, sync_params, inp_toa_list, offset_va
 
 	fixed_hydros_vec 		<- getFixedHydrosVec(hydros, sync_params)
 	
-	if(ss_data_vec[1] == 0){
+	if(ss_vec[1] == 0){
 		ss_data_how <- "est"
 	} else{
 		ss_data_how <- 'data'
@@ -30,7 +30,6 @@ getDatTmbSync <- function(hydros, dat_sync, sync_params, inp_toa_list, offset_va
 	dat_tmb_sync <- list(
 		model = 'yaps_sync', 
 		H=H,
-		toa = toa,
 		toa_offset = toa_offset,
 		sync_tag_idx_vec = inp_toa_list$sync_tag_idx_vec,
 		np = nrow(inp_toa_list$toa),
@@ -39,7 +38,7 @@ getDatTmbSync <- function(hydros, dat_sync, sync_params, inp_toa_list, offset_va
 		fixed_hydros_vec = fixed_hydros_vec,
 		offset_idx = offset_vals$offset_idx,
 		n_offset_idx = offset_vals$n_offset_idx,
-		ss_data_vec = ss_data_vec,
+		ss_vec = ss_vec,
 		E_model = E_model
 	)
 	return(dat_tmb_sync)

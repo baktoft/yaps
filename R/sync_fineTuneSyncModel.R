@@ -1,0 +1,50 @@
+#' Fine-tune an already fitted sync_model
+#' Wrapper function to re-run getSyncModel() using the same data, but excluding outliers. Note dimensions of data might change if eps_threshold results in empty rows in the TOA-matrix.
+#' @param sync_model sync_model obtained using getSyncModel()
+#' @param eps_threshold Maximum value of residual measured in meter assuming speed of sound = 1450 m/s
+#' @param silent logical whether to make getSyncModel() silent
+#' @export
+#' @return Fine tuned `sync_model`. See `?getSyncModel` for more info.
+#' @example man/examples/example-yaps_ssu1.R
+fineTuneSyncModel <- function(sync_model, eps_threshold, silent=TRUE){
+	# original inp_sync
+	inp_sync <- sync_model$inp_synced
+
+	# getting resids, identify outliers and get rid of them everywhere in inp_sync
+	resids <- sync_model$report$eps
+	resids[resids == 0] <- NA
+	outliers  <- which(abs(resids)*1450 > eps_threshold)
+	
+	# fast forward if no resids larger than eps_threshold
+	if(length(outliers) == 0){
+		cat("NOTE: No residuals larger than eps_threshold found - returning same sync_model\n")
+		return(sync_model)
+	}
+	
+	inp_sync$dat_tmb_sync$toa_offset[outliers] <- NA
+	inp_sync$inp_params$toa[outliers] <- NA
+
+	# check if any empty rows now exists - if so get rid of them entirely
+	nobs <- apply(inp_sync$dat_tmb_sync$toa_offset, 1, function(k) sum(!is.na(k)))
+	empty_rows <- which(nobs < inp_sync$inp_params$min_hydros)
+
+	if(length(empty_rows) > 0){
+		inp_sync$dat_tmb_sync$toa_offset <- inp_sync$dat_tmb_sync$toa_offset[-empty_rows, ]
+		inp_sync$dat_tmb_sync$sync_tag_idx_vec <- inp_sync$dat_tmb_sync$sync_tag_idx_vec[-empty_rows]
+		inp_sync$dat_tmb_sync$offset_idx <- inp_sync$dat_tmb_sync$offset_idx[-empty_rows]
+		inp_sync$dat_tmb_sync$ss_idx <- inp_sync$dat_tmb_sync$ss_idx[-empty_rows]
+		inp_sync$dat_tmb_sync$np <- inp_sync$dat_tmb_sync$np - length(empty_rows)
+		
+		if(inp_sync$dat_tmb_sync$ss_data_what == "data"){
+			inp_sync$dat_tmb_sync$ss_data_vec = inp_sync$dat_tmb_sync$ss_data_vec [-empty_rows]
+		}
+		
+		inp_sync$params_tmb_sync$TOP <- inp_sync$params_tmb_sync$TOP[-empty_rows]
+		
+		inp_sync$inp_params$toa <- inp_sync$inp_params$toa[-empty_rows, ]
+	}
+	
+	sync_model_tuned <- getSyncModel(inp_sync, silent=silent, max_iter=inp_sync$inp_params$max_iter)
+	
+	return(sync_model_tuned)
+}

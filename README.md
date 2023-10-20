@@ -15,6 +15,11 @@ downloads](https://cranlogs.r-pkg.org/badges/grand-total/yaps)](https://cran.r-p
 
 # YAPS - (Yet Another Positioning Solver)<img src="man/logo/yaps_logo.png" align="right" width="120" />
 
+## IMPORTANT
+<b>YAPS was archived on CRAN due to dependency on package splusTimeSeries which were deprecated. 
+We are currently working on YAPS v2. Besides not using splusTimeSeries function, it features a new approach to sync and several other improvements. Stay tuned!</b>
+
+## Introduction
 Welcome to the `yaps` repository. The `yaps` package is based on the
 original YAPS presented in Baktoft, Gjelland, Økland & Thygesen (2017):
 [Positioning of aquatic animals based on time-of-arrival and random walk

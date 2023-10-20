@@ -4,7 +4,7 @@
 #' @export
 getDatTmbSync <- function(hydros, dat_sync, sync_params, inp_toa_list, offset_vals, T0, ss_vec){
 	# H <- as.matrix(inp_H_info$inp_H)
-	H <- as.matrix(hydros[, .(x,y,z)])
+	H <- as.matrix(hydros[, .(h_x,h_y,h_z)])
 	dimnames(H) <- NULL
 	
 	toa_0 <- inp_toa_list$toa - T0

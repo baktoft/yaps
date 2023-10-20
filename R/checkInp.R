@@ -10,13 +10,17 @@ checkInp <- function(inp){
 	# only relevant for ping_types 'rbi' and 'pbi'?
 	if(inp$datTmb$pingType != 'sbi'){
 		if(inp$datTmb$rbi_min > min(diff(inp$params$top)))	{
-			print(paste0("WARNING: inp$datTmb$rbi_min > min(diff(inp$params$top)) | ",inp$datTmb$rbi_min," > ",min(diff(inp$params$top)),""))
-			inp$datTmb$rbi_min <- min(diff(inp$params$top)) * 0.90
+			cat(paste0("ERROR: inp$datTmb$rbi_min > min(diff(inp$params$top)) | ",inp$datTmb$rbi_min," > ",min(diff(inp$params$top)),"\n"))
+			# inp$datTmb$rbi_min <- min(diff(inp$params$top)) * 0.90
+			# cat("...inp$datTmb$rbi_min adjusted to ", inp$datTmb$rbi_min, "\n")
+			stopSilent()
 		}
 
 		if(inp$datTmb$rbi_max < max(diff(inp$params$top))){
-			print(paste0("WARNING: inp$datTmb$rbi_max < max(diff(inp$params$top)) | ",inp$datTmb$rbi_max," < ",max(diff(inp$params$top)),""))
-			inp$datTmb$rbi_max <- max(diff(inp$params$top)) * 1.10
+			cat(paste0("ERROR: inp$datTmb$rbi_max < max(diff(inp$params$top)) | ",inp$datTmb$rbi_max," < ",max(diff(inp$params$top)),"\n"))
+			# inp$datTmb$rbi_max <- max(diff(inp$params$top)) * 1.10
+			# cat("...inp$datTmb$rbi_max adjusted to ", inp$datTmb$rbi_max, "\n")
+			stopSilent()
 		}
 	}
 	
@@ -40,7 +44,4 @@ checkInp <- function(inp){
 	}
 	
 	print("Pre-flight checkInp() passed!")
-	
-	return(inp)
-
 }

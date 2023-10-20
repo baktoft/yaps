@@ -6,7 +6,7 @@ getDistMat <- function(hydros){
 	colnames(dist_mat) <- hydros$h_sn
 	for(hx in 1:nrow(hydros)){
 		for(hy in 1:nrow(hydros)){
-			dist_mat[hx, hy] <- sqrt((hydros[hx, x] - hydros[hy, x] )^2 + (hydros[hx, y] - hydros[hy, y] )^2 + (hydros[hx, z] - hydros[hy, z] )^2)
+			dist_mat[hx, hy] <- sqrt((hydros[hx, h_x] - hydros[hy, h_x] )^2 + (hydros[hx, h_y] - hydros[hy, h_y] )^2 + (hydros[hx, h_z] - hydros[hy, h_z] )^2)
 		}
 	}
 	return(dist_mat)

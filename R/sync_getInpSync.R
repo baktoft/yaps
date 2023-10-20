@@ -95,7 +95,7 @@ getInpSync <- function(hydros, dat_sync, dat_ss=NA, sync_params, plot=TRUE){
 
 	# check to ensure that the timekeeper has data in all offset_idxs
 	dat_tk <- data.table(cbind(toa=inp_toa_list$toa[, colnames(inp_toa_list$toa) == sync_params$time_keeper], offset_idx = factor(dat_tmb_sync$offset_idx)))
-	
+	toa <- inp_toa_list$toa
 	if(nrow(dat_tk[!is.na(toa), .N, by=offset_idx]) != length(unique(dat_tk$offset_idx)) | nrow(dat_tk[!is.na(toa), .N, by=offset_idx][N < 10]) > 0){
 		cat("WARNING: The time keeper should have data (N >= 10) in all offset_idx!\n")
 		cat("...Data in these periods will not be synced!\n")

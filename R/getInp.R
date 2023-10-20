@@ -19,6 +19,9 @@
 #' @example man/examples/example-yaps_ssu1.R
 getInp <- function(hydros, toa, E_dist, n_ss, pingType, sdInits=1, rbi_min=0, rbi_max=0, ss_data_what='est', ss_data=0, biTable=NULL, z_vec=NULL, bbox=NULL){
 	stopifnot(pingType %in% c('sbi', 'pbi', 'rbi'))
+	
+	checkHydros(hydros)
+	
 	inp_params 	<- getInpParams(hydros, toa, pingType)
 	datTmb 		<- getDatTmb(hydros, toa, E_dist, n_ss, pingType, rbi_min, rbi_max, ss_data_what, ss_data, biTable, inp_params, z_vec, bbox)
 	params 		<- getParams(datTmb)

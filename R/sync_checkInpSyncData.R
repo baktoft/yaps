@@ -5,14 +5,12 @@ checkInpSyncData <- function(hydros, dat_sync, dat_ss, sync_params){
 	Es <- 0
 	Ws <- 0
 	
-	if(is.null(attr(hydros, 'yapsified'))){
+	checkHydros(hydros)
+	
+	if(nrow(hydros[sync_params$time_keeper %in% h_sn]) == 0){
 		Es <- Es + 1
-		stop("ERROR: The hydros data.table is not yapsified. Run e.g. hydros <- yapsify(hydros) to do so. \n")
-	}
-
-	if(!is.null(attr(hydros, 'yapsified')) & attr(hydros, 'yapsified') == FALSE){
-		Es <- Es + 1
-		stop("ERROR: The hydros data.table is not yapsified. Run e.g. hydros <- yapsify(hydros) to do so. \n")
+		cat("ERROR: The specified sync_params$time_keeper is not present in hydros. \n")
+		stopSilent()
 	}
 	
 	if(!"epo" %in% colnames(dat_sync)){
@@ -25,10 +23,6 @@ checkInpSyncData <- function(hydros, dat_sync, dat_ss, sync_params){
 		dat_sync[, epofrac := epo+frac]
 	}
 	
-	if(length(unique(hydros$h_sn)) != nrow(hydros)){
-		Es <- Es+1
-		stop("ERROR: At least one hydrophone serial number is used more than once in sync_dat$hydros!\n")
-	}
 	
 	if(sync_params$keep_rate <=0 | (sync_params$keep_rate > 1 & sync_params$keep_rate < 10) | (sync_params$keep_rate >= 10 & sync_params$keep_rate %% 1 != 0)){
 		Es <- Es+1

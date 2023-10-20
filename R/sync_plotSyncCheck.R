@@ -56,14 +56,14 @@ plotSyncCheck <- function(sync_model, type=1){
 	if(type == 4){
 		dat_plot4 <- sync_check_dat[, .(mean=mean(abs(delta), na.rm=TRUE), median=median(abs(delta), na.rm=TRUE)), by=.(focal_hsn, sync_tag)]
 
-		dat_plot4 <- merge(dat_plot4, hydros[, .(sync_tag, x_from=x, y_from=y)], by.x="sync_tag", by.y="sync_tag")
-		dat_plot4 <- merge(dat_plot4, hydros[, .(h_sn, x_to=x, y_to=y)], by.x="focal_hsn", by.y="h_sn")
+		dat_plot4 <- merge(dat_plot4, hydros[, .(sync_tag, x_from=h_x, y_from=h_y)], by.x="sync_tag", by.y="sync_tag")
+		dat_plot4 <- merge(dat_plot4, hydros[, .(h_sn, x_to=h_x, y_to=h_y)], by.x="focal_hsn", by.y="h_sn")
 
 		p4 <- ggplot2::ggplot() 
-		p4 <- p4 + geom_point(data=hydros, aes(x=x, y=y)) + coord_fixed(ratio=1) 
+		p4 <- p4 + geom_point(data=hydros, aes(x=h_x, y=h_y)) + coord_fixed(ratio=1) 
 		p4 <- p4 + geom_segment(data=dat_plot4, aes(x=x_from, xend=x_to, y=y_from, yend=y_to, col=mean), lwd=1) 
 		p4 <- p4 + viridis::scale_color_viridis(limits=c(0,max(dat_plot4$mean)), name="Mean dev\n(m)")
-		p4 <- p4 + ggrepel::geom_label_repel(data=hydros, aes(x=x, y=y, label=paste0(h_sn,'\n',sync_tag)))
+		p4 <- p4 + ggrepel::geom_label_repel(data=hydros, aes(x=h_x, y=h_y, label=paste0(h_sn,'\n',sync_tag)))
 		return(p4)
 	}
 	

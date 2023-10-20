@@ -17,16 +17,30 @@
 #' @return List of input data ready for use in `runYaps()`
 #' @export
 #' @example man/examples/example-yaps_ssu1.R
-getInp <- function(hydros, toa, E_dist, n_ss, pingType, sdInits=1, rbi_min=0, rbi_max=0, ss_data_what='est', ss_data=0, biTable=NULL, z_vec=NULL, bbox=NULL){
-	stopifnot(pingType %in% c('sbi', 'pbi', 'rbi'))
+# getInp <- function(hydros, toa, E_dist, n_ss, pingType, sdInits=1, rbi_min=0, rbi_max=0, ss_data_what='est', ss_data=0, biTable=NULL, z_vec=NULL, bbox=NULL){
+getInp <- function(hydros, toa, ss_data='none', z_data='none', yaps_params){
 	
+	yaps_params <- prepYapsParams(yaps_params, ss_data, z_data)
 	checkHydros(hydros)
 	
-	inp_params 	<- getInpParams(hydros, toa, pingType)
-	datTmb 		<- getDatTmb(hydros, toa, E_dist, n_ss, pingType, rbi_min, rbi_max, ss_data_what, ss_data, biTable, inp_params, z_vec, bbox)
-	params 		<- getParams(datTmb)
-	inits 		<- getInits(datTmb, sdInits)
-	bounds 		<- getBounds(datTmb)
+	if(ncol(toa) != nrow(hydros)){
+		cat("ERROR: ncol(toa) != nrow(hydros) \n")
+		cat("...getInp found ",ncol(toa)," != ",nrow(hydros),"\n")
+		stopSilent()
+	}
+	
+	if(z_data[1] != 'none' & length(z_data) != nrow(toa)){
+		cat("ERROR: nrow(toa) != length(z_data) \n")
+		cat("...getInp found ",nrow(toa)," != ",length(z_data),"\n")
+		stopSilent()
+	}
+	
+	
+	inp_params 	<- getInpParams(hydros, toa)
+	dat_tmb 	<- getDatTmb(hydros, toa, ss_data, yaps_params, inp_params)
+	params 		<- getParams(dat_tmb)
+	inits 		<- getInits(dat_tmb, yaps_params)
+	bounds 		<- getBounds(dat_tmb)
 	return(list(
 		datTmb = datTmb,
 		params= params,

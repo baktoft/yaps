@@ -6,18 +6,18 @@
 #' @inheritParams getInp
 #' @return Vector of initial values to use in TMB
 #' @noRd
-getInits <- function(datTmb, sdInits=1) {
+getInits <- function(dat_tmb, yaps_params) {
 	init_logD_xy <- -1
 
-	if(datTmb$pingType == 'sbi') {
+	if(dat_tmb$ping_type == 'sbi') {
 		init_logSigma_bi <- -6
-	} else if(datTmb$pingType == 'rbi'){
-		if(datTmb$rbi_max >= 10){
+	} else if(dat_tmb$ping_type == 'rbi'){
+		if(dat_tmb$rbi_max >= 10){
 			init_logSigma_bi <- 4 
 		} else {
 			init_logSigma_bi <- -3
 		}
-	} else if(datTmb$pingType == 'pbi'){
+	} else if(dat_tmb$ping_type == 'pbi'){
 		init_logSigma_bi <- -5
 	}
 	
@@ -28,32 +28,32 @@ getInits <- function(datTmb, sdInits=1) {
 
 	inits <- c(init_logD_xy)
 
-	if(datTmb$how_3d == 'est'){
+	if(dat_tmb$how_3d == 'est'){
 		init_logD_z <- 0
 		inits <- c(inits, init_logD_z)
 	}
 	
-	if(datTmb$ss_data_what == 'est'){
+	if(dat_tmb$ss_data == 'none'){
 		inits <- c(inits, init_logD_v)
 	}
 	
 
-	if(datTmb$Edist[1] == 1){
+	if(dat_tmb$E_dist_vec[1] == 1){
 		inits <- c(inits, init_logSigma_toa)
-	} else if(datTmb$Edist[2] == 1){
+	} else if(dat_tmb$E_dist_vec[2] == 1){
 		inits <- c(inits, init_logSigma_toa, init_logScale, init_log_t_part)
-	} else if(datTmb$Edist[3] == 1){
+	} else if(dat_tmb$E_dist_vec[3] == 1){
 		inits <- c(inits, init_logScale)
 	}
 	
-	if(datTmb$pingType == 'sbi'){
+	if(dat_tmb$ping_type == 'sbi'){
 		inits <- c(inits, init_logSigma_bi)#,  init_logD_v)#, init_logSigma_toa, init_logScale, init_log_t_part)
-	} else if (datTmb$pingType == 'rbi'){
+	} else if (dat_tmb$ping_type == 'rbi'){
 		inits <- c(inits, init_logSigma_bi)#, 					init_logD_v)#, init_logSigma_toa, init_logScale, init_log_t_part)
-	} else if (datTmb$pingType == 'pbi'){
+	} else if (dat_tmb$ping_type == 'pbi'){
 		inits <- c(inits, init_logSigma_bi)#,  init_logD_v)#, init_logSigma_toa, init_logScale, init_log_t_part)
 	}
 	
-	inits <- stats::rnorm(length(inits), mean=inits, sd=sdInits)
+	inits <- stats::rnorm(length(inits), mean=inits, sd=yaps_params$sd_inits)
 	return(inits)
 }

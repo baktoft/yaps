@@ -3,7 +3,7 @@
 #' @export
 prepSyncParams <- function(hydros, dat_sync, sync_params){
 	
-	cat("Setting defaults and estiamted values for non-specified sync_params...\n")
+	cat("Setting defaults and estimated values for non-specified sync_params...\n")
 	cat("...override these by specifying them in sync_params before calling getInpSync()...\n")
 	
 	if(is.null(sync_params$smooth_offsets)){

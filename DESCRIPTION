@@ -14,7 +14,8 @@ LazyData: true
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1
 LinkingTo: Rcpp, TMB, RcppEigen
-Imports: circular, cowplot, data.table, ggplot2, ggrepel, nloptr, plyr, Rcpp, reshape2, splusTimeSeries, stats, tictoc, TMB, viridis, zoo
+Imports: circular, cowplot, data.table, ggplot2, ggrepel, nloptr, plyr, Rcpp, reshape2, stats, tictoc, TMB, viridis, zoo
+Remotes: spkaluzny/splusTimeSeries, spkaluzny/splusTimeDate
 Suggests: 
     caTools,
 	covr,

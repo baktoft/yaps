@@ -37,7 +37,8 @@ alignBurstSeq <- function(synced_dat, burst_seq, seq_lng_min=10, rbi_min, rbi_ma
 	first_seq_bi <- synced_dat[hydro_idx==first_seq_info$hydro_idx & ping_idx %between% c(first_seq_info$ping_idx, first_seq_info$ping_idx + seq_lng_min), diff(eposync)]
 		
 	seq_diffs <- plyr::aaply(1:(length(burst_seq) - seq_lng_min), 1, function(k) {	sum(abs(burst_seq[k:(k+seq_lng_min-1)] - first_seq_bi))	}	)
-	seq_fix_idx <- which.min(seq_diffs)
+	# # #Added hot-fix to accomodate n=100 repeated seqs
+	seq_fix_idx <- which.min(seq_diffs[501:length(seq_diffs)]) + 500
 	
 	
 	# finding epo for all pings in burst_seq_dt

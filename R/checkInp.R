@@ -8,39 +8,39 @@ checkInp <- function(inp){
 
 	# check that all BIs are in range of values in the model
 	# only relevant for ping_types 'rbi' and 'pbi'?
-	if(inp$datTmb$pingType != 'sbi'){
-		if(inp$datTmb$rbi_min > min(diff(inp$params$top)))	{
-			cat(paste0("ERROR: inp$datTmb$rbi_min > min(diff(inp$params$top)) | ",inp$datTmb$rbi_min," > ",min(diff(inp$params$top)),"\n"))
-			# inp$datTmb$rbi_min <- min(diff(inp$params$top)) * 0.90
-			# cat("...inp$datTmb$rbi_min adjusted to ", inp$datTmb$rbi_min, "\n")
+	if(inp$dat_tmb$ping_type != 'sbi'){
+		if(inp$dat_tmb$rbi_min > min(diff(inp$params$TOP)))	{
+			cat(paste0("ERROR: inp$dat_tmb$rbi_min > min(diff(inp$params$top)) | ",inp$dat_tmb$rbi_min," > ",min(diff(inp$params$TOP)),"\n"))
+			# inp$dat_tmb$rbi_min <- min(diff(inp$params$top)) * 0.90
+			# cat("...inp$dat_tmb$rbi_min adjusted to ", inp$dat_tmb$rbi_min, "\n")
 			stopSilent()
 		}
 
-		if(inp$datTmb$rbi_max < max(diff(inp$params$top))){
-			cat(paste0("ERROR: inp$datTmb$rbi_max < max(diff(inp$params$top)) | ",inp$datTmb$rbi_max," < ",max(diff(inp$params$top)),"\n"))
-			# inp$datTmb$rbi_max <- max(diff(inp$params$top)) * 1.10
-			# cat("...inp$datTmb$rbi_max adjusted to ", inp$datTmb$rbi_max, "\n")
+		if(inp$dat_tmb$rbi_max < max(diff(inp$params$TOP))){
+			cat(paste0("ERROR: inp$dat_tmb$rbi_max < max(diff(inp$params$top)) | ",inp$dat_tmb$rbi_max," < ",max(diff(inp$params$TOP)),"\n"))
+			# inp$dat_tmb$rbi_max <- max(diff(inp$params$top)) * 1.10
+			# cat("...inp$dat_tmb$rbi_max adjusted to ", inp$dat_tmb$rbi_max, "\n")
 			stopSilent()
 		}
 	}
 	
 	# check correct dimensions...
-	stopifnot(ncol(inp$datTmb$toa) == inp$datTmb$np)
-	stopifnot(nrow(inp$datTmb$toa) == inp$datTmb$nh)
-	stopifnot(dim(inp$datTmb$H)[2] == 3)
+	stopifnot(nrow(inp$dat_tmb$toa) == inp$dat_tmb$np)
+	stopifnot(ncol(inp$dat_tmb$toa) == inp$dat_tmb$nh)
+	stopifnot(dim(inp$dat_tmb$H)[2] == 3)
 	
 	# check for correct number of lower and upper bounds
 	stopifnot(nrow(inp$bounds) == length(inp$inits))
 	
 	# check that neither first nor last row in toa is all NAs
-	stopifnot(sum(!is.na(inp$datTmb$toa[,1])) > 0)
-	stopifnot(sum(!is.na(inp$datTmb$toa[,ncol(inp$datTmb$toa)])) > 0)
+	stopifnot(sum(!is.na(inp$dat_tmb$toa[1,])) > 0)
+	stopifnot(sum(!is.na(inp$dat_tmb$toa[,ncol(inp$dat_tmb$toa)])) > 0)
 	
-	stopifnot(dim(inp$datTmb$H)[2] == 3)
+	stopifnot(dim(inp$dat_tmb$H)[2] == 3)
 	
 	# if z_vec != NULL 
-	if(!inp$datTmb$how_3d %in% c('none', 'est')){
-		stopifnot(length(inp$datTmb$z_vec) == inp$datTmb$np)
+	if(!inp$dat_tmb$how_3d %in% c('none', 'est')){
+		stopifnot(length(inp$dat_tmb$z_vec) == inp$dat_tmb$np)
 	}
 	
 	print("Pre-flight checkInp() passed!")

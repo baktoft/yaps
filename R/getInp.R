@@ -42,7 +42,7 @@ getInp <- function(hydros, toa, ss_data='none', z_data='none', yaps_params){
 	inits 		<- getInits(dat_tmb, yaps_params)
 	bounds 		<- getBounds(dat_tmb)
 	return(list(
-		datTmb = datTmb,
+		dat_tmb = dat_tmb,
 		params= params,
 		inits = inits,
 		inp_params = inp_params,

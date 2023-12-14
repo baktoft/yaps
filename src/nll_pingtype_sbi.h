@@ -10,9 +10,9 @@
 	// }
 
 
-	nll -= dnorm(top(0), Type(0), Type(0.1), true);
-	nll -= dnorm(top(0) - (-1 * top(2) + 2*top(1)), Type(0), exp(logSigma_bi), true);
-	nll -= dnorm(top(1) - (-1 * top(3) + 2*top(2)), Type(0), exp(logSigma_bi), true);
+	nll -= dnorm(TOP(0), Type(0), Type(0.1), true);
+	nll -= dnorm(TOP(0) - (-1 * TOP(2) + 2*TOP(1)), Type(0), sigma_bi, true);
+	nll -= dnorm(TOP(1) - (-1 * TOP(3) + 2*TOP(2)), Type(0), sigma_bi, true);
 	for(int i=2; i < np; i++){
-	    nll -= dnorm(top(i)-2*top(i-1)+top(i-2), Type(0), exp(logSigma_bi), true);
+	    nll -= dnorm(TOP(i)-2*TOP(i-1)+TOP(i-2), Type(0), sigma_bi, true);
 	}

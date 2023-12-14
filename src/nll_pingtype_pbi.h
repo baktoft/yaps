@@ -11,7 +11,7 @@
 		top_pbi(i) = top_pbi(i-1) + biTable(i-1);
 	}
 	for(int i = 0; i < np; ++i)	{
-		nll -= dnorm(top(i), top_pbi(i) + tag_drift(i), Type(1E-6), true);
+		nll -= dnorm(TOP(i), top_pbi(i) + tag_drift(i), Type(1E-6), true);
 	}
 
 

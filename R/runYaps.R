@@ -26,7 +26,7 @@
 #'  }
 #'
 #' @example man/examples/example-yaps_ssu1.R
-runYaps <- function(inp, maxIter=1000, getPlsd=TRUE, getRep=TRUE, silent=TRUE, opt_fun='nlminb', opt_controls=list(), tmb_smartsearch=TRUE){
+runYaps <- function(inp, max_iter=1000, getPlsd=TRUE, getRep=TRUE, silent=TRUE, opt_fun='nlminb', opt_controls=list(), tmb_smartsearch=TRUE){
 	
 	# making sure inp is correct...
 	checkInp(inp)
@@ -34,23 +34,25 @@ runYaps <- function(inp, maxIter=1000, getPlsd=TRUE, getRep=TRUE, silent=TRUE, o
 	nobs <- z <- z_sd <- NULL
 	print("Running yaps...")
 	random <- c("X", "Y", "top")
-	if(inp$datTmb$how_3d == "est"){
+	if(inp$dat_tmb$how_3d == "est"){
 		random <- c(random, "Z")
 	}	
-	if(inp$datTmb$ss_data_what == 'est'){
+	if(inp$dat_tmb$ss_data == 'none'){
 		random <- c(random, 'SS')
 	}
 
-	if(inp$datTmb$pingType == 'pbi'){
+	if(inp$dat_tmb$ping_type == 'pbi'){
 		random <- c(random, "tag_drift")
 	}
 	
+	inp$dat_tmb$ss_data_what <- 'est'
+	
 	obj <- TMB::MakeADFun(
-			data = inp$datTmb,
+			data = inp$dat_tmb,
 			parameters = inp$params,
 			random = random,
 			DLL = "yaps",
-			inner.control = list(maxit = maxIter),
+			inner.control = list(maxit = max_iter),
 			silent=silent
 		)
 	
@@ -59,7 +61,7 @@ runYaps <- function(inp, maxIter=1000, getPlsd=TRUE, getRep=TRUE, silent=TRUE, o
 	# TMB::newtonOption(obj, tol10=1)
 	
 	# # # EXPERIMENTAL
-	if(inp$datTmb$pingType == 'rbi'){
+	if(inp$dat_tmb$pingType == 'rbi'){
 		TMB::newtonOption(obj, mgcmax=1E6)
 	}
 	
@@ -146,11 +148,11 @@ runYaps <- function(inp, maxIter=1000, getPlsd=TRUE, getRep=TRUE, silent=TRUE, o
 		top=as.POSIXct(pl$top + inp$inp_params$T0, origin="1970-01-01", tz="UTC"), top_sd=plsd$top,
 		x=pl$X+inp$inp_params$Hx0, y=pl$Y+inp$inp_params$Hy0, 
 		x_sd=plsd$X, y_sd=plsd$Y)
-	if(inp$datTmb$how_3d == 'est'){
+	if(inp$dat_tmb$how_3d == 'est'){
 		track[, z := pl$Z]
 		track[, z_sd := plsd$Z]
-	} else if(inp$datTmb$how_3d == 'data'){
-		track[, z := inp$datTmb$z_vec]
+	} else if(inp$dat_tmb$how_3d == 'data'){
+		track[, z := inp$dat_tmb$z_vec]
 		track[, z_sd := NA]
 	} else {
 		track[, z:=NA]
@@ -158,7 +160,7 @@ runYaps <- function(inp, maxIter=1000, getPlsd=TRUE, getRep=TRUE, silent=TRUE, o
 	}
 	
 	
-	track[, nobs := apply(inp$datTmb$toa, 2, function(k) sum(!is.na(k)))]
+	track[, nobs := apply(inp$dat_tmb$toa, 2, function(k) sum(!is.na(k)))]
 	
 	track <- track[, c('top', 'x', 'y', 'z', 'top_sd', 'x_sd', 'y_sd', 'z_sd', 'nobs')]
 	

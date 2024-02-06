@@ -45,14 +45,16 @@ getSyncToa <- function(hydros, dat_sync, sync_params){
 		
 		self_detections[, epo_roll:=epofrac]
 		other_detections[, epo_roll:=epofrac]
-		toa_i <- t(plyr::daply(.data=other_detections, .variables="h_idx", .fun=function(k){
+		toa_i <- t(plyr::daply(.data=other_detections, .variables="h_idx", .drop_o = FALSE, .fun=function(k){
 			k <- data.table::data.table(k)
-			return(as.numeric(k[self_detections, roll="nearest", on=.(epo_roll)]$epofrac))
+			toa_k <- as.numeric(k[self_detections, roll="nearest", on=.(epo_roll)]$epofrac)
+			return(toa_k)
 		}))
-		
-		if(nrow(toa_i) == 1 ){
-			toa_i <- t(toa_i)
-		}
+
+		# # # this should be obsolete now - should always return a matrix with colnames
+		# if(nrow(toa_i) == 1 ){
+			# toa_i <- t(toa_i)
+		# }
 
 		# idx <- unique(other_detections$hydro_idx)
 		# toa_i <- matrix(nrow=nrow(self_detections), ncol=length(idx))

@@ -71,7 +71,7 @@ applySync <- function(dat_sync, sync_model){
 	if(nrow(nas_non_tk) > 0){
 		for(i in 1:nrow(nas_non_tk)){
 			na_range_i <- sync_model$inp_synced$inp_params$offset_levels[nas_non_tk[i, offset_idx], ]
-			dat_synced[epofrac %between% na_range_i, eposync := NA]
+			dat_synced[h_sn == nas_non_tk[i, h_sn] & epofrac %between% na_range_i, eposync := NA]
 		}
 	}
 	n_non_tk_nas <- nrow(dat_synced[is.na(eposync)]) - n_outside_sync_range - n_tk_nas

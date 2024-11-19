@@ -7,7 +7,7 @@
 \usage{
 runYaps(
   inp,
-  maxIter = 1000,
+  max_iter = 1000,
   getPlsd = TRUE,
   getRep = TRUE,
   silent = TRUE,
@@ -18,7 +18,7 @@ runYaps(
 
 runTmb(
   inp,
-  maxIter = 1000,
+  max_iter = 1000,
   getPlsd = TRUE,
   getRep = TRUE,
   silent = TRUE,
@@ -29,8 +29,6 @@ runTmb(
 }
 \arguments{
 \item{inp}{inp-object obtained from \code{getInp()}}
-
-\item{maxIter}{Sets \code{inner.control(maxit)} of the TMB-call. Increase if model is not converging.}
 
 \item{getPlsd, getRep}{Whether or not to get sd estimates (plsd=TRUE) and reported values (getRep=TRUE).}
 
@@ -44,6 +42,8 @@ If \code{opt_fun = 'nloptr'}, \code{opt_controls} must be a list formatted appro
 See \code{?nloptr} and the NLopt site https://nlopt.readthedocs.io/en/latest/ for more info. Some algorithms in \code{nloptr} require bounded parameters - this is not currently implemented.}
 
 \item{tmb_smartsearch}{Logical whether to use the TMB smartsearch in the inner optimizer (see \code{?TMB::MakeADFun} for info). Default and original implementation is TRUE. However, there seems to be an issue with recent versions of \code{Matrix} that requires \code{tmb_smartsearch=FALSE}.}
+
+\item{maxIter}{Sets \code{inner.control(maxit)} of the TMB-call. Increase if model is not converging.}
 }
 \value{
 List containing results of fitting \code{yaps} to the data.

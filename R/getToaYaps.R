@@ -21,13 +21,15 @@ getToaYaps <- function(synced_dat, hydros, rbi_min, rbi_max, pingType=NULL){
 	if(length(mps) > 0){
 		synced_dat <- synced_dat[-mps]
 	}
+	
+	union_matchtol <- ifelse(rbi_min < 3, 5, 10)
 
 	# build toa-matrix...
 	ts_focal <- splusTimeSeries::signalSeries(pos=floor(synced_dat[hydro_idx==1,eposync*10]), data=synced_dat[hydro_idx==1,eposync*10])
 	for(i in 2:nrow(hydros)){
 		# print(i)
 		xi <- splusTimeSeries::signalSeries(pos=floor(synced_dat[hydro_idx==i,eposync*10]), data=synced_dat[hydro_idx==i,eposync*10])
-		ts_focal <- splusTimeSeries::seriesMerge(ts_focal, xi, pos="union", matchtol=10)
+		ts_focal <- splusTimeSeries::seriesMerge(ts_focal, xi, pos="union", matchtol=union_matchtol)
 	}
 	ts_focal <- as.matrix(as.data.frame(ts_focal))
 	ts_focal <- ts_focal/10

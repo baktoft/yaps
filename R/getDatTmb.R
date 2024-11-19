@@ -7,7 +7,7 @@
 #' @return List for use in TMB.
 #' @noRd
 # getDatTmb <- function(hydros, toa, E_dist, n_ss, pingType, rbi_min, rbi_max, ss_data_what, ss_data, biTable, inp_params, z_vec, bbox){
-getDatTmb <- function(hydros, toa, ss_data, yaps_params, inp_params){
+getDatTmb <- function(hydros, toa, ss_data, z_data, yaps_params, inp_params){
 	
 	T0 <- inp_params$T0
 	Hx0 <- inp_params$Hx0
@@ -28,7 +28,7 @@ getDatTmb <- function(hydros, toa, ss_data, yaps_params, inp_params){
 	
 	approx_bi <- mean(diff(rowMeans(toa, na.rm=TRUE), na.rm=TRUE), na.rm=TRUE)
 
-	if(ss_data != 'none' & length(ss_data) != nrow(toa) ){ 
+	if(ss_data[1] != 'none' & length(ss_data) != nrow(toa) ){ 
 		cat("ERROR: Seems like ss_data is provided, but length(ss_data) != nrow(toa) \n")
 		cat("...getInp() found ss_data != 'none' and ",length(ss_data)," != ",nrow(toa)," \n")
 		stopSilent()

@@ -20,7 +20,7 @@
 	for(int i=0; i<np; ++i){ //iterate pings
 		for(int h=0; h<nh; ++h){ //iterate hydros
 			if(!isNA(toa(h,i))){ //ignore NA's...
-				nll -= Edist(1) * 
+				nll -= E_dist_vec(1) * 
 							// ( 1 / ( 1 + 1E3 * (softplus(Type(0.0) - delta_t(h,i), Type(1E-6)))) ) *	// Attempt to keep toas before top out of estimation
 //							( 1 / ( 1 + 1E3 * (	)) ) * 
 							log( 

@@ -34,7 +34,7 @@ prepYapsParams <- function(yaps_params, ss_data, z_data){
 		stopSilent()
 	}
 	
-	if(ss_data == 'none' & is.null(yaps_params$n_ss)){
+	if(ss_data[1] == 'none' & is.null(yaps_params$n_ss)){
 		cat("...Setting n_ss = 1 \n")
 		yaps_params$n_ss <- 1
 	}

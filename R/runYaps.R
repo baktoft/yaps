@@ -33,19 +33,20 @@ runYaps <- function(inp, max_iter=1000, getPlsd=TRUE, getRep=TRUE, silent=TRUE, 
 	
 	nobs <- z <- z_sd <- NULL
 	print("Running yaps...")
-	random <- c("X", "Y", "top")
+	random <- c("X", "Y", "TOP")
 	if(inp$dat_tmb$how_3d == "est"){
 		random <- c(random, "Z")
 	}	
-	if(inp$dat_tmb$ss_data == 'none'){
+	if(inp$dat_tmb$ss_data[1] == 'none'){
+		inp$dat_tmb$ss_data_what <- 'est'
 		random <- c(random, 'SS')
+		inp$dat_tmb$ss_data <- c(0)
 	}
 
 	if(inp$dat_tmb$ping_type == 'pbi'){
 		random <- c(random, "tag_drift")
 	}
 	
-	inp$dat_tmb$ss_data_what <- 'est'
 	
 	obj <- TMB::MakeADFun(
 			data = inp$dat_tmb,
@@ -61,7 +62,7 @@ runYaps <- function(inp, max_iter=1000, getPlsd=TRUE, getRep=TRUE, silent=TRUE, 
 	# TMB::newtonOption(obj, tol10=1)
 	
 	# # # EXPERIMENTAL
-	if(inp$dat_tmb$pingType == 'rbi'){
+	if(inp$dat_tmb$ping_type == 'rbi'){
 		TMB::newtonOption(obj, mgcmax=1E6)
 	}
 	
@@ -145,7 +146,7 @@ runYaps <- function(inp, max_iter=1000, getPlsd=TRUE, getRep=TRUE, silent=TRUE, 
 	
 	# extract track in user friendly format
 	track <- data.table::data.table(
-		top=as.POSIXct(pl$top + inp$inp_params$T0, origin="1970-01-01", tz="UTC"), top_sd=plsd$top,
+		top=as.POSIXct(pl$TOP + inp$inp_params$T0, origin="1970-01-01", tz="UTC"), top_sd=plsd$TOP,
 		x=pl$X+inp$inp_params$Hx0, y=pl$Y+inp$inp_params$Hy0, 
 		x_sd=plsd$X, y_sd=plsd$Y)
 	if(inp$dat_tmb$how_3d == 'est'){

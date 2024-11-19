@@ -36,11 +36,11 @@ getInp <- function(hydros, toa, ss_data='none', z_data='none', yaps_params){
 	}
 	
 	
-	inp_params 	<- getInpParams(hydros, toa)
-	dat_tmb 	<- getDatTmb(hydros, toa, ss_data, yaps_params, inp_params)
-	params 		<- getParams(dat_tmb)
-	inits 		<- getInits(dat_tmb, yaps_params)
-	bounds 		<- getBounds(dat_tmb)
+	inp_params 	<- yaps:::getInpParams(hydros, toa)
+	dat_tmb 	<- yaps:::getDatTmb(hydros, toa, ss_data, z_data, yaps_params, inp_params)
+	params 		<- yaps:::getParams(dat_tmb)
+	inits 		<- yaps:::getInits(dat_tmb, yaps_params)
+	bounds 		<- yaps:::getBounds(dat_tmb)
 	return(list(
 		dat_tmb = dat_tmb,
 		params= params,

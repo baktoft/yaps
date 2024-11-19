@@ -13,7 +13,7 @@
 	DATA_INTEGER(n_ss);
 	// DATA_SCALAR(approxBI);
 
-	DATA_VECTOR(Edist);
+	DATA_VECTOR(E_dist_vec);
 	DATA_VECTOR(biTable);
 	DATA_VECTOR(bbox);
 
@@ -67,11 +67,11 @@
 	}
 	
 	// error distribution...
-	if(Edist(0) ==1){
+	if(E_dist_vec(0) == 1){
 		#include "nll_gaus-dist.h"
-	} else if (Edist(1) == 1){
+	} else if (E_dist_vec(1) == 1){
 		#include "nll_mix-dist.h"
-	} else if(Edist(2) == 1){
+	} else if(E_dist_vec(2) == 1){
 		#include "nll_t-dist.h"
 	}
 

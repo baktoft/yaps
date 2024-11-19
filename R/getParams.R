@@ -28,7 +28,7 @@ getParams <- function(dat_tmb){
 	
 
 	# # # ss related
-	if(dat_tmb$ss_data == 'none'){
+	if(dat_tmb$ss_data[1] == 'none'){
 		out$logD_v <- 0				#diffusivity of speed of sound (D_v in ms)
 		out$SS <- stats::rnorm(dat_tmb$n_ss, 1450, 5) 	#speed of sound
 	}

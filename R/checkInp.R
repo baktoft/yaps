@@ -20,13 +20,13 @@ checkInp <- function(inp){
 			cat(paste0("ERROR: inp$dat_tmb$rbi_max < max(diff(inp$params$top)) | ",inp$dat_tmb$rbi_max," < ",max(diff(inp$params$TOP)),"\n"))
 			# inp$dat_tmb$rbi_max <- max(diff(inp$params$top)) * 1.10
 			# cat("...inp$dat_tmb$rbi_max adjusted to ", inp$dat_tmb$rbi_max, "\n")
-			stopSilent()
+			stopSilent() #
 		}
 	}
 	
 	# check correct dimensions...
-	stopifnot(nrow(inp$dat_tmb$toa) == inp$dat_tmb$np)
-	stopifnot(ncol(inp$dat_tmb$toa) == inp$dat_tmb$nh)
+	stopifnot(ncol(inp$dat_tmb$toa) == inp$dat_tmb$np)
+	stopifnot(nrow(inp$dat_tmb$toa) == inp$dat_tmb$nh)
 	stopifnot(dim(inp$dat_tmb$H)[2] == 3)
 	
 	# check for correct number of lower and upper bounds

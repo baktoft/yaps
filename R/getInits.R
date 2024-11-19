@@ -33,7 +33,7 @@ getInits <- function(dat_tmb, yaps_params) {
 		inits <- c(inits, init_logD_z)
 	}
 	
-	if(dat_tmb$ss_data == 'none'){
+	if(dat_tmb$ss_data[1] == 'none'){
 		inits <- c(inits, init_logD_v)
 	}
 	

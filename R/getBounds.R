@@ -29,7 +29,7 @@ getBounds <- function(dat_tmb) {
 		bounds <- rbind(bounds, lu_logD_z)
 	}
 
-	if(dat_tmb$ss_data == 'none'){
+	if(dat_tmb$ss_data[1] == 'none'){
 		bounds <- rbind(bounds, lu_logD_v)
 	}
 

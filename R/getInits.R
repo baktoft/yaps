@@ -7,6 +7,10 @@
 #' @return Vector of initial values to use in TMB
 #' @noRd
 getInits <- function(dat_tmb, yaps_params) {
+	if(is.null(yaps_params$sd_inits[1])){
+		yaps_params$sd_inits <- 1
+	}
+	
 	init_logD_xy <- -1
 
 	if(dat_tmb$ping_type == 'sbi') {
@@ -33,7 +37,7 @@ getInits <- function(dat_tmb, yaps_params) {
 		inits <- c(inits, init_logD_z)
 	}
 	
-	if(dat_tmb$ss_data[1] == 'none'){
+	if(dat_tmb$how_ss == 'est'){
 		inits <- c(inits, init_logD_v)
 	}
 	

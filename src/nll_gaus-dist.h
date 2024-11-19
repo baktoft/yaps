@@ -3,8 +3,8 @@
 
 	for(int i=0; i<np; ++i){ //iterate pings
 		for(int h=0; h<nh; ++h){ //iterate hydros
-			if(!isNA(toa(h,i))){ //ignore NA's...
-				nll -= E_dist_vec(0) * dnorm(eps(h,i), Type(0), sigma_toa, true); 					//Gaussian part					
+			if(!isNA(toa(i,h))){ //ignore NA's...
+				nll -= E_dist_vec(0) * dnorm(eps(i,h), Type(0), sigma_toa, true); 					//Gaussian part					
 			}
 		}
 	}

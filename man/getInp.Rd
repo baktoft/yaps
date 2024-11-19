@@ -4,14 +4,12 @@
 \alias{getInp}
 \title{Get prepared inp-object for use in TMB-call}
 \usage{
-getInp(hydros, toa, ss_data = "none", z_data = "none", yaps_params)
+getInp(yaps_params, yaps_data)
 }
 \arguments{
 \item{hydros}{Dataframe from simHydros() or Dataframe with columns hx and hy containing positions of the receivers. Translate the coordinates to get the grid centre close to (0;0).}
 
 \item{toa}{TOA-matrix: matrix with receivers in rows and detections in columns. Make sure that the receivers are in the same order as in hydros, and that the matrix is very regular: one ping per column (inlude empty columns if a ping is not detected).}
-
-\item{ss_data}{Vector of ss-data to be used if ss_data_what = 'est'. Otherwise ss_data <- 0 (default)}
 
 \item{E_dist}{Which distribution to use in the model - "Gaus" = Gaussian, "Mixture" = mixture of Gaussian and t or "t" = pure t-distribution}
 
@@ -24,6 +22,8 @@ getInp(hydros, toa, ss_data = "none", z_data = "none", yaps_params)
 \item{sdInits}{If >0 initial values will be randomized around the normally fixed value using rnorm(length(inits), mean=inits, sd=sdInits)}
 
 \item{ss_data_what}{What speed of sound (ss) data to be used. Default ss_data_what='est': ss is estimated by the model. Alternatively, if ss_data_what='data': ss_data must be provided and length(ss_data) == ncol(toa)}
+
+\item{ss_data}{Vector of ss-data to be used if ss_data_what = 'est'. Otherwise ss_data <- 0 (default)}
 
 \item{biTable}{Table of known burst intervals. Only used when pingType == "pbi". Default=NULL}
 

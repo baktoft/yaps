@@ -4,7 +4,7 @@
 \alias{getToaRbi}
 \title{Get TOA matrix for random burst interval transmitters}
 \usage{
-getToaRbi(dets, hydros, rbi_min, rbi_max)
+getToaRbi(yaps_params, yaps_data)
 }
 \description{
 Get TOA matrix for random burst interval transmitters

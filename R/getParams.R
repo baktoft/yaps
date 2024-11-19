@@ -5,7 +5,7 @@
 #' @return List of params for use in TMB
 #' @noRd
 getParams <- function(dat_tmb){
-	params_XY <- getParamsXYFromCOA(dat_tmb)
+	params_XY <- yaps:::getParamsXYFromCOA(dat_tmb)
 	out <- list(
 		  X = params_XY$X + stats::rnorm(nrow(dat_tmb$toa), sd=10)
 		, Y = params_XY$Y + stats::rnorm(nrow(dat_tmb$toa), sd=10)
@@ -28,7 +28,7 @@ getParams <- function(dat_tmb){
 	
 
 	# # # ss related
-	if(dat_tmb$ss_data[1] == 'none'){
+	if(dat_tmb$how_ss == 'est'){
 		out$logD_v <- 0				#diffusivity of speed of sound (D_v in ms)
 		out$SS <- stats::rnorm(dat_tmb$n_ss, 1450, 5) 	#speed of sound
 	}

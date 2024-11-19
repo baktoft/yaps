@@ -21,16 +21,7 @@ testYaps(
 
 \item{est_ss}{Logical whether to test using ss_data_what = 'est' (est_ss = TRUE) or ss_data_what = 'data' (est_ss = FALSE)}
 
-\item{opt_fun}{Which optimization function to use. Default is \code{opt_fun = 'nlminb'} - alternative is \code{opt_fun = 'nloptr'} (experimental!). If using nloptr, \code{opt_controls} must be specified.}
-
-\item{opt_controls}{List of controls passed to optimization function. For instances, tolerances such as \code{x.tol=1E-8}. \cr
-If \code{opt_fun = 'nloptr'}, \code{opt_controls} must be a list formatted appropriately. For instance: \cr
-\code{opt_controls <- list( algorithm="NLOPT_LD_AUGLAG", xtol_abs=1e-12, maxeval=2E+4, print_level = 1, local_opts= list(algorithm="NLOPT_LD_AUGLAG_EQ", xtol_rel=1e-4) )}. \cr
-See \code{?nloptr} and the NLopt site https://nlopt.readthedocs.io/en/latest/ for more info. Some algorithms in \code{nloptr} require bounded parameters - this is not currently implemented.}
-
 \item{return_yaps}{Logical whether to return the fitted yaps model. Default=FALSE.}
-
-\item{tmb_smartsearch}{Logical whether to use the TMB smartsearch in the inner optimizer (see \code{?TMB::MakeADFun} for info). Default and original implementation is TRUE. However, there seems to be an issue with recent versions of \code{Matrix} that requires \code{tmb_smartsearch=FALSE}.}
 }
 \value{
 If \code{return_yaps == TRUE}, the fitted \code{yaps} object. See \code{?runYaps} for further info.

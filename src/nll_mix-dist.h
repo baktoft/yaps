@@ -19,13 +19,13 @@
 
 	for(int i=0; i<np; ++i){ //iterate pings
 		for(int h=0; h<nh; ++h){ //iterate hydros
-			if(!isNA(toa(h,i))){ //ignore NA's...
+			if(!isNA(toa(i,h))){ //ignore NA's...
 				nll -= E_dist_vec(1) * 
 							// ( 1 / ( 1 + 1E3 * (softplus(Type(0.0) - delta_t(h,i), Type(1E-6)))) ) *	// Attempt to keep toas before top out of estimation
 //							( 1 / ( 1 + 1E3 * (	)) ) * 
 							log( 
-								G_part * dnorm(eps(h,i), Type(0),sigma_toa,false) + 		//Gaussian part
-								t_part * dt(eps(h,i)/scale, Type(3.0), false) / scale				//t part
+								G_part * dnorm(eps(i,h), Type(0),sigma_toa,false) + 		//Gaussian part
+								t_part * dt(eps(i,h)/scale, Type(3.0), false) / scale				//t part
 							);
 						// t_part * dt(eps(h,i)/scale, Type(3.0), false) / scale );					//t part
 						// t_part * dt(eps(h,i), Type(3.0), false));					//t part

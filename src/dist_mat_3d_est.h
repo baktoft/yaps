@@ -11,10 +11,10 @@
 		
 		for(int i=0; i<np; ++i){ //iterate pings
 			for(int h=0; h<nh; ++h){ //iterate hydros
-				if(!isNA(toa(h,i))){ //ignore NA's...
-					dist(h,i) = sqrt((H(h,0)-X(i))*(H(h,0)-X(i)) + (H(h,1)-Y(i))*(H(h,1)-Y(i)) + (H(h,2)-Z(i))*(H(h,2)-Z(i)));
-					mu_toa(h,i) = TOP(i) +  dist(h,i)/ss_i(i);
-					eps(h,i) = toa(h,i) - mu_toa(h,i);
+				if(!isNA(toa(i,h))){ //ignore NA's...
+					dist(i,h) = sqrt((H(h,0)-X(i))*(H(h,0)-X(i)) + (H(h,1)-Y(i))*(H(h,1)-Y(i)) + (H(h,2)-Z(i))*(H(h,2)-Z(i)));
+					mu_toa(i,h) = TOP(i) +  dist(i,h)/ss_i(i);
+					eps(i,h) = toa(i,h) - mu_toa(i,h);
 				}
 			}
 		}

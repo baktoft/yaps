@@ -1,7 +1,7 @@
 #' Internal function to replace yaps_params NAs with defaults and calculated values.
 #' @noRd
 #' @export
-prepYapsParams <- function(yaps_params, ss_data, z_data){
+prepYapsParams <- function(yaps_params, yaps_data){
 	cat("Setting defaults and estimated values for non-specified yaps_params...\n")
 	cat("...override these by specifying them in yaps_params before calling getInp()...\n")
 
@@ -34,7 +34,7 @@ prepYapsParams <- function(yaps_params, ss_data, z_data){
 		stopSilent()
 	}
 	
-	if(ss_data[1] == 'none' & is.null(yaps_params$n_ss)){
+	if(yaps_data$how_ss == 'est' & is.null(yaps_params$n_ss)){
 		cat("...Setting n_ss = 1 \n")
 		yaps_params$n_ss <- 1
 	}

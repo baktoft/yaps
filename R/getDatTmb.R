@@ -7,7 +7,9 @@
 #' @return List for use in TMB.
 #' @noRd
 # getDatTmb <- function(hydros, toa, E_dist, n_ss, pingType, rbi_min, rbi_max, ss_data_what, ss_data, biTable, inp_params, z_vec, bbox){
-getDatTmb <- function(hydros, toa, ss_data, z_data, yaps_params, inp_params){
+# getDatTmb <- function(hydros, toa, ss_data, z_data, yaps_params, inp_params){
+# getDatTmb <- function(hydros, toa, ss_data, z_data, yaps_params, inp_params){
+getDatTmb <- function(yaps_params, yaps_data, toa, inp_params){
 	
 	T0 <- inp_params$T0
 	Hx0 <- inp_params$Hx0
@@ -21,16 +23,16 @@ getDatTmb <- function(hydros, toa, ss_data, z_data, yaps_params, inp_params){
 	
 	
 	if(yaps_params$n_ss > 1){
-		ss_idx <- cut(1:nrow(toa), yaps_params$n_ssn_ss, labels=FALSE) - 1 #-1 because zero-indexing in TMB
+		ss_idx <- cut(1:nrow(toa), yaps_params$n_ss, labels=FALSE) - 1 #-1 because zero-indexing in TMB
 	} else {
 		ss_idx <- rep(0, nrow(toa))
 	}
 	
 	approx_bi <- mean(diff(rowMeans(toa, na.rm=TRUE), na.rm=TRUE), na.rm=TRUE)
 
-	if(ss_data[1] != 'none' & length(ss_data) != nrow(toa) ){ 
+	if(yaps_data$how_ss != 'est' & length(yaps_data$ss_data) != nrow(toa) ){ 
 		cat("ERROR: Seems like ss_data is provided, but length(ss_data) != nrow(toa) \n")
-		cat("...getInp() found ss_data != 'none' and ",length(ss_data)," != ",nrow(toa)," \n")
+		cat("...getInp() found ss_data != 'none' and ",length(yaps_data$ss_data)," != ",nrow(toa)," \n")
 		stopSilent()
 	}
 
@@ -39,9 +41,10 @@ getDatTmb <- function(hydros, toa, ss_data, z_data, yaps_params, inp_params){
 	if(yaps_params$E_dist == "Mixture") {E_dist_vec[2] <- 1}
 	if(yaps_params$E_dist == "t") 		{E_dist_vec[3] <- 1}
 	
-	if(z_data[1] == 'none'){
+	if(yaps_data$z_data[1] == 'none'){
 		how_3d <- 'none'
-	} else if(z_data[1] == 'est'){
+		z_vec <- c(0)
+	} else if(yaps_data$z_data[1] == 'est'){
 		how_3d <- 'est'
 	} else {
 		how_3d <- 'data'
@@ -71,11 +74,13 @@ getDatTmb <- function(hydros, toa, ss_data, z_data, yaps_params, inp_params){
 		ping_type = yaps_params$ping_type,
 		n_ss = yaps_params$n_ss,
 		ss_idx = ss_idx,
-		ss_data = ss_data,
+		ss_data = yaps_data$ss_data,
 		approx_bi = approx_bi,
-		# biTable = c(1), # NOT IMPLEMENTED YET
+		biTable = c(1), # NOT IMPLEMENTED YET
 		how_3d = how_3d,
-		z_data = z_data,
+		how_ss = yaps_data$how_ss,
+		z_data = yaps_data$z_data,
+		z_vec = z_vec, 
 		bbox = bbox
 	)
 	# if(pingType == 'pbi') {datTmb$biTable = biTable} # NOT IMPLEMENTED YET

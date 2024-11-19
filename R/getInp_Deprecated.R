@@ -18,20 +18,10 @@
 #' @export
 #' @example man/examples/example-yaps_ssu1.R
 # getInp <- function(hydros, toa, E_dist, n_ss, pingType, sdInits=1, rbi_min=0, rbi_max=0, ss_data_what='est', ss_data=0, biTable=NULL, z_vec=NULL, bbox=NULL){
-# getInp <- function(hydros, toa, ss_data='none', z_data='none', yaps_params){
-getInp <- function(yaps_params, yaps_data){
+getInp_deprecated <- function(hydros, toa, ss_data='none', z_data='none', yaps_params){
 	
-	yaps_params <- prepYapsParams(yaps_params, yaps_data)
-	hydros <- copy(yaps_data$hydros)
+	yaps_params <- prepYapsParams(yaps_params, ss_data, z_data)
 	checkHydros(hydros)
-	
-	if(yaps_params$ping_type == 'rbi'){
-		# toa <- getToaRbi(dat_synced=yaps_data$dat_synced, hydros=yaps_data$hydros, bi=c(yaps_params$bi[1], yaps_params$bi[2]), ping_type=yaps_params$ping_type)
-		toa <- getToaRbi(yaps_params, yaps_data)
-	} else {
-		cat("FATAL ERROR: Only ping_type == 'rbi' is implemented at the moment.\n")
-		stopSilent()
-	}
 	
 	if(ncol(toa) != nrow(hydros)){
 		cat("ERROR: ncol(toa) != nrow(hydros) \n")
@@ -39,18 +29,18 @@ getInp <- function(yaps_params, yaps_data){
 		stopSilent()
 	}
 	
-	if(yaps_data$z_data[1] != 'none' & length(yaps_data$z_data) != nrow(toa)){
+	if(z_data[1] != 'none' & length(z_data) != nrow(toa)){
 		cat("ERROR: nrow(toa) != length(z_data) \n")
 		cat("...getInp found ",nrow(toa)," != ",length(z_data),"\n")
 		stopSilent()
 	}
 	
 	
-	inp_params 	<- getInpParams(hydros, toa)
-	dat_tmb 	<- getDatTmb(yaps_params, yaps_data, toa, inp_params)
-	params 		<- getParams(dat_tmb)
-	inits 		<- getInits(dat_tmb, yaps_params)
-	bounds 		<- getBounds(dat_tmb)
+	inp_params 	<- yaps:::getInpParams(hydros, toa)
+	dat_tmb 	<- yaps:::getDatTmb(hydros, toa, ss_data, z_data, yaps_params, inp_params)
+	params 		<- yaps:::getParams(dat_tmb)
+	inits 		<- yaps:::getInits(dat_tmb, yaps_params)
+	bounds 		<- yaps:::getBounds(dat_tmb)
 	return(list(
 		dat_tmb = dat_tmb,
 		params= params,

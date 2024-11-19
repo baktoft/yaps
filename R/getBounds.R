@@ -5,7 +5,7 @@
 #' @return Matrix of bounds restricting the optimizer when running runYaps().
 #' @noRd
 getBounds <- function(dat_tmb) {
-	lu_logD_xy 			<- c(-50,  2)
+	lu_logD_xy 			<- c(-50,  4)
 	lu_logD_z 			<- c(-50,  2)
 
 	lu_logSigma_toa 	<- c(-12, -2)
@@ -29,7 +29,7 @@ getBounds <- function(dat_tmb) {
 		bounds <- rbind(bounds, lu_logD_z)
 	}
 
-	if(dat_tmb$ss_data[1] == 'none'){
+	if(dat_tmb$how_ss == 'est'){
 		bounds <- rbind(bounds, lu_logD_v)
 	}
 

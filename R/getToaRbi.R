@@ -1,7 +1,17 @@
 #' Get TOA matrix for random burst interval transmitters
 #' @export
-getToaRbi <- function(dets, hydros, rbi_min, rbi_max){
+# getToaRbi <- function(dat_synced, hydros, rbi_min, rbi_max){
+# getToaRbi <- function(dat_synced, hydros, bi, ping_type){
+getToaRbi <- function(yaps_params, yaps_data){
+	ping_type <- yaps_params$ping_type
+	hydros <- copy(yaps_data$hydros)
 	
+	if(ping_type == 'rbi'){
+		rbi_min = yaps_params$bi[1]
+		rbi_max = yaps_params$bi[2]
+	}
+	
+	dets <- copy(yaps_data$dat_synced)
 	data.table::setorder(dets, eposync)
 	
 	dets <- merge(dets, hydros[, .(h_sn, h_idx)], all.x=TRUE)

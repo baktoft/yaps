@@ -29,10 +29,14 @@
 	Type D_xy = exp(logD_xy);
 	
 
-	array<Type> mu_toa(nh,np);  // mu-matrix
-	array<Type> delta_t(nh,np);  // matrix for delta toa - top
-	array<Type> dist(nh,np);	// dist-matrix
-	array<Type> eps(nh,np);		// eps-matrix
+	// array<Type> mu_toa(nh,np);  // mu-matrix
+	// array<Type> delta_t(nh,np);  // matrix for delta toa - top
+	// array<Type> dist(nh,np);	// dist-matrix
+	// array<Type> eps(nh,np);		// eps-matrix
+	array<Type> mu_toa(np,nh);  // mu-matrix
+	array<Type> delta_t(np,nh);  // matrix for delta toa - top
+	array<Type> dist(np,nh);	// dist-matrix
+	array<Type> eps(np,nh);		// eps-matrix
 	vector<Type> ss_i(np);
 
 	Type nll = 0.0;
@@ -46,14 +50,14 @@
 	if(how_3d != "est"){
 		for(int i=0; i<np; ++i){ //iterate pings
 			for(int h=0; h<nh; ++h){ //iterate hydros
-				if(!isNA(toa(h,i))){ //ignore NA's...
+				if(!isNA(toa(i,h))){ //ignore NA's...
 					if(how_3d == "none"){
-						dist(h,i) = sqrt((H(h,0)-X(i))*(H(h,0)-X(i)) + (H(h,1)-Y(i))*(H(h,1)-Y(i)));
+						dist(i,h) = sqrt((H(h,0)-X(i))*(H(h,0)-X(i)) + (H(h,1)-Y(i))*(H(h,1)-Y(i)));
 					} else if(how_3d == "data"){
-						dist(h,i) = sqrt((H(h,0)-X(i))*(H(h,0)-X(i)) + (H(h,1)-Y(i))*(H(h,1)-Y(i)) + (H(h,2)-z_vec(i))*(H(h,2)-z_vec(i)));
+						dist(i,h) = sqrt((H(h,0)-X(i))*(H(h,0)-X(i)) + (H(h,1)-Y(i))*(H(h,1)-Y(i)) + (H(h,2)-z_vec(i))*(H(h,2)-z_vec(i)));
 					}
-					mu_toa(h,i) = TOP(i) +  dist(h,i)/ss_i(i);
-					eps(h,i) = toa(h,i) - mu_toa(h,i);
+					mu_toa(i,h) = TOP(i) +  dist(i,h)/ss_i(i);
+					eps(i,h) = toa(i,h) - mu_toa(i,h);
 					
 					// // Making sure that all toas are later than top
 					// delta_t(h,i) = (toa(h,i) - top(i));

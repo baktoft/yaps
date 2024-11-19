@@ -25,8 +25,8 @@ checkInp <- function(inp){
 	}
 	
 	# check correct dimensions...
-	stopifnot(ncol(inp$dat_tmb$toa) == inp$dat_tmb$np)
-	stopifnot(nrow(inp$dat_tmb$toa) == inp$dat_tmb$nh)
+	stopifnot(nrow(inp$dat_tmb$toa) == inp$dat_tmb$np)
+	stopifnot(ncol(inp$dat_tmb$toa) == inp$dat_tmb$nh)
 	stopifnot(dim(inp$dat_tmb$H)[2] == 3)
 	
 	# check for correct number of lower and upper bounds

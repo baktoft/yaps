@@ -21,6 +21,37 @@
 #' @return List of input data ready for use in `getSyncModel()`
 #' @example man/examples/example-yaps_ssu1.R
 getInpSync <- function(sync_dat, max_epo_diff, min_hydros, time_keeper_idx, fixed_hydros_idx, n_offset_day, n_ss_day, keep_rate=1, excl_self_detect=TRUE, lin_corr_coeffs=NA, ss_data_what="est", ss_data=c(0), silent_check=FALSE){
+	if (!is.list(sync_dat)) {
+		stop("sync_dat must be a list")
+	}
+	if (is.null(sync_dat$hydros) | is.null(sync_dat$detections)) {
+		stop("The sync_dat list must contain a hydros and a detections object")
+	}
+	if (!data.table::is.data.table(sync_dat$hydros)) {
+		message("M: sync_dat$hydros is not a data.table. Attempting to convert...",
+		        appendLF = FALSE)
+		sync_dat$hydros <- data.table::as.data.table(sync_dat$hydros)
+		if (data.table::is.data.table(sync_dat$hydros)) {
+			message(" success.")
+		} else {
+			message()
+			stop("Could not convert sync_dat$hydros to data.table.",
+			     " Please supply hydros in data.table format.")
+		}
+	}
+	if (!data.table::is.data.table(sync_dat$detections)) {
+		message("M: sync_dat$detections is not a data.table. Attempting to convert...",
+		        appendLF = FALSE)
+		sync_dat$detections <- data.table::as.data.table(sync_dat$detections)
+		if (data.table::is.data.table(sync_dat$detections)) {
+			message(" success.")
+		} else {
+			message()
+			stop("Could not convert sync_dat$detections to data.table.",
+			     " Please supply detections in data.table format.")
+		}
+	}
+
 	if(length(unique(sync_dat$hydros$serial)) != nrow(sync_dat$hydros)){
 		print(sync_dat$hydros[, .N, by=serial][N>=2])
 		stop("ERROR: At least one hydrophone serial number is used more than once in sync_dat$hydros!\n")

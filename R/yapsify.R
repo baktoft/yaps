@@ -21,6 +21,9 @@ yapsify <- function(yapsify_me){
 	if(sum(c("h_x", "h_y", "h_z") %in% colnames(yapsify_me)) >= 1){ # seems to be a hydro data.table
 
 		std_h <- yapsify_me[, c('h_sn', 'h_x','h_y','h_z','sync_tag')]
+		if(!is.numeric(std_h$h_sn)){
+			std_h$h_sn <- as.numeric(std_h$h_sn)
+		}
 		setorder(std_h, h_sn)
 		std_h[, h_idx := 1:.N]
 
@@ -38,6 +41,10 @@ yapsify <- function(yapsify_me){
 		return(std_h)
 	} else if(sum(c("ts", "tag", "epo", "frac") %in% colnames(yapsify_me)) >= 1){ # should be a detection table
 		std_dat <- yapsify_me[, c('ts','h_sn','tag','frac')]
+		if(!is.numeric(std_dat$h_sn)){
+			std_dat$h_sn <- as.numeric(std_dat$h_sn)
+		}
+
 		std_dat[, epo := floor(as.numeric(ts))]
 		std_dat[, epofrac := epo + frac]
 		

@@ -21,11 +21,14 @@ getDatTmb <- function(yaps_params, yaps_data, toa, inp_params){
 	rbi_min <- yaps_params$bi[1] - yaps_params$bi[1] * 0.05
 	rbi_max <- yaps_params$bi[2] + yaps_params$bi[2] * 0.05
 	
-	
-	if(yaps_params$n_ss > 1){
-		ss_idx <- cut(1:nrow(toa), yaps_params$n_ss, labels=FALSE) - 1 #-1 because zero-indexing in TMB
+	if(!is.null(yaps_params$n_ss)){
+		if(yaps_params$n_ss > 1){
+			ss_idx <- cut(1:nrow(toa), yaps_params$n_ss, labels=FALSE) - 1 #-1 because zero-indexing in TMB
+		} else {
+			ss_idx <- rep(0, nrow(toa))
+		}
 	} else {
-		ss_idx <- rep(0, nrow(toa))
+		ss_idx <- c()
 	}
 	
 	approx_bi <- mean(diff(rowMeans(toa, na.rm=TRUE), na.rm=TRUE), na.rm=TRUE)

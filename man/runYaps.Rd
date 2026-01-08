@@ -4,7 +4,7 @@
 \alias{runYaps}
 \title{Wrapper function to doRunYaps()}
 \usage{
-runYaps(inp, silent, best_of = 1)
+runYaps(inp, silent, best_of = 1, max_iter = 1000)
 }
 \arguments{
 \item{inp}{input}

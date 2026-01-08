@@ -34,7 +34,7 @@ checkInp <- function(inp){
 	
 	# check that neither first nor last row in toa is all NAs
 	stopifnot(sum(!is.na(inp$dat_tmb$toa[1,])) > 0)
-	stopifnot(sum(!is.na(inp$dat_tmb$toa[,ncol(inp$dat_tmb$toa)])) > 0)
+	stopifnot(sum(!is.na(inp$dat_tmb$toa[nrow(inp$dat_tmb$toa), ])) > 0)
 	
 	stopifnot(dim(inp$dat_tmb$H)[2] == 3)
 	

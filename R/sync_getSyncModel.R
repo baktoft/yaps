@@ -80,7 +80,7 @@ getSyncModel <- function(inp_sync, silent=TRUE, max_iter=1000, plot=TRUE){
 	crazy_outliers <- which(abs(report$eps)*1450 > 10000)
 	fine_outliers  <- which(abs(report$eps)*1450 > 1000)
 	if(length(crazy_outliers > 0)){
-		cat(".... some extreme outliers potentially affecting the model where identified \n Consider running fineTuneSyncModel(sync_model, eps_threshold=10000). See ?fineTuneSyncModel for more info. \n")
+		cat(".... extreme outliers potentially affecting the model where identified \n Consider running fineTuneSyncModel(sync_model, eps_threshold=10000). See ?fineTuneSyncModel for more info. \n")
 		# dat_tmb$toa_offset[crazy_outliers] <- NA
 	}
 

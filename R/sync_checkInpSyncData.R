@@ -8,7 +8,7 @@ checkInpSyncData <- function(hydros, dat_sync, dat_ss, sync_params){
 	checkHydros(hydros)
 	
 	if(!is.na(sync_params$lin_corr[1])){
-		if(!identical(as.integer(rownames(sync_params$lin_corr)),  hydros$h_sn)){
+		if(!identical(as.integer(rownames(sync_params$lin_corr)),  as.integer(hydros$h_sn))){
 			Es <- Es + 1
 			cat("	ERROR: Inconsistency in hydro serials specified in lin_corr vs hydros. 
 					... lin_corr was probably obtained based on a different data set. \n")

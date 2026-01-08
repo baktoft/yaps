@@ -1,10 +1,18 @@
 #' Internal function to replaces sync_params NAs with defaults and calculated values to sync_params.
 #' @noRd
 #' @export
-prepSyncParams <- function(hydros, dat_sync, sync_params){
+prepSyncParams <- function(hydros, dat_sync, sync_params=NULL){
 	
 	cat("Setting defaults and estimated values for non-specified sync_params...\n")
 	cat("...override these by specifying them in sync_params before calling getInpSync()...\n")
+	
+	if(is.null(sync_params$time_keeper)){
+		hns <- dat_sync[, .N, by=h_sn]
+		h_sn_most_n <- hydros[h_sn == hns[N == max(N), h_sn], h_sn]
+		sync_params$time_keeper <- h_sn_most_n
+		cat("WARNING: Time keeper not specified. The one with most detections (h_sn =",h_sn_most_n ,")have been auto selected. \n")
+		hns <- h_sn_most_n <- NULL
+	}
 	
 	if(is.null(sync_params$smooth_offsets)){
 		sync_params$smooth_offsets <- TRUE

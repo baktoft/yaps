@@ -24,7 +24,7 @@
 # getInpSync <- function(sync_dat, max_epo_diff, min_hydros, time_keeper_idx, fixed_hydros_idx, n_offset_day, n_ss_day, keep_rate=1, 
 	# excl_self_detect=TRUE, lin_corr_coeffs=NA, ss_data_what="est", ss_data=c(0), silent_check=FALSE, sync_type='top', Edist_sync){
 
-getInpSync <- function(hydros, dat_sync, dat_ss=NA, sync_params, plot=TRUE){
+getInpSync <- function(hydros, dat_sync, dat_ss=NA, sync_params=NULL, plot=TRUE){
 	
 	dat_sync_temp <- copy(dat_sync)
 	
